@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">헤엄</string>
+    <string name="none"> </string>
+
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">DashBoard</string>
+    <string name="title_notifications">Notification</string>
+
+    <string name="find">아이디/비밀번호 찾기</string>
+    <string name="login">로그인</string>
+    <string name="register">회원 가입</string>
+    <string name="profile">프로필</string>
+    <string name="logout">로그아웃</string>
+
+    <string name="name">이름</string>
+    <string name="id">아이디</string>
+    <string name="nickName">닉네임</string>
+    <string name="password">비밀번호</string>
+    <string name="password_check">비밀번호 확인</string>
+    <string name="email">이메일</string>
+    <string name="verification">인증</string>
+    <string name="certification">인증 번호</string>
+    <string name="message_register_name_length">2~10자 사이로 길이를 맞춰주세요.</string>
+    <string name="message_register_id_length">6~20자 사이로 길이를 맞춰주세요.</string>
+    <string name="message_register_password_length">8~30자 사이로 길이를 맞춰주세요</string>
+    <string name="message_register_blank">공백을 포함할 수 없습니다.</string>
+    <string name="message_register_password_incorrect">비밀번호가 일치하지 않습니다.</string>
+    <string name="message_register_email_format">이메일 형식이 올바르지 않습니다.</string>
+    <string name="message_register_code_incorrect">인증 코드가 일치하지 않습니다.</string>
+    <string name="message_register_send_email">이메일을 전송하였습니다.</string>
+    <string name="message_register_duplicate_id">이미 사용중인 아이디입니다.</string>
+    <string name="message_register_duplicate_email">이미 사용중인 이메일입니다.</string>
+    <string name="message_register_failed">입력 정보를 다시 확인해주세요.</string>
+    <string name="message_error">오류가 발생하였습니다.</string>
+    <string name="message_isBlank">해당란이 공백입니다.</string>
+    <string name="message_logout">로그아웃 되었습니다.</string>
+
+    <string name="find_id">아이디 찾기</string>
+    <string name="find_password">비밀번호 찾기</string>
+    <string name="message_find_error">* 입력 정보 오류시 이메일이 전송되지 않습니다.</string>
+
+    <string name="free_board">자유 게시판</string>
+    <string name="board_write">게시글 작성하기</string>
+    <string name="board_title">제목</string>
+    <string name="board_contents">내용</string>
+    <string name="board_success">글쓰기를 완료하였습니다.</string>
+    <string name="write">작성</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "185932867191",
+    "firebase_url": "https://swimming-10cba.firebaseio.com",
+    "project_id": "swimming-10cba",
+    "storage_bucket": "swimming-10cba.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:185932867191:android:59755fda4a247178bbc872",
+        "android_client_info": {
+          "package_name": "com.example.swimming"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "185932867191-q6iin1nnq9agn6jeu4all7tomtvhs3qm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.swimming",
+            "certificate_hash": "92649a1a62c3d2002109965a5877b8eaa6b53a53"
+          }
+        },
+        {
+          "client_id": "185932867191-lsnquascfj35n5ufvh4iejvmigg7i5mf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu8O4haa6d7zR1rtKGMkx6gcw8N0HV8EI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "185932867191-lsnquascfj35n5ufvh4iejvmigg7i5mf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

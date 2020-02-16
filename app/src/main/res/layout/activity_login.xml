@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.swimming.ui.user.UserViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="32dp"
+        android:paddingTop="40dp"
+        android:paddingRight="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".ui.user.LoginActivity">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:labelFor="@id/edit_login_id"
+            android:orientation="vertical"
+            app:cardBackgroundColor="@color/colorWhite">
+
+            <EditText
+                android:id="@+id/edit_login_id"
+                style="@style/EditTheme"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:drawableStart="@drawable/round_person_24"
+                android:drawablePadding="8dp"
+                android:hint="@string/none"
+                android:inputType="textEmailAddress"
+                android:text="@={viewModel.id}" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:labelFor="@id/edit_login_password"
+            android:orientation="vertical"
+            app:cardBackgroundColor="@color/colorWhite">
+
+            <EditText
+                android:id="@+id/edit_login_password"
+                style="@style/EditTheme"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:drawableStart="@drawable/round_https_24"
+                android:drawablePadding="8dp"
+                android:hint="@string/none"
+                android:inputType="textPassword"
+                android:text="@={viewModel.password}" />
+        </androidx.cardview.widget.CardView>
+
+        <ProgressBar
+            android:id="@+id/progress_login"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="14dp"
+            android:indeterminateTint="@color/colorWhite"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/btn_login_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorDarkWhite"
+            android:text="@string/login"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlack" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/btn_login_find"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/find"
+                android:textColor="@color/colorWhite" />
+
+            <Button
+                android:id="@+id/btn_login_register"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/register"
+                android:textColor="@color/colorWhite" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>

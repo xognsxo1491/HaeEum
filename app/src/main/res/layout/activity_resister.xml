@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 회원가입 -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.swimming.ui.user.UserViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:toolbarId="@+id/toolbar_register">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_register"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/register"
+                    android:textColor="@color/colorWhite" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    style="@style/EditTheme_Black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:labelFor="@+id/edit_register_name"
+                    android:text="@string/name" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/colorDarkWhite"
+                    android:labelFor="@+id/edit_register_name"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edit_register_name"
+                        style="@style/EditTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:hint="@string/none"
+                        android:inputType=""
+                        android:privateImeOptions="defaultInputmode=korean"
+                        android:text="@={viewModel.name}" />
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/EditTheme_Black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:labelFor="@+id/edit_register_id"
+                    android:text="@string/id" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorDarkWhite"
+                    android:baselineAligned="false"
+                    android:labelFor="@+id/edit_register_id"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/edit_register_id"
+                        style="@style/EditTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_marginTop="4dp"
+                        android:inputType="textEmailAddress"
+                        android:text="@={viewModel.id}" />
+
+                </LinearLayout>
+
+                <TextView
+                    style="@style/EditTheme_Black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:labelFor="@+id/edit_register_password"
+                    android:text="@string/password" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/colorDarkWhite"
+                    android:labelFor="@+id/edit_register_password"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edit_register_password"
+                        style="@style/EditTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:inputType="textPassword"
+                        android:text="@={viewModel.password}" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/EditTheme_Black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:labelFor="@+id/edit_register_password_check"
+                    android:text="@string/password_check" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/colorDarkWhite"
+                    android:labelFor="@+id/edit_register_password_check"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edit_register_password_check"
+                        style="@style/EditTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:hint="@string/none"
+                        android:inputType="textPassword"
+                        android:text="@={viewModel.passwordCheck}" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/EditTheme_Black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:labelFor="@+id/edit_register_email"
+                    android:text="@string/email" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:baselineAligned="false"
+                    android:labelFor="@+id/edit_register_email"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:background="@color/colorDarkWhite"
+                        android:labelFor="@+id/edit_register_email"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/edit_register_email"
+                            style="@style/EditTheme"
+                            android:layout_width="match_parent"
+                            android:layout_height="35dp"
+                            android:hint="@string/none"
+                            android:inputType="textEmailAddress"
+                            android:labelFor="@+id/edit_register_email"
+                            android:text="@={viewModel.email}" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="3"
+                        android:labelFor="@+id/btn_register_verification"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/btn_register_verification"
+                            android:layout_width="match_parent"
+                            android:layout_height="47dp"
+                            android:backgroundTint="@color/colorPrimary"
+                            android:text="@string/verification"
+                            android:textColor="@color/colorWhite" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <TextView
+                    style="@style/EditTheme_Black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:labelFor="@+id/edit_register_code"
+                    android:text="@string/certification" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/colorDarkWhite"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/edit_register_code"
+                        style="@style/EditTheme"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:inputType="number"
+                        android:labelFor="@+id/edit_register_code"
+                        android:text="@={viewModel.code}" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progress_register"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:visibility="invisible" />
+
+                <Button
+                    android:id="@+id/btn_register_done"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:onClick="@{() -> viewModel.register()}"
+                    android:text="@string/register"
+                    android:textColor="@color/colorWhite" />
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+</layout>
