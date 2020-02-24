@@ -19,7 +19,7 @@ class DashBoardFragment : Fragment() {
         ).get(BoardViewModel::class.java)
 
         binding.viewModel = viewModel
-        binding.layoutDashFree.setOnClickListener {
+        binding.cardDashFree.setOnClickListener {
             val intent = Intent(context, FreeBoardActivity::class.java)
             startActivity(intent)
         }

@@ -37,6 +37,7 @@
                 style="@style/EditTheme"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
+                android:backgroundTint="@color/colorDarkWhite"
                 android:drawableStart="@drawable/round_person_24"
                 android:drawablePadding="8dp"
                 android:hint="@string/none"
@@ -57,6 +58,7 @@
                 style="@style/EditTheme"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
+                android:backgroundTint="@color/colorDarkWhite"
                 android:drawableStart="@drawable/round_https_24"
                 android:drawablePadding="8dp"
                 android:hint="@string/none"
@@ -71,17 +73,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="14dp"
-            android:indeterminateTint="@color/colorWhite"
+            android:indeterminateTint="@color/colorGradientPink"
+            android:progressTint="@color/colorGradientPink"
             android:visibility="invisible" />
 
         <Button
             android:id="@+id/btn_login_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorDarkWhite"
+            android:backgroundTint="@color/colorGradientPink"
             android:text="@string/login"
-            android:textStyle="bold"
-            android:textColor="@color/colorBlack" />
+            android:textColor="@color/colorDarkWhite"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/find"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorDarkWhite" />
 
             <Button
                 android:id="@+id/btn_login_register"
@@ -106,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/register"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/colorDarkWhite" />
 
         </LinearLayout>
     </LinearLayout>

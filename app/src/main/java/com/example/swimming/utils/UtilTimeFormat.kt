@@ -1,7 +1,7 @@
 package com.example.swimming.utils
 
+// 시간 변환
 object UtilTimeFormat {
-
     fun formatting(regTime: Long): String {
         val sec = 60
         val min = 60

@@ -1,18 +1,20 @@
 package com.example.swimming.ui.board
 
+import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardWriteBinding
 import com.example.swimming.ui.result.Result
-import com.example.swimming.ui.user.UserViewModelFactory
+import com.example.swimming.utils.UtilShowDialog
 import kotlinx.android.synthetic.main.activity_board_write.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -22,6 +24,8 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
     override val kodein by kodein()
 
     private val factory: BoardViewModelFactory by instance()
+    private val SELECT_PICTURE = 1000
+
     lateinit var viewModel: BoardViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,12 +37,26 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         setSupportActionBar(binding.toolbarBoard)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_close_24)
 
         binding.viewModel = viewModel
         viewModel.result = this
 
-        viewModel.writeFormState.observe(this@FreeBoardWriteActivity, Observer {
+        viewModel.linearLayout = layout_write
+
+        viewModel.img1 = img_board_1
+        viewModel.img2 = img_board_2
+        viewModel.img3 = img_board_3
+        viewModel.img4 = img_board_4
+        viewModel.img5 = img_board_5
+
+        viewModel.card1 = card_write_1
+        viewModel.card2 = card_write_2
+        viewModel.card3 = card_write_3
+        viewModel.card4 = card_write_4
+        viewModel.card5 = card_write_5
+
+        viewModel.boardFormState.observe(this@FreeBoardWriteActivity, Observer {
             val writeState = it ?: return@Observer
 
             if (writeState.titleError != null) {
@@ -48,7 +66,27 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             if (writeState.contentsError != null) {
                 edit_board_contents.error = getString(writeState.contentsError)
             }
+
+            if (writeState.loading != null) {
+                UtilShowDialog(this, getString(writeState.loading)).show()
+            }
         })
+
+        fab_board_gallery.setOnClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "image/*"
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            startActivityForResult(intent, SELECT_PICTURE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
+            viewModel.data = data
+            viewModel.setImage()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -71,7 +109,6 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
     }
 
     override fun onSuccess() {
-        Toast.makeText(this, R.string.board_success, Toast.LENGTH_SHORT).show()
 
         val intent = Intent(this,FreeBoardActivity::class.java)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -79,7 +116,7 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
     }
 
     override fun onFailed() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Toast.makeText(this, "사진은 최대 5장까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
     }
 
     override fun onError() {

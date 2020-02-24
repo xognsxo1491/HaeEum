@@ -40,11 +40,14 @@
     <string name="message_find_error">* 입력 정보 오류시 이메일이 전송되지 않습니다.</string>
 
     <string name="free_board">자유 게시판</string>
+    <string name="information_board">정보 게시판</string>
     <string name="board_write">게시글 작성하기</string>
     <string name="board_title">제목</string>
     <string name="board_contents">내용</string>
     <string name="board_success">글쓰기를 완료하였습니다.</string>
     <string name="write">작성</string>
+    <string name="anonymous">익명</string>
+    <string name="loading">헤엄 중..</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

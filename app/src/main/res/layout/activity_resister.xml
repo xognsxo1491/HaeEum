@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.example.swimming.ui.user.UserViewModel" />
@@ -35,7 +36,7 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/register"
-                    android:textColor="@color/colorWhite" />
+                    android:textColor="@color/colorDarkWhite" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
@@ -49,12 +50,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp"
+                android:padding="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    style="@style/EditTheme_Black"
+                    style="@style/EditTheme_Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:labelFor="@+id/edit_register_name"
@@ -63,8 +64,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/colorDarkWhite"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/style_rounding"
                     android:labelFor="@+id/edit_register_name"
                     android:orientation="vertical">
 
@@ -73,6 +74,7 @@
                         style="@style/EditTheme"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
+                        android:backgroundTint="@color/colorDarkWhite"
                         android:hint="@string/none"
                         android:inputType=""
                         android:privateImeOptions="defaultInputmode=korean"
@@ -81,7 +83,7 @@
                 </LinearLayout>
 
                 <TextView
-                    style="@style/EditTheme_Black"
+                    style="@style/EditTheme_Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
@@ -91,7 +93,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/colorDarkWhite"
+                    android:background="@drawable/style_rounding"
+                    android:layout_marginTop="8dp"
                     android:baselineAligned="false"
                     android:labelFor="@+id/edit_register_id"
                     android:orientation="horizontal">
@@ -101,14 +104,14 @@
                         style="@style/EditTheme"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
-                        android:layout_marginTop="4dp"
+                        android:backgroundTint="@color/colorDarkWhite"
                         android:inputType="textEmailAddress"
                         android:text="@={viewModel.id}" />
 
                 </LinearLayout>
 
                 <TextView
-                    style="@style/EditTheme_Black"
+                    style="@style/EditTheme_Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
@@ -118,8 +121,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/colorDarkWhite"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/style_rounding"
                     android:labelFor="@+id/edit_register_password"
                     android:orientation="vertical">
 
@@ -128,12 +131,13 @@
                         style="@style/EditTheme"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
+                        android:backgroundTint="@color/colorDarkWhite"
                         android:inputType="textPassword"
                         android:text="@={viewModel.password}" />
                 </LinearLayout>
 
                 <TextView
-                    style="@style/EditTheme_Black"
+                    style="@style/EditTheme_Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
@@ -143,8 +147,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/colorDarkWhite"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/style_rounding"
                     android:labelFor="@+id/edit_register_password_check"
                     android:orientation="vertical">
 
@@ -153,13 +157,14 @@
                         style="@style/EditTheme"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
+                        android:backgroundTint="@color/colorDarkWhite"
                         android:hint="@string/none"
                         android:inputType="textPassword"
                         android:text="@={viewModel.passwordCheck}" />
                 </LinearLayout>
 
                 <TextView
-                    style="@style/EditTheme_Black"
+                    style="@style/EditTheme_Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
@@ -169,8 +174,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:baselineAligned="false"
+                    android:layout_marginTop="8dp"
                     android:labelFor="@+id/edit_register_email"
                     android:orientation="horizontal">
 
@@ -179,7 +184,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="1"
-                        android:background="@color/colorDarkWhite"
+                        android:background="@drawable/style_rounding"
                         android:labelFor="@+id/edit_register_email"
                         android:orientation="vertical">
 
@@ -188,6 +193,7 @@
                             style="@style/EditTheme"
                             android:layout_width="match_parent"
                             android:layout_height="35dp"
+                            android:backgroundTint="@color/colorDarkWhite"
                             android:hint="@string/none"
                             android:inputType="textEmailAddress"
                             android:labelFor="@+id/edit_register_email"
@@ -206,15 +212,15 @@
                             android:id="@+id/btn_register_verification"
                             android:layout_width="match_parent"
                             android:layout_height="47dp"
-                            android:backgroundTint="@color/colorPrimary"
+                            android:backgroundTint="@color/colorPrimaryVariant"
                             android:text="@string/verification"
-                            android:textColor="@color/colorWhite" />
+                            android:textColor="@color/colorDarkWhite" />
                     </LinearLayout>
                 </LinearLayout>
 
 
                 <TextView
-                    style="@style/EditTheme_Black"
+                    style="@style/EditTheme_Primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
@@ -224,8 +230,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:background="@color/colorDarkWhite"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/style_rounding"
                     android:orientation="horizontal">
 
                     <EditText
@@ -233,6 +239,7 @@
                         style="@style/EditTheme"
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
+                        android:backgroundTint="@color/colorDarkWhite"
                         android:inputType="number"
                         android:labelFor="@+id/edit_register_code"
                         android:text="@={viewModel.code}" />
@@ -244,6 +251,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
+                    android:indeterminateTint="@color/colorPrimary"
                     android:visibility="invisible" />
 
                 <Button
@@ -251,7 +259,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:backgroundTint="@color/colorGradientPink"
                     android:onClick="@{() -> viewModel.register()}"
                     android:text="@string/register"
                     android:textColor="@color/colorWhite" />

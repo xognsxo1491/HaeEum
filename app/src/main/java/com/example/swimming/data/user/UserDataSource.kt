@@ -14,6 +14,10 @@ class UserDataSource {
         FirebaseDatabase.getInstance()
     }
 
+    private val auth: FirebaseAuth by lazy {
+        FirebaseAuth.getInstance()
+    }
+
     // 회원가입
     fun register(name: String, id: String, password: String, email: String) = Completable.create {
             database.getReference("UserInfo").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -52,6 +56,8 @@ class UserDataSource {
             override fun onDataChange(p0: DataSnapshot) {
                 if (p0.exists()) {
                     if (p0.child("password").value.toString() == password) {
+                        auth.signInWithEmailAndPassword(UtilBase64Cipher.decode(p0.child("email").value.toString()), UtilBase64Cipher.decode(password))
+
                         val pref = context.getSharedPreferences("Login",Context.MODE_PRIVATE)
                         val editor = pref.edit()
 

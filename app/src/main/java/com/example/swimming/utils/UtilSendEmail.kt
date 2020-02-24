@@ -5,7 +5,6 @@ import javax.mail.*
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
-
 // 이메일 보내기
 class UtilSendEmail : Authenticator() {
     private var session: Session? = null

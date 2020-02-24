@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.swimming.ui.board.DashBoardFragment
 import com.example.swimming.ui.board.HomeFragment
 import com.example.swimming.ui.board.NotificationFragment
@@ -32,7 +33,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.include_main.*
 
 // Singleton
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // 프로필 이미지 불러오기
         val storage = FirebaseStorage.getInstance().getReference("Profile/$id").downloadUrl
         storage.addOnSuccessListener{ uri ->
-            Picasso.get().load(uri).into(mProfileImage)
+            Glide.with(this).load(uri).into(mProfileImage)
             mProfileImage.background = ShapeDrawable(OvalShape())
             mProfileImage.clipToOutline = true
         }
