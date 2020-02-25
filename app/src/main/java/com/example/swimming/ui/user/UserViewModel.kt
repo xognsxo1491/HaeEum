@@ -36,6 +36,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
     var userActionResult: UserActionResult? = null
     var result: Result? = null
 
+    // 회원가입
     fun register() {
         checkName()
         checkId()
@@ -61,6 +62,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         } else userActionResult?.onFailed()
     }
 
+    // 아이디 찾기
     fun findId() {
         checkName()
         checkEmail()
@@ -81,6 +83,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         }
     }
 
+    // 비밀번호 찾기
     fun findPassword() {
         checkName()
         checkId()
@@ -102,6 +105,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         }
     }
 
+    // 이메일 보내기
     fun sendEmail() {
         if (email.isNullOrEmpty()) {
             _registerForm.value = RegisterFormState(emailError = R.string.message_isBlank)
@@ -128,6 +132,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         disposables.add(sendEmail)
     }
 
+    // 로그인
     fun login() {
         checkId()
         checkPassword()
@@ -148,6 +153,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         }
     }
 
+    // 이름 형식 체크
     private fun checkName() {
         if (name.isNullOrEmpty()) {
             _registerForm.value = RegisterFormState(nameError = R.string.message_isBlank)
@@ -168,6 +174,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         } else stateName = true
     }
 
+    // 아이디 형식 체크
     private fun checkId() {
         if (id.isNullOrEmpty()) {
             _registerForm.value = RegisterFormState(idError = R.string.message_isBlank)
@@ -187,6 +194,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         } else stateId = true
     }
 
+    // 비밀번호 형식 체크
     private fun checkPassword() {
         if (password.isNullOrEmpty()) {
             _registerForm.value = RegisterFormState(passwordError = R.string.message_isBlank)
@@ -206,6 +214,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         } else statePassword = true
     }
 
+    // 비민번호 확인 형식 체크
     private fun checkPasswordCheck() {
         if (passwordCheck.isNullOrEmpty()) {
             _registerForm.value = RegisterFormState(passwordCheckError = R.string.message_isBlank)
@@ -220,6 +229,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         } else statePasswordCheck = true
     }
 
+    // 이메일 형식 체크
     private fun checkEmail() {
         if (email.isNullOrEmpty()) {
             _registerForm.value = RegisterFormState(emailError = R.string.message_isBlank)
@@ -234,6 +244,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         } else stateEmail = true
     }
 
+    // 코드 형식 체크
     private fun checkCode() {
         if (code.isNullOrEmpty()) {
             _registerForm.value = RegisterFormState(codeError = R.string.message_isBlank)

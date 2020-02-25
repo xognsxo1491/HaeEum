@@ -24,7 +24,7 @@
             android:name=".ui.board.FreeBoardActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".singletone.LoadingActivity"
+            android:name=".utils.LoadingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".singletone.MainActivity"
+            android:name=".ui.profile.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.user.FindActivity"

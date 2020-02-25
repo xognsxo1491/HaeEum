@@ -1,4 +1,4 @@
-package com.example.swimming.singletone
+package com.example.swimming.utils
 
 import android.content.Context
 import android.content.Intent
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.example.swimming.R
+import com.example.swimming.ui.profile.MainActivity
 import com.example.swimming.ui.user.LoginActivity
 
 class LoadingActivity : AppCompatActivity() {

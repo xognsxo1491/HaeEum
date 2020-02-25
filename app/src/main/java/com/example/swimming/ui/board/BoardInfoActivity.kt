@@ -39,7 +39,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         binding.viewModel = viewModel
 
         val num = intent.getStringExtra("UUID")
-        viewModel.loadInfo( "FreeBoardInfo", num!!)
+        viewModel.downloadInfo( "FreeBoardInfo", num!!)
 
         viewModel.boardFormState.observe(this@BoardInfoActivity, Observer {
             val boardState = it ?: return@Observer

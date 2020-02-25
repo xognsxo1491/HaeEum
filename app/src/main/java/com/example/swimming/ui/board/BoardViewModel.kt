@@ -21,7 +21,6 @@ import com.example.swimming.ui.result.Result
 import com.example.swimming.utils.PostViewHolder
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.storage.FirebaseStorage
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter
 import com.shreyaspatil.firebase.recyclerpagination.LoadingState
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -231,7 +230,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
     }
 
     // 게시글 불러오기
-    fun load(owner: LifecycleOwner, path: String) {
+    fun downloadList(owner: LifecycleOwner, path: String) {
         val layoutManager = LinearLayoutManager(context)
 
         recyclerView!!.setHasFixedSize(true)
@@ -240,7 +239,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
         layoutManager.reverseLayout = true
         layoutManager.stackFromEnd = true
 
-        val option = repository.load(owner, path)
+        val option = repository.downloadList(owner, path)
 
         val adapter = object : FirebaseRecyclerPagingAdapter<Board, PostViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -288,9 +287,9 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
     }
 
     // 게시글 내용 불러오기
-    fun loadInfo(path: String, child: String)  {
+    fun downloadInfo(path: String, child: String)  {
 
-        val loadInfo = repository.loadInfo(path, child)
+        val loadInfo = repository.downloadInfo(path, child)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { t -> setBoard(t) }
@@ -305,7 +304,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
         val date = Date(UtilBase64Cipher.decode(board.time).toLong())
         val format = SimpleDateFormat("MM/dd HH:mm", Locale.KOREA)
 
-        val loadProfileImage =repository.loadProfileImage(board.id)
+        val loadProfileImage =repository.downloadProfileImage(board.id)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(

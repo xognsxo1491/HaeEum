@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityLoginBinding
-import com.example.swimming.singletone.MainActivity
+import com.example.swimming.ui.profile.MainActivity
 import com.example.swimming.ui.result.Result
 import kotlinx.android.synthetic.main.activity_login.*
 import org.kodein.di.KodeinAware

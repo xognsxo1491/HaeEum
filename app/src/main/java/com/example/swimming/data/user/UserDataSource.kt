@@ -8,7 +8,6 @@ import com.google.firebase.database.*
 import io.reactivex.Completable
 
 class UserDataSource {
-    private lateinit var mAuth: FirebaseAuth
 
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance()
@@ -27,18 +26,12 @@ class UserDataSource {
 
                     override fun onDataChange(p0: DataSnapshot) {
                         if (!p0.child(id).exists()) {
-                            val user = User(
-                                name,
-                                id,
-                                password,
-                                email
-                            )
+                            val user = User(name, id, password, email)
                             database.reference.child("UserInfo").child(id).setValue(user)
                             database.reference.child("EmailInfo").child(email).setValue(id)
                             it.onComplete()
 
-                            mAuth = FirebaseAuth.getInstance()
-                            mAuth.createUserWithEmailAndPassword(UtilBase64Cipher.decode(email), password)
+                            auth.createUserWithEmailAndPassword(UtilBase64Cipher.decode(email), password)
 
                         } else
                             it.onError(Throwable("IdDuplicate"))
@@ -60,8 +53,8 @@ class UserDataSource {
 
                         val pref = context.getSharedPreferences("Login",Context.MODE_PRIVATE)
                         val editor = pref.edit()
-
                         editor.putString("Id", UtilBase64Cipher.decode(id)).apply()
+
                         it.onComplete()
 
                     } else
@@ -82,8 +75,7 @@ class UserDataSource {
                 override fun onDataChange(p0: DataSnapshot) {
                     if (!p0.child(email).exists()) {
                         try {
-                            val sendEmail = UtilSendEmail()
-                            sendEmail.sendMail("헤엄 인증코드 발송 메일입니다.", "인증번호는 다음과 같습니다.\n 인증번호: $code", UtilBase64Cipher.decode(email))
+                            UtilSendEmail().sendMail("헤엄 인증코드 발송 메일입니다.", "인증번호는 다음과 같습니다.\n 인증번호: $code", UtilBase64Cipher.decode(email))
                             it.onComplete()
 
                         } catch (e: Exception) {
@@ -120,8 +112,7 @@ class UserDataSource {
 
                     if (name == user.name) {
                         try {
-                            val sendEmail = UtilSendEmail()
-                            sendEmail.sendMail("헤엄 아이디 발송 메일입니다.", "아이디는 다음과 같습니다.\n 아이디: " +
+                            UtilSendEmail().sendMail("헤엄 아이디 발송 메일입니다.", "아이디는 다음과 같습니다.\n 아이디: " +
                                     UtilBase64Cipher.decode(p0.key.toString()), UtilBase64Cipher.decode(email))
                             it.onComplete()
 
@@ -141,6 +132,7 @@ class UserDataSource {
         })
     }
 
+    // 비밀번호 찾기
     fun findPassword(name: String, id: String, email: String) = Completable.create {
         val query = database.getReference("UserInfo").orderByChild(UtilBase64Cipher.encode("email"))
         query.addChildEventListener(object : ChildEventListener {
@@ -164,8 +156,7 @@ class UserDataSource {
                     if (name == user.name && id == user.id) {
 
                         try {
-                            val sendEmail = UtilSendEmail()
-                            sendEmail.sendMail("헤엄 비밀번호 찾기 발송 메일입니다.", "비밀번호는 다음과 같습니다.\n 비밀번호: " +
+                            UtilSendEmail().sendMail("헤엄 비밀번호 찾기 발송 메일입니다.", "비밀번호는 다음과 같습니다.\n 비밀번호: " +
                                         UtilBase64Cipher.decode(user.password.toString()), UtilBase64Cipher.decode(email))
                             it.onComplete()
 

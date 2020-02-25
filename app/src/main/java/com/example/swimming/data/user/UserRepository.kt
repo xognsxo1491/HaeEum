@@ -1,7 +1,11 @@
 package com.example.swimming.data.user
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.widget.TextView
 import com.example.swimming.utils.UtilBase64Cipher
+import io.reactivex.Single
 
 class UserRepository(private val dataSource: UserDataSource) {
 
@@ -19,4 +23,5 @@ class UserRepository(private val dataSource: UserDataSource) {
 
     fun findPassword(name: String, id: String, email: String) =
         dataSource.findPassword(UtilBase64Cipher.encode(name), UtilBase64Cipher.encode(id), UtilBase64Cipher.encode(email))
+
 }

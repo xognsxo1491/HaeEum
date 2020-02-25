@@ -3,10 +3,14 @@ package com.example.swimming.di
 import android.app.Application
 import com.example.swimming.data.board.BoardDataSource
 import com.example.swimming.data.board.BoardRepository
+import com.example.swimming.data.profile.ProfileDataSource
+import com.example.swimming.data.profile.ProfileRepository
 import com.example.swimming.data.user.UserDataSource
 import com.example.swimming.data.user.UserRepository
 import com.example.swimming.ui.board.BoardViewModel
 import com.example.swimming.ui.board.BoardViewModelFactory
+import com.example.swimming.ui.profile.ProfileViewModel
+import com.example.swimming.ui.profile.ProfileViewModelFactory
 import com.example.swimming.ui.user.UserViewModel
 import com.example.swimming.ui.user.UserViewModelFactory
 import org.kodein.di.Kodein
@@ -31,5 +35,10 @@ class MyApplication() : Application(), KodeinAware {
         bind() from singleton { BoardRepository(instance()) }
         bind() from provider { BoardViewModel(instance(), instance()) }
         bind() from provider { BoardViewModelFactory(instance()) }
+
+        bind() from singleton { ProfileDataSource() }
+        bind() from singleton { ProfileRepository(instance()) }
+        bind() from provider { ProfileViewModel(instance(), instance()) }
+        bind() from provider { ProfileViewModelFactory(instance()) }
     }
 }

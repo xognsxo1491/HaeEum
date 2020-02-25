@@ -6,18 +6,15 @@ import android.net.Uri
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
 import com.example.swimming.utils.UtilBase64Cipher
-import com.google.android.gms.tasks.Task
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageException
 import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import java.util.*
 
 class BoardDataSource {
 
@@ -42,7 +39,7 @@ class BoardDataSource {
     }
 
     // 게시글 불러오기
-    fun load(owner: LifecycleOwner, path: String) : DatabasePagingOptions<Board> {
+    fun downloadList(owner: LifecycleOwner, path: String) : DatabasePagingOptions<Board> {
         val database = FirebaseDatabase.getInstance().reference.child(path)
 
         val config = PagedList.Config.Builder()
@@ -59,7 +56,7 @@ class BoardDataSource {
     }
 
     // 게시글 정보
-    fun loadInfo(path: String, child: String) = Single.create<Board> {
+    fun downloadInfo(path: String, child: String) = Single.create<Board> {
         val database = FirebaseDatabase.getInstance().reference.child(path).child(child)
         database.addListenerForSingleValueEvent(object : ValueEventListener {
 
@@ -75,8 +72,8 @@ class BoardDataSource {
     }
 
     // 프로필 이미지 불러오기
-    fun loadProfileImage(id: String) = Observable.create<Uri> { emitter ->
-        val storage = FirebaseStorage.getInstance().getReference("Profile/$id").downloadUrl
+    fun downloadProfileImage(id: String) = Observable.create<Uri> { emitter ->
+        val storage = FirebaseStorage.getInstance().getReference("Profiles/$id").downloadUrl
         storage.addOnSuccessListener {
             emitter.onNext(it)
             emitter.onComplete()
@@ -91,36 +88,40 @@ class BoardDataSource {
         val storage = FirebaseStorage.getInstance()
         val ref = storage.reference
 
-        when (count) {
-            "1" -> {
-                ref.child(path1).child("$uuid/1").putFile(data!!.data!!)
-            }
+        try {
+            when (count) {
+                "1" -> {
+                    ref.child(path1).child("$uuid/1").putFile(data!!.data!!)
+                }
 
-            "2" -> {
-                ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-            }
+                "2" -> {
+                    ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                }
 
-            "3" -> {
-                ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
-            }
+                "3" -> {
+                    ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
+                }
 
-            "4" -> {
-                ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(3).uri)
-            }
+                "4" -> {
+                    ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(3).uri)
+                }
 
-            "5" -> {
-                ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(3).uri)
-                ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(4).uri)
+                "5" -> {
+                    ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(3).uri)
+                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(4).uri)
+                }
             }
+        } catch (e: Exception) {
+            it.onError(e)
         }
     }
 }

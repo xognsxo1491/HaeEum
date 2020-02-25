@@ -32,7 +32,7 @@ class FreeBoardActivity : AppCompatActivity(), KodeinAware {
         binding.viewModel = viewModel
         viewModel.recyclerView = binding.recyclerBoard
         viewModel.refreshLayout = binding.swipeFree
-        viewModel.load(this, "FreeBoardInfo")
+        viewModel.downloadList(this, "FreeBoardInfo")
 
         fab_free.setOnClickListener {
             val intent = Intent(this, FreeBoardWriteActivity::class.java)
