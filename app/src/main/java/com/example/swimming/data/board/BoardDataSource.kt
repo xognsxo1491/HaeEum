@@ -2,7 +2,6 @@ package com.example.swimming.data.board
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
 import com.example.swimming.utils.UtilBase64Cipher
@@ -13,7 +12,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 
 class BoardDataSource {
@@ -71,57 +69,78 @@ class BoardDataSource {
         })
     }
 
-    // 프로필 이미지 불러오기
-    fun downloadProfileImage(id: String) = Observable.create<Uri> { emitter ->
-        val storage = FirebaseStorage.getInstance().getReference("Profiles/$id").downloadUrl
-        storage.addOnSuccessListener {
-            emitter.onNext(it)
-            emitter.onComplete()
-
-        }.addOnFailureListener {
-            emitter.onError(it)
-        }
-    }
-
     // 이미지 업로드
-    fun uploadImage(path1: String, uuid: String ,count: String, data: Intent?) = Completable.create {
+    fun uploadImage(path: String, uuid: String, count: String, data: Intent?) = Completable.create {
         val storage = FirebaseStorage.getInstance()
         val ref = storage.reference
 
         try {
             when (count) {
                 "1" -> {
-                    ref.child(path1).child("$uuid/1").putFile(data!!.data!!)
+                    ref.child(path).child("$uuid/1").putFile(data!!.data!!)
                 }
 
                 "2" -> {
-                    ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    ref.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
                 }
 
                 "3" -> {
-                    ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
+                    ref.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
                 }
 
                 "4" -> {
-                    ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(3).uri)
+                    ref.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(3).uri)
                 }
 
                 "5" -> {
-                    ref.child(path1).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(3).uri)
-                    ref.child(path1).child("$uuid/2").putFile(data.clipData!!.getItemAt(4).uri)
+                    ref.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(2).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(3).uri)
+                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(4).uri)
                 }
             }
         } catch (e: Exception) {
             it.onError(e)
         }
+    }
+
+    // 댓글 작성
+    fun uploadComments(path: String, child: String, num: String, id: String, time: String, contents: String) = Completable.create {
+        val database = FirebaseDatabase.getInstance().reference.child(path).child(child)
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val comments = Comments(id, time, contents)
+                database.child(num).setValue(comments)
+                it.onComplete()
+            }
+        })
+    }
+
+    fun downloadComments(owner: LifecycleOwner, path: String, child: String) : DatabasePagingOptions<Comments> {
+        val database = FirebaseDatabase.getInstance().reference.child(path).child(child)
+
+        val config = PagedList.Config.Builder()
+            .setInitialLoadSizeHint(20) // 초기 개수
+            .setEnablePlaceholders(false)
+            .setPrefetchDistance(5) // 몇개 남았을 때 불러올지
+            .setPageSize(20) // 불러올 개수
+            .build()
+
+        return DatabasePagingOptions.Builder<Comments>()
+            .setLifecycleOwner(owner)
+            .setQuery(database, config, Comments::class.java)
+            .build()
     }
 }

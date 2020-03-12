@@ -13,8 +13,8 @@ class ProfileViewModelFactory(private val context: Context) : ViewModelProvider.
         if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
             return ProfileViewModel(
                 repository = ProfileRepository(
-                    ProfileDataSource()
-                ), context = context
+                    ProfileDataSource(), context = context
+                )
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

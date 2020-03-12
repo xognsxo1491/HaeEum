@@ -56,7 +56,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
             }
 
             if (registerState.passwordError != null) {
-                edit_register_password.error = getString(registerState.passwordError)
+                edit_login_password.error = getString(registerState.passwordError)
             }
 
             if (registerState.passwordCheckError != null) {

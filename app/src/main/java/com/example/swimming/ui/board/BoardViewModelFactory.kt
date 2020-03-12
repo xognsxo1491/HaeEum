@@ -13,7 +13,7 @@ class BoardViewModelFactory(private val context: Context) : ViewModelProvider.Fa
         if (modelClass.isAssignableFrom(BoardViewModel::class.java)) {
             return BoardViewModel(
                 repository = BoardRepository(
-                    BoardDataSource()
+                    BoardDataSource(), context = context
                 ), context = context
             ) as T
         }

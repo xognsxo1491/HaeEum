@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -19,55 +20,62 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="16dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
 
             <TextView
-                style="@style/EditTheme_Black"
+                style="@style/TextTheme_Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/name" />
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/style_rounding"
-                android:orientation="horizontal">
+                app:cardBackgroundColor="@color/colorWhiteVariant"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp">
 
                 <EditText
                     android:id="@+id/edit_find_id_name"
-                    style="@style/EditTheme"
+                    style="@style/EditTheme_Primary"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:backgroundTint="@color/colorDarkWhite"
+                    android:backgroundTint="@color/colorWhiteVariant"
+                    android:importantForAutofill="no"
                     android:inputType="text"
                     android:privateImeOptions="defaultInputmode=korean"
-                    android:text="@={viewModel.name}" />
-            </LinearLayout>
+                    android:text="@={viewModel.name}"
+                    tools:ignore="LabelFor" />
+            </androidx.cardview.widget.CardView>
 
             <TextView
-                style="@style/EditTheme_Primary"
+                style="@style/TextTheme_Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/email" />
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/style_rounding"
-                android:orientation="horizontal">
+                app:cardBackgroundColor="@color/colorWhiteVariant"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp">
 
                 <EditText
                     android:id="@+id/edit_find_id_email"
-                    style="@style/EditTheme"
+                    style="@style/EditTheme_Primary"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:backgroundTint="@color/colorDarkWhite"
+                    android:backgroundTint="@color/colorWhiteVariant"
+                    android:importantForAutofill="no"
                     android:inputType="textEmailAddress"
-                    android:text="@={viewModel.email}" />
-            </LinearLayout>
+                    android:text="@={viewModel.email}"
+                    tools:ignore="Autofill,LabelFor" />
+            </androidx.cardview.widget.CardView>
 
             <ProgressBar
                 android:id="@+id/progress_find_id"
@@ -86,7 +94,7 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:onClick="@{() -> viewModel.findId()}"
                 android:text="@string/find_id"
-                android:textColor="@color/colorDarkWhite" />
+                android:textColor="@color/colorWhiteVariant" />
 
             <TextView
                 android:layout_width="match_parent"

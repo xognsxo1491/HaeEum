@@ -1,6 +1,5 @@
 package com.example.swimming.ui.user
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +11,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class UserViewModel(private val repository: UserRepository, private val context: Context) : ViewModel() {
+class UserViewModel(private val repository: UserRepository) : ViewModel() {
     private val mRandom = System.currentTimeMillis()
 
     private val _registerForm = MutableLiveData<RegisterFormState>()
@@ -138,7 +137,7 @@ class UserViewModel(private val repository: UserRepository, private val context:
         checkPassword()
 
         if (stateId && statePassword) {
-            val login = repository.login(id!!, password!!, context)
+            val login = repository.login(id!!, password!!)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({result?.onSuccess()},

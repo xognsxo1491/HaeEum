@@ -31,8 +31,8 @@
             android:background="@color/colorPrimary"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_main"
-            app:itemIconTint="@color/colorDarkWhite"
-            app:itemTextAppearance="@style/EditTheme_White"
+            app:itemIconTint="@color/colorWhiteVariant"
+            app:itemTextAppearance="@style/TextTheme_White"
             app:menu="@menu/menu_main_drawer" />
 
     </androidx.drawerlayout.widget.DrawerLayout>

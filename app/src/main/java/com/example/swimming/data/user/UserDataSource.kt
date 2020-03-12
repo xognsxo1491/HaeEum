@@ -1,6 +1,6 @@
 package com.example.swimming.data.user
 
-import android.content.Context
+import android.content.SharedPreferences
 import com.example.swimming.utils.UtilSendEmail
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.firebase.auth.FirebaseAuth
@@ -40,7 +40,7 @@ class UserDataSource {
         }
 
     // 로그인
-    fun login(id: String, password: String, context: Context) = Completable.create {
+    fun login(id: String, password: String, editor: SharedPreferences.Editor) = Completable.create {
         database.getReference("UserInfo").child(id).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())
@@ -50,9 +50,6 @@ class UserDataSource {
                 if (p0.exists()) {
                     if (p0.child("password").value.toString() == password) {
                         auth.signInWithEmailAndPassword(UtilBase64Cipher.decode(p0.child("email").value.toString()), UtilBase64Cipher.decode(password))
-
-                        val pref = context.getSharedPreferences("Login",Context.MODE_PRIVATE)
-                        val editor = pref.edit()
                         editor.putString("Id", UtilBase64Cipher.decode(id)).apply()
 
                         it.onComplete()

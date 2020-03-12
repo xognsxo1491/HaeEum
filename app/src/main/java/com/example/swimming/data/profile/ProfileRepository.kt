@@ -3,17 +3,15 @@ package com.example.swimming.data.profile
 import android.content.Context
 import android.content.Intent
 
-class ProfileRepository(private val dataSource: ProfileDataSource) {
+class ProfileRepository(private val dataSource: ProfileDataSource, val context: Context) {
 
-    fun setProfile(context: Context) =
-        dataSource.setProfile(context)
+    private val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
+    private val id = pref.getString("Id", "")
+    private val editor = pref.edit()
 
-    fun uploadProfileImage(id: String, data: Intent?) =
-        dataSource.uploadProfileImage(id, data)
+    fun setProfile() =
+        dataSource.setProfile(id!!)
 
-    fun downloadProfileImage(id: String) =
-        dataSource.downloadProfileImage(id)
-
-    fun logout(context: Context) =
-        dataSource.logout(context)
+    fun logout() =
+        dataSource.logout(editor)
 }

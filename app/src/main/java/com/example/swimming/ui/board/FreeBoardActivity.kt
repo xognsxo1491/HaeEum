@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityFreeBoardBinding
-import com.example.swimming.ui.user.UserViewModelFactory
 import kotlinx.android.synthetic.main.activity_free_board.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -30,8 +29,8 @@ class FreeBoardActivity : AppCompatActivity(), KodeinAware {
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
         binding.viewModel = viewModel
-        viewModel.recyclerView = binding.recyclerBoard
-        viewModel.refreshLayout = binding.swipeFree
+        viewModel.recyclerViewBoard = binding.recyclerBoard
+        viewModel.refreshLayoutBoard = binding.swipeFree
         viewModel.downloadList(this, "FreeBoardInfo")
 
         fab_free.setOnClickListener {

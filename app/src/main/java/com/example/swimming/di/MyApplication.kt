@@ -27,18 +27,18 @@ class MyApplication() : Application(), KodeinAware {
         import(androidXModule(this@MyApplication))
 
         bind() from singleton { UserDataSource() }
-        bind() from singleton { UserRepository(instance()) }
-        bind() from provider { UserViewModel(instance(), instance()) }
+        bind() from singleton { UserRepository(instance(), instance()) }
+        bind() from provider { UserViewModel(instance()) }
         bind() from provider { UserViewModelFactory(instance()) }
 
         bind() from singleton { BoardDataSource() }
-        bind() from singleton { BoardRepository(instance()) }
+        bind() from singleton { BoardRepository(instance(), instance()) }
         bind() from provider { BoardViewModel(instance(), instance()) }
         bind() from provider { BoardViewModelFactory(instance()) }
 
         bind() from singleton { ProfileDataSource() }
-        bind() from singleton { ProfileRepository(instance()) }
-        bind() from provider { ProfileViewModel(instance(), instance()) }
+        bind() from singleton { ProfileRepository(instance(), instance()) }
+        bind() from provider { ProfileViewModel(instance()) }
         bind() from provider { ProfileViewModelFactory(instance()) }
     }
 }

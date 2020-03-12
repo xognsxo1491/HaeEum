@@ -13,8 +13,8 @@ class UserViewModelFactory(private val context: Context) : ViewModelProvider.Fac
         if (modelClass.isAssignableFrom(UserViewModel::class.java)) {
             return UserViewModel(
                 repository = UserRepository(
-                    UserDataSource()
-                ), context = context
+                    UserDataSource(), context = context
+                )
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

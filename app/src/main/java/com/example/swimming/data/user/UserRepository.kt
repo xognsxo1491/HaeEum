@@ -7,13 +7,16 @@ import android.widget.TextView
 import com.example.swimming.utils.UtilBase64Cipher
 import io.reactivex.Single
 
-class UserRepository(private val dataSource: UserDataSource) {
+class UserRepository(private val dataSource: UserDataSource, val context: Context) {
+
+    private val pref = context.getSharedPreferences("Login",Context.MODE_PRIVATE)
+    private val editor = pref.edit()
 
     fun register(name: String, id: String, password: String, email: String) =
         dataSource.register(UtilBase64Cipher.encode(name), UtilBase64Cipher.encode(id), UtilBase64Cipher.encode(password), UtilBase64Cipher.encode(email))
 
-    fun login(id: String, password: String, context: Context) =
-        dataSource.login(UtilBase64Cipher.encode(id), UtilBase64Cipher.encode(password), context)
+    fun login(id: String, password: String) =
+        dataSource.login(UtilBase64Cipher.encode(id), UtilBase64Cipher.encode(password), editor)
 
     fun sendEmail(email: String, code: String) =
         dataSource.sendEmail(UtilBase64Cipher.encode(email), code)

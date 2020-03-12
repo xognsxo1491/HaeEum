@@ -7,8 +7,8 @@
         <item name="android:navigationBarColor">@color/colorPrimary</item>
     </style>
 
-    <style name="EditTheme" parent="@android:style/Widget.EditText">
-        <item name="android:textColor">@color/colorBlack</item>
+    <style name="EditTheme_Primary" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:paddingStart">8dp</item>
         <item name="android:paddingEnd">8dp</item>
         <item name="android:background">@null</item>
@@ -16,24 +16,27 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="EditTheme_Black"  parent="@android:style/Widget.TextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/colorBlack</item>
-        <item name="android:textStyle">bold</item>
+    <style name="EditTheme_White" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/colorWhiteVariant</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:background">@null</item>
+        <item name="android:selectAllOnFocus">true</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColorHint">@color/colorGray</item>
     </style>
 
-    <style name="EditTheme_Primary"  parent="@android:style/Widget.TextView">
+    <style name="TextTheme_Primary" parent="@android:style/Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="EditTheme_White"  parent="@android:style/Widget.TextView">
+    <style name="TextTheme_White" parent="@android:style/Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/colorDarkWhite</item>
+        <item name="android:textColor">@color/colorWhiteVariant</item>
         <item name="android:textStyle">bold</item>
     </style>
 

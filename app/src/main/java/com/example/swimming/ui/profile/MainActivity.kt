@@ -1,11 +1,7 @@
 package com.example.swimming.ui.profile
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
-import android.graphics.drawable.ShapeDrawable
-import android.graphics.drawable.shapes.OvalShape
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
@@ -19,7 +15,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityMainBinding
 import com.example.swimming.ui.board.*
@@ -38,21 +33,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private val factory: ProfileViewModelFactory by instance()
     private var progress: ProgressBar? = null
-    private val code = 1000
 
     lateinit var viewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java)
 
         binding.viewModel = viewModel
         viewModel.profileActionResult = this
+        viewModel.progressBar = nav_main_view.getHeaderView(0).findViewById(R.id.progress_nav)
         viewModel.setProfile()
-        viewModel.downloadProfileImage()
 
         loadFragment(HomeFragment())
 
@@ -81,36 +74,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             true
         }
 
-        viewModel.profileImage = nav_main_view.getHeaderView(0).findViewById(R.id.img_nav)
-        viewModel.profileImage!!.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(intent, "SELECT PICTURE"), code)
-        }
-
         // 프로필 이미지 업로드 UI
         viewModel.profileFormState.observe(this@MainActivity, Observer {
             val userState = it ?: return@Observer
-
-            if (userState.uploadProfileImage != null) {
-                viewModel.profileImage!!.setImageURI(userState.uploadProfileImage)
-                viewModel.profileImage!!.background = ShapeDrawable(OvalShape())
-                viewModel.profileImage!!.clipToOutline = true
-            }
-
-            // 프로필 이미지 불러오기 UI
-            if (userState.downloadProfileImage != null) {
-                Glide.with(this)
-                    .load(userState.downloadProfileImage)
-                    .fitCenter()
-                    .placeholder(R.drawable.round_account_circle_24)
-                    .error(R.drawable.round_account_circle_24)
-                    .into(viewModel.profileImage!!)
-
-                viewModel.profileImage!!.background = ShapeDrawable(OvalShape())
-                viewModel.profileImage!!.clipToOutline = true
-            }
 
             if (userState.onError != null) {
                 Toast.makeText(this, getString(userState.onError), Toast.LENGTH_SHORT).show()
@@ -126,18 +92,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 email.text = UtilBase64Cipher.decode(userState.email)
             }
         })
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == code && resultCode == Activity.RESULT_OK) {
-            viewModel.data = data
-            viewModel.uploadProfileImage()
-
-            progress = nav_main_view.getHeaderView(0).findViewById(R.id.progress_nav)
-            progress!!.visibility = View.VISIBLE
-        }
     }
 
     // Drawer 불러오기

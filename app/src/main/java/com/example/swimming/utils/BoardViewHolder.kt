@@ -9,11 +9,11 @@ import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
 
-class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var id: TextView = itemView.findViewById(R.id.text_item_id)
-    var title: TextView = itemView.findViewById(R.id.text_item_title)
-    var contents: TextView = itemView.findViewById(R.id.text_item_contents)
-    var time: TextView = itemView.findViewById(R.id.text_item_time)
+class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    var id: TextView = itemView.findViewById(R.id.text_board_id)
+    var title: TextView = itemView.findViewById(R.id.text_board_title)
+    var contents: TextView = itemView.findViewById(R.id.text_board_contents)
+    var time: TextView = itemView.findViewById(R.id.text_board_time)
     var uuid: String? = null
 
     fun setItem(post: Board) {
