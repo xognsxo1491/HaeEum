@@ -11,9 +11,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.data.board.BoardRepository
@@ -40,18 +40,19 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
     private var stateTitle: Boolean = false
     private var stateContents: Boolean = false
 
-    var recyclerViewBoard: RecyclerView? = null
-    var recyclerViewComments: RecyclerView? = null
-    var refreshLayoutBoard: SwipeRefreshLayout? = null
-    var refreshLayoutComments: SwipeRefreshLayout? = null
+    var recyclerView: RecyclerView? = null
+    var refreshLayout: SwipeRefreshLayout? = null
+
     var result: Result? = null
     var title: String? = null
     var contents: String? = null
+    var comment: TextView? = null
 
+    private var adapterComments: FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>? = null
     var linearLayout : LinearLayout? = null
     var data: Intent? = null
-    private var adapterComments: FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>? = null
 
+    var img0 : ImageView? = null
     var img1 : ImageView? = null
     var img2 : ImageView? = null
     var img3 : ImageView? = null
@@ -65,7 +66,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
     var card5 : CardView? = null
 
     // 작성하기
-    fun write(path: String) {
+    fun writeBoard(path1: String, path2: String) {
 
         checkTitle()
         checkContents()
@@ -75,7 +76,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
             if (card1!!.visibility != View.VISIBLE) {
 
-                val write = repository.write(title!!, contents!!, context, path, String.format("0"))
+                val write = repository.writeBoard(title!!, contents!!, String.format("0"), String.format("0"), path1, path2)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -93,7 +94,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
 
-                            val write = repository.write(title!!, contents!!, context, path, String.format("2"))
+                            val write = repository.writeBoard(title!!, contents!!, String.format("2"), String.format("0"), path1, path2)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -108,7 +109,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
 
-                            val write = repository.write(title!!, contents!!, context, path, String.format("3"))
+                            val write = repository.writeBoard(title!!, contents!!, String.format("3"), String.format("0"), path1, path2)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -123,7 +124,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
 
-                            val write = repository.write(title!!, contents!!, context, path, String.format("4"))
+                            val write = repository.writeBoard(title!!, contents!!, String.format("4"), String.format("0"), path1, path2)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -138,7 +139,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
 
-                            val write = repository.write(title!!, contents!!, context, path, String.format("5"))
+                            val write = repository.writeBoard(title!!, contents!!, String.format("5"), String.format("0"), path1, path2)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -155,7 +156,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                         .observeOn(Schedulers.newThread())
                         .subscribe()
 
-                    val write = repository.write(title!!, contents!!, context, path, String.format("1"))
+                    val write = repository.writeBoard(title!!, contents!!, String.format("1"), String.format("0"), path1, path2)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -234,17 +235,51 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
         }
     }
 
+    // 이미지 불러오기
+    fun loadImage(path: String, count: String) {
+
+        val load = repository.loadImage(path, count)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if (it.contains("이미지0: ")) {
+                    Glide.with(context).load((it.split("이미지0: ")[1])).into(img0!!).waitForLayout()
+                    img0!!.visibility = View.VISIBLE
+                }
+
+                if (it.contains("이미지1: ")) {
+                    card1!!.visibility = View.VISIBLE
+                    Glide.with(context).load((it.split("이미지1: ")[1])).into(img1!!).waitForLayout()
+                }
+
+                if (it.contains("이미지2: ")) {
+                    card2!!.visibility = View.VISIBLE
+                    Glide.with(context).load((it.split("이미지2: ")[1])).into(img2!!).waitForLayout()
+                }
+
+                if (it.contains("이미지3: ")) {
+                    card3!!.visibility = View.VISIBLE
+                    Glide.with(context).load((it.split("이미지3: ")[1])).into(img3!!).waitForLayout()
+                }
+
+                if (it.contains("이미지4: ")) {
+                    card4!!.visibility = View.VISIBLE
+                    Glide.with(context).load((it.split("이미지4: ")[1])).into(img4!!).waitForLayout()
+                }
+
+                if (it.contains("이미지5: ")) {
+                    card5!!.visibility = View.VISIBLE
+                    Glide.with(context).load((it.split("이미지5: ")[1])).into(img5!!).waitForLayout()
+                }
+
+            }, {})
+
+        disposables.add(load)
+    }
+
     // 게시글 불러오기
-    fun downloadList(owner: LifecycleOwner, path: String) {
-        val layoutManager = LinearLayoutManager(context)
-
-        recyclerViewBoard!!.setHasFixedSize(true)
-        recyclerViewBoard!!.layoutManager = layoutManager
-
-        layoutManager.reverseLayout = true
-        layoutManager.stackFromEnd = true
-
-        val option = repository.downloadList(owner, path)
+    fun loadBoardList(owner: LifecycleOwner, path1: String, path2: String) {
+        val option = repository.loadBoardList(owner, path1, path2)
 
         val adapter = object : FirebaseRecyclerPagingAdapter<Board, BoardViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
@@ -253,30 +288,30 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
             override fun onBindViewHolder(p0: BoardViewHolder, p1: Int, p2: Board) {
                 p0.setItem(p2)
-                p0.onClick(p0.itemView, context)
+                p0.onClick(p0.itemView, context, path1)
             }
 
             override fun onLoadingStateChanged(state: LoadingState) {
                 when (state) {
                     LoadingState.LOADING_INITIAL -> {
-                        refreshLayoutBoard!!.isRefreshing = true
+                        refreshLayout!!.isRefreshing = true
                     }
 
                     LoadingState.LOADING_MORE -> {
-                        refreshLayoutBoard!!.isRefreshing = true
+                        refreshLayout!!.isRefreshing = true
                     }
 
                     LoadingState.LOADED -> {
-                        refreshLayoutBoard!!.isRefreshing = false
+                        refreshLayout!!.isRefreshing = false
                     }
 
                     LoadingState.ERROR -> {
-                        refreshLayoutBoard!!.isRefreshing = false
+                        refreshLayout!!.isRefreshing = false
                         result?.onError()
                     }
 
                     LoadingState.FINISHED -> {
-                        refreshLayoutBoard!!.isRefreshing = false
+                        refreshLayout!!.isRefreshing = false
                     }
                 }
             }
@@ -287,13 +322,14 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
             }
         }
 
-        recyclerViewBoard!!.adapter = adapter
-        refreshLayoutBoard!!.setOnRefreshListener { adapter.refresh() }
+        recyclerView!!.setHasFixedSize(true)
+        recyclerView!!.adapter = adapter
+        refreshLayout!!.setOnRefreshListener { adapter.refresh() }
     }
 
     // 게시글 내용 불러오기
-    fun downloadInfo(path: String, child: String)  {
-        val loadInfo = repository.downloadInfo(path, child)
+    fun infoBoard(path1: String, path2: String, child: String)  {
+        val loadInfo = repository.infoBoard(path1, path2, child)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSuccess { t -> setBoard(t) }
@@ -304,23 +340,17 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
     }
 
     // 댓글 작성
-    fun uploadComments(path: String, child: String, contents: String) {
-        val upload = repository.uploadComments(path, child, contents)
+    fun uploadComments(path1: String, path2: String, child: String, contents: String) {
+        val upload = repository.uploadComments(path1, path2, child, contents)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {adapterComments!!.refresh()}
 
         disposables.add(upload)
-
     }
 
-    fun downloadComments(owner: LifecycleOwner, path: String, child: String) {
-        val layoutManager = LinearLayoutManager(context)
-
-        recyclerViewComments!!.setHasFixedSize(true)
-        recyclerViewComments!!.layoutManager = layoutManager
-
-        val option = repository.downloadComments(owner, path, child)
+    fun loadComments(owner: LifecycleOwner, path1: String, path2: String, child: String) {
+        val option = repository.loadComments(owner, path1, path2, child)
 
         adapterComments = object : FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -335,24 +365,24 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
             override fun onLoadingStateChanged(state: LoadingState) {
                 when (state) {
                     LoadingState.LOADING_INITIAL -> {
-                        refreshLayoutComments!!.isRefreshing = true
+                        refreshLayout!!.isRefreshing = false
                     }
 
                     LoadingState.LOADING_MORE -> {
-                        refreshLayoutComments!!.isRefreshing = true
+                        refreshLayout!!.isRefreshing = false
                     }
 
                     LoadingState.LOADED -> {
-                        refreshLayoutComments!!.isRefreshing = false
+                        refreshLayout!!.isRefreshing = false
                     }
 
                     LoadingState.ERROR -> {
-                        refreshLayoutComments!!.isRefreshing = false
+                        refreshLayout!!.isRefreshing = false
                         result?.onError()
                     }
 
                     LoadingState.FINISHED -> {
-                        refreshLayoutComments!!.isRefreshing = false
+                        refreshLayout!!.isRefreshing = false
                     }
                 }
             }
@@ -363,8 +393,30 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
             }
         }
 
-        recyclerViewComments!!.adapter = adapterComments
-        refreshLayoutComments!!.setOnRefreshListener { (adapterComments as FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>).refresh() }
+        recyclerView!!.setHasFixedSize(false)
+        recyclerView!!.adapter = adapterComments
+        refreshLayout!!.setOnRefreshListener { (adapterComments as FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>).refresh() }
+    }
+
+    fun loadCommentCount(path1: String, path2: String, uuid: String) {
+        val load = repository.loadCommentCount(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe( {
+                comment!!.text = UtilBase64Cipher.decode(it)
+
+            }, {})
+
+        disposables.add(load)
+    }
+
+    fun updateCommentCount(path1: String, path2: String, uuid: String, num: String) {
+        val load = repository.updateCommentCount(path1, path2, uuid, num)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(load)
     }
 
     // 아이템 설정
@@ -376,7 +428,8 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
             setId = "by. " + UtilBase64Cipher.decode(board.id),
             setTitle = UtilBase64Cipher.decode(board.title),
             setContents = UtilBase64Cipher.decode(board.contents),
-            setTime = format.format(date)
+            setTime = format.format(date),
+            setImgCount = UtilBase64Cipher.decode(board.imgCount)
         )
     }
 

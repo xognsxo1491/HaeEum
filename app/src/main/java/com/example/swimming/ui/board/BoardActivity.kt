@@ -13,7 +13,8 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
-class FreeBoardActivity : AppCompatActivity(), KodeinAware {
+// 게시판 리스트
+class BoardActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
 
@@ -29,12 +30,18 @@ class FreeBoardActivity : AppCompatActivity(), KodeinAware {
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
         binding.viewModel = viewModel
-        viewModel.recyclerViewBoard = binding.recyclerBoard
-        viewModel.refreshLayoutBoard = binding.swipeFree
-        viewModel.downloadList(this, "FreeBoardInfo")
+        viewModel.recyclerView = binding.recyclerBoard
+        viewModel.refreshLayout = binding.swipeFree
+
+        when (intent.getStringExtra("BoardKind")) {
+            "FreeBoard" -> {
+                viewModel.loadBoardList(this, "FreeBoard", "FreeBoardInfo")
+            }
+        }
 
         fab_free.setOnClickListener {
-            val intent = Intent(this, FreeBoardWriteActivity::class.java)
+            val intent = Intent(this, BoardWriteActivity::class.java)
+            intent.putExtra("BoardKind", "FreeBoard")
             startActivity(intent)
         }
     }

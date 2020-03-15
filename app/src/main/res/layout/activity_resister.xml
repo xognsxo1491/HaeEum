@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -40,6 +40,7 @@
                     android:textColor="@color/colorWhiteVariant" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
+
         </com.google.android.material.appbar.AppBarLayout>
 
         <ScrollView
@@ -77,10 +78,10 @@
                         android:layout_height="35dp"
                         android:backgroundTint="@color/colorWhiteVariant"
                         android:hint="@string/none"
+                        android:importantForAutofill="no"
                         android:inputType=""
                         android:privateImeOptions="defaultInputmode=korean"
                         android:text="@={viewModel.name}"
-                        android:importantForAutofill="no"
                         tools:ignore="Autofill,LabelFor" />
 
                 </androidx.cardview.widget.CardView>
@@ -265,4 +266,5 @@
         </ScrollView>
 
     </LinearLayout>
+
 </layout>

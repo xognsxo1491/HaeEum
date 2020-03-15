@@ -13,17 +13,18 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardWriteBinding
 import com.example.swimming.ui.result.Result
-import com.example.swimming.utils.UtilShowDialog
+import com.example.swimming.utils.utilShowDialog
 import kotlinx.android.synthetic.main.activity_board_write.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
-class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
+// 게시글 작성
+class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
     override val kodein by kodein()
 
     private val factory: BoardViewModelFactory by instance()
-    private val SELECT_PICTURE = 1000
+    private val code = 1000
 
     lateinit var viewModel: BoardViewModel
 
@@ -55,7 +56,7 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         viewModel.card4 = card_write_4
         viewModel.card5 = card_write_5
 
-        viewModel.boardFormState.observe(this@FreeBoardWriteActivity, Observer {
+        viewModel.boardFormState.observe(this@BoardWriteActivity, Observer {
             val writeState = it ?: return@Observer
 
             if (writeState.titleError != null) {
@@ -67,7 +68,7 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             }
 
             if (writeState.loading != null) {
-                UtilShowDialog(this, getString(writeState.loading)).show()
+                utilShowDialog(this, getString(writeState.loading)).show()
             }
         })
 
@@ -75,14 +76,14 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            startActivityForResult(intent, SELECT_PICTURE)
+            startActivityForResult(intent, code)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == code && resultCode == Activity.RESULT_OK) {
             viewModel.data = data
             viewModel.setImage()
         }
@@ -100,18 +101,26 @@ class FreeBoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         }
 
         if (item.itemId == R.id.menu_write) {
-            viewModel.write("FreeBoardInfo")
-            return true
+            when (intent.getStringExtra("BoardKind")) {
+                "FreeBoard" -> {
+                    viewModel.writeBoard("FreeBoard", "FreeBoardInfo")
+                    return true
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item)
     }
 
     override fun onSuccess() {
-
-        val intent = Intent(this,FreeBoardActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-        startActivity(intent)
+        when (intent.getStringExtra("BoardKind")) {
+            "FreeBoard" -> {
+                val intent = Intent(this,BoardActivity::class.java)
+                intent.putExtra("BoardKind", "FreeBoard")
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+            }
+        }
     }
 
     override fun onFailed() {

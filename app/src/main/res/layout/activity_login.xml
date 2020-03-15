@@ -100,6 +100,7 @@
                     android:text="@={viewModel.password}"
                     android:textColorHint="@color/colorWhiteVariant"
                     android:importantForAutofill="no" />
+
             </androidx.cardview.widget.CardView>
 
             <Button

@@ -49,6 +49,9 @@
                 android:layout_height="match_parent"
                 app:tabIndicatorColor="@color/colorWhite"
                 app:tabTextColor="@color/colorWhite" />
+
         </com.google.android.material.appbar.AppBarLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </layout>

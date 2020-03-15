@@ -44,6 +44,7 @@
                     android:textColor="@color/colorWhite" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
+
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -146,7 +147,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:visibility="gone"
                                 app:cardCornerRadius="8dp"
-                                app:cardElevation="8dp">
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:id="@+id/img_board_1"
@@ -165,7 +166,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:visibility="gone"
                                 app:cardCornerRadius="8dp"
-                                app:cardElevation="8dp">
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:id="@+id/img_board_2"
@@ -184,7 +185,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:visibility="gone"
                                 app:cardCornerRadius="8dp"
-                                app:cardElevation="8dp">
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:id="@+id/img_board_3"
@@ -203,7 +204,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:visibility="gone"
                                 app:cardCornerRadius="8dp"
-                                app:cardElevation="8dp">
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:id="@+id/img_board_4"
@@ -222,7 +223,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:visibility="gone"
                                 app:cardCornerRadius="8dp"
-                                app:cardElevation="8dp">
+                                app:cardElevation="0dp">
 
                                 <ImageView
                                     android:id="@+id/img_board_5"
@@ -264,4 +265,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

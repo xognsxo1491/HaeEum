@@ -32,6 +32,7 @@
                 android:textColor="@color/colorWhite"
                 android:textSize="16sp" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -60,7 +61,7 @@
             app:menu="@menu/menu_main_nav">
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

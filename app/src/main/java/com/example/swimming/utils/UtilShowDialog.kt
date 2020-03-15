@@ -11,7 +11,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 
 // Progress Dialog 띄우기
-fun UtilShowDialog(context: Context, message: String): AlertDialog {
+fun utilShowDialog(context: Context, message: String): AlertDialog {
     val padding = 30
     val layout = LinearLayout(context)
 

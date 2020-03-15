@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.databinding.FragmentDashBoardBinding
 
+// 자유 게시판
 class DashBoardFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -20,7 +21,8 @@ class DashBoardFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.cardDashFree.setOnClickListener {
-            val intent = Intent(context, FreeBoardActivity::class.java)
+            val intent = Intent(context, BoardActivity::class.java)
+            intent.putExtra("BoardKind","FreeBoard")
             startActivity(intent)
         }
 
