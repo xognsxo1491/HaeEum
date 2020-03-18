@@ -6,14 +6,17 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
+import com.example.swimming.data.board.Board
 import com.example.swimming.databinding.ActivityBoardSearchBinding
+import com.example.swimming.ui.recycler.SearchAdapter
+import com.example.swimming.utils.UtilKeyboard
 import kotlinx.android.synthetic.main.activity_board_search.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
-
 
 class BoardSearchActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
@@ -25,14 +28,11 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_board_search)
+
         val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
+        val list = ArrayList<Board>()
 
-        binding!!.viewModel = viewModel
-
-        layout_search.setOnClickListener {
-            finish()
-        }
-
+        viewModel.recyclerView = recycler_Search
 
         edit_search.requestFocus()
         edit_search.setOnEditorActionListener { v, actionId, event ->
@@ -41,7 +41,9 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
 
                     when (intent.getStringExtra("BoardKind")) {
                         "FreeBoard" -> {
+                            list.clear()
                             viewModel.searchKeyword("FreeBoard", "FreeBoardInfo", edit_search.text.toString())
+                            UtilKeyboard.hideKeyboard(this)
                         }
                     }
                 }
@@ -55,6 +57,20 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
             }
         }
 
+        layout_search.setOnClickListener {
+            finish()
+        }
+
+        viewModel.boardFormState.observe(this@BoardSearchActivity, Observer {
+            val boardState = it ?: return@Observer
+
+            if (boardState.board != null) {
+                list.add(boardState.board)
+            }
+
+            viewModel.recyclerView!!.adapter =
+                SearchAdapter(list)
+        })
     }
 
     override fun onDestroy() {

@@ -1,4 +1,4 @@
-package com.example.swimming.utils
+package com.example.swimming.ui.recycler
 
 import android.content.Context
 import android.view.View
@@ -6,6 +6,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
 import com.example.swimming.data.board.Comments
+import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.utils.UtilTimeFormat
 
 class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var id: TextView = itemView.findViewById(R.id.text_comments_id)

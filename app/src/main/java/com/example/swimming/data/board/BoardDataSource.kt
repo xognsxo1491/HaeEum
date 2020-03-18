@@ -51,22 +51,6 @@ class BoardDataSource {
             .build()
     }
 
-    // 게시글 정보
-    fun infoBoard(path1: String, path2: String, child: String) = Single.create<Board> {
-        val database = FirebaseDatabase.getInstance().reference.child(path1).child(path2).child(child)
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
-
-            override fun onCancelled(p0: DatabaseError) {
-                it.onError(p0.toException())
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                val board = p0.getValue(Board::class.java)
-                it.onSuccess(board!!)
-            }
-        })
-    }
-
     // 이미지 업로드
     fun uploadImage(path: String, uuid: String, count: String, data: Intent?) = Completable.create {
         val storage = FirebaseStorage.getInstance()
@@ -247,7 +231,7 @@ class BoardDataSource {
     }
 
     // 키워드 검색
-    fun searchKeyword(path1: String, path2: String, keyword: String) = Completable.create {
+    fun searchKeyword(path1: String, path2: String, keyword: String) = Observable.create<Board> {
         val query = FirebaseDatabase.getInstance().reference.child(path1).child(path2)
         query.addChildEventListener(object : ChildEventListener {
 
@@ -260,14 +244,14 @@ class BoardDataSource {
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val board = p0.getValue(Board::class.java)
 
-                if (keyword == board!!.title || keyword == board.contents) {
-                    println("존재함")
+                if (UtilBase64Cipher.decode(board!!.title).contains(keyword) || UtilBase64Cipher.decode(board.contents).contains(keyword)) {
+                    it.onNext(board)
                 }
             }
 
@@ -275,7 +259,6 @@ class BoardDataSource {
                 TODO("Not yet implemented")
             }
         })
-
     }
 
     // 댓글 개수 업데이트

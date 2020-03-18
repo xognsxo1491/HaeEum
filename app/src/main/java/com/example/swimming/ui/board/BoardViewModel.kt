@@ -18,8 +18,8 @@ import com.example.swimming.data.board.Board
 import com.example.swimming.data.board.BoardRepository
 import com.example.swimming.data.board.Comments
 import com.example.swimming.ui.result.Result
-import com.example.swimming.utils.BoardViewHolder
-import com.example.swimming.utils.CommentViewHolder
+import com.example.swimming.ui.recycler.BoardViewHolder
+import com.example.swimming.ui.recycler.CommentViewHolder
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.firebase.database.DatabaseError
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter
@@ -287,7 +287,9 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
         val adapter = object : FirebaseRecyclerPagingAdapter<Board, BoardViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
-                return BoardViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false))
+                return BoardViewHolder(
+                    LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false)
+                )
             }
 
             override fun onBindViewHolder(p0: BoardViewHolder, p1: Int, p2: Board) {
@@ -348,7 +350,10 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
         adapterComments = object : FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-                return CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_comments, parent, false))
+                return CommentViewHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_comments, parent, false)
+                )
             }
 
             override fun onBindViewHolder(p0: CommentViewHolder, p1: Int, p2: Comments) {
@@ -428,7 +433,9 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
         val load = repository.searchKeyword(path1, path2, keyword)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+            .subscribe({
+                _boardForm.value = BoardFormState(board = it)
+            }, {})
 
         disposables.add(load)
     }

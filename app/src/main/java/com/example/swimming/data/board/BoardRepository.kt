@@ -39,5 +39,5 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
         dataSource.updateCommentCount(path1, path2, uuid)
 
     fun searchKeyword(path1: String, path2: String, keyword: String) =
-        dataSource.searchKeyword(path1, path2, UtilBase64Cipher.encode(keyword))
+        dataSource.searchKeyword(path1, path2, keyword)
 }

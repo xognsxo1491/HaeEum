@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardInfoBinding
-import com.example.swimming.ui.result.Result
 import com.example.swimming.utils.UtilKeyboard
 import com.example.swimming.utils.utilShowDialog
 import kotlinx.android.synthetic.main.activity_board_info.*
@@ -50,7 +49,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
         binding!!.viewModel = viewModel
-        viewModel.recyclerView = recyclerInfo
+        viewModel.recyclerView = recycler_Info
         viewModel.refreshLayout = swipe_info
 
         viewModel.card1 = card_info1
