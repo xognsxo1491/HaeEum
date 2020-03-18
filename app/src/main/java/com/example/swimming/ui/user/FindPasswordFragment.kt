@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.FragmentFindPasswordBinding
 import com.example.swimming.ui.result.Result
+import kotlinx.android.synthetic.main.fragment_find_id.*
 import kotlinx.android.synthetic.main.fragment_find_password.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
@@ -34,6 +35,9 @@ class FindPasswordFragment : Fragment(), Result, KodeinAware{
 
         binding.viewModel = viewModel
         viewModel.result = this
+        viewModel.name = binding.editFindPwName
+        viewModel.id = binding.editFindPwId
+        viewModel.email = binding.editFindPwEmail
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)

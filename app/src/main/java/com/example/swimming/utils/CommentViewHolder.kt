@@ -1,14 +1,11 @@
 package com.example.swimming.utils
 
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
-import com.example.swimming.data.board.Board
 import com.example.swimming.data.board.Comments
-import com.example.swimming.ui.board.BoardInfoActivity
 
 class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var id: TextView = itemView.findViewById(R.id.text_comments_id)

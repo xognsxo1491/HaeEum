@@ -14,9 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ui.board.BoardSearchActivity"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".ui.board.BoardInfoActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.board.BoardWriteActivity"
             android:screenOrientation="portrait" />

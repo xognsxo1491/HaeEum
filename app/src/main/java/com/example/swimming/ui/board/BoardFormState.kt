@@ -10,6 +10,16 @@ data class BoardFormState(
     val setContents: String? = null,
     val setTime: String? = null,
     val setImgCount: String? = null,
+    val setCommentCount: String? = null,
+
+    val image0: String? = null,
+    val image1: String? = null,
+    val image2: String? = null,
+    val image3: String? = null,
+    val image4: String? = null,
+    val image5: String? = null,
+
+    val codeIntent: String? = null,
 
     val error: Int? = null,
     val loading: Int? = null

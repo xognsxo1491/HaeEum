@@ -246,10 +246,56 @@ class BoardDataSource {
         })
     }
 
-    fun updateCommentCount(path1: String, path2: String, uuid: String, num: String) = Completable.create {
+    // 키워드 검색
+    fun searchKeyword(path1: String, path2: String, keyword: String) = Completable.create {
+        val query = FirebaseDatabase.getInstance().reference.child(path1).child(path2)
+        query.addChildEventListener(object : ChildEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val board = p0.getValue(Board::class.java)
+
+                if (keyword == board!!.title || keyword == board.contents) {
+                    println("존재함")
+                }
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+                TODO("Not yet implemented")
+            }
+        })
+
+    }
+
+    // 댓글 개수 업데이트
+    fun updateCommentCount(path1: String, path2: String, uuid: String) = Completable.create {
         val database = FirebaseDatabase.getInstance().reference.child(path1).child(path2).child(uuid)
-        val map: HashMap<String, Any> = HashMap()
-        map["commentCount"] = num
-        database.updateChildren(map)
+        database.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val board = p0.getValue(Board::class.java)
+                val num = Integer.parseInt(UtilBase64Cipher.decode(board!!.commentCount))
+
+                val map: HashMap<String, Any> = HashMap()
+                map["commentCount"] = UtilBase64Cipher.encode((num + 1).toString())
+
+                database.updateChildren(map)
+            }
+        })
     }
 }

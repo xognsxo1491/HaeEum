@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -75,7 +76,7 @@
 
             <EditText
                 android:id="@+id/edit_board_title"
-                style="@style/EditTheme_Primary"
+                style="@style/EditTheme_White"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -88,9 +89,9 @@
                 android:privateImeOptions="defaultInputmode=korean"
                 android:text="@={viewModel.title}"
                 android:textColor="@color/colorWhiteVariant"
-                android:textColorHint="@color/colorGrayVariant"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:focusableInTouchMode="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -239,7 +240,7 @@
 
                     <EditText
                         android:id="@+id/edit_board_contents"
-                        style="@style/EditTheme_Primary"
+                        style="@style/EditTheme_White"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -250,14 +251,13 @@
                         android:inputType="textMultiLine"
                         android:privateImeOptions="defaultInputmode=korean"
                         android:text="@={viewModel.contents}"
-                        android:textColor="@color/colorWhiteVariant"
-                        android:textColorHint="@color/colorGrayVariant"
                         android:textSize="15sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="LabelFor" />
+
                 </LinearLayout>
 
             </androidx.core.widget.NestedScrollView>

@@ -13,7 +13,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.bumptech.glide.Glide
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.data.board.BoardRepository
@@ -28,8 +27,6 @@ import com.shreyaspatil.firebase.recyclerpagination.LoadingState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.text.SimpleDateFormat
-import java.util.*
 
 class BoardViewModel(val repository: BoardRepository, val context: Context) : ViewModel() {
     private val disposables = CompositeDisposable()
@@ -46,13 +43,12 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
     var result: Result? = null
     var title: String? = null
     var contents: String? = null
-    var comment: TextView? = null
+    var comments: String? = null
 
     private var adapterComments: FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>? = null
     var linearLayout : LinearLayout? = null
     var data: Intent? = null
 
-    var img0 : ImageView? = null
     var img1 : ImageView? = null
     var img2 : ImageView? = null
     var img3 : ImageView? = null
@@ -243,36 +239,44 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it.contains("이미지0: ")) {
-                    Glide.with(context).load((it.split("이미지0: ")[1])).into(img0!!).waitForLayout()
-                    img0!!.visibility = View.VISIBLE
+                    _boardForm.value = BoardFormState(
+                        image0 = it.split("이미지0: ")[1]
+                    )
                 }
 
                 if (it.contains("이미지1: ")) {
-                    card1!!.visibility = View.VISIBLE
-                    Glide.with(context).load((it.split("이미지1: ")[1])).into(img1!!).waitForLayout()
+                    _boardForm.value = BoardFormState(
+                        image1 = it.split("이미지1: ")[1]
+                    )
                 }
 
                 if (it.contains("이미지2: ")) {
-                    card2!!.visibility = View.VISIBLE
-                    Glide.with(context).load((it.split("이미지2: ")[1])).into(img2!!).waitForLayout()
+                    _boardForm.value = BoardFormState(
+                        image2 = it.split("이미지2: ")[1]
+                    )
                 }
 
                 if (it.contains("이미지3: ")) {
-                    card3!!.visibility = View.VISIBLE
-                    Glide.with(context).load((it.split("이미지3: ")[1])).into(img3!!).waitForLayout()
+                    _boardForm.value = BoardFormState(
+                        image3 = it.split("이미지3: ")[1]
+                    )
                 }
 
                 if (it.contains("이미지4: ")) {
-                    card4!!.visibility = View.VISIBLE
-                    Glide.with(context).load((it.split("이미지4: ")[1])).into(img4!!).waitForLayout()
+                    _boardForm.value = BoardFormState(
+                        image4 = it.split("이미지4: ")[1]
+                    )
                 }
 
                 if (it.contains("이미지5: ")) {
-                    card5!!.visibility = View.VISIBLE
-                    Glide.with(context).load((it.split("이미지5: ")[1])).into(img5!!).waitForLayout()
+                    _boardForm.value = BoardFormState(
+                        image5 = it.split("이미지5: ")[1]
+                    )
                 }
 
-            }, {})
+            }, {
+                _boardForm.value = BoardFormState( error = R.string.imageError)
+            })
 
         disposables.add(load)
     }
@@ -288,7 +292,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
             override fun onBindViewHolder(p0: BoardViewHolder, p1: Int, p2: Board) {
                 p0.setItem(p2)
-                p0.onClick(p0.itemView, context, path1)
+                p0.onClick(p0.itemView, context, p2, path1)
             }
 
             override fun onLoadingStateChanged(state: LoadingState) {
@@ -327,30 +331,20 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
         refreshLayout!!.setOnRefreshListener { adapter.refresh() }
     }
 
-    // 게시글 내용 불러오기
-    fun infoBoard(path1: String, path2: String, child: String)  {
-        val loadInfo = repository.infoBoard(path1, path2, child)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSuccess { t -> setBoard(t) }
-            .doOnError { t: Throwable? -> throw t!! }
-            .subscribe()
-
-        disposables.add(loadInfo)
-    }
-
     // 댓글 작성
-    fun uploadComments(path1: String, path2: String, child: String, contents: String) {
-        val upload = repository.uploadComments(path1, path2, child, contents)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {adapterComments!!.refresh()}
+    fun uploadComments(path1: String, path2: String, uuid: String) {
 
-        disposables.add(upload)
+            val upload = repository.uploadComments(path1, path2, uuid, comments!!)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { adapterComments!!.refresh() }
+
+            disposables.add(upload)
     }
 
-    fun loadComments(owner: LifecycleOwner, path1: String, path2: String, child: String) {
-        val option = repository.loadComments(owner, path1, path2, child)
+    // 댓글 불러오기
+    fun loadComments(owner: LifecycleOwner, path1: String, path2: String, path3: String, uuid: String) {
+        val option = repository.loadComments(owner, path1, path2, uuid)
 
         adapterComments = object : FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -359,7 +353,6 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
             override fun onBindViewHolder(p0: CommentViewHolder, p1: Int, p2: Comments) {
                 p0.setItem(p2)
-                p0.onClick(p0.itemView, context)
             }
 
             override fun onLoadingStateChanged(state: LoadingState) {
@@ -395,42 +388,49 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
         recyclerView!!.setHasFixedSize(false)
         recyclerView!!.adapter = adapterComments
-        refreshLayout!!.setOnRefreshListener { (adapterComments as FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>).refresh() }
+        refreshLayout!!.setOnRefreshListener {
+            (adapterComments as FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>).refresh()
+
+            // 새로고침 시 댓글, 하트수 불러오기
+            loadCommentCount(path1, path3, uuid)
+        }
     }
 
-    fun loadCommentCount(path1: String, path2: String, uuid: String) {
+    // 댓글 개수 불러오기
+    private fun loadCommentCount(path1: String, path2: String, uuid: String) {
+
         val load = repository.loadCommentCount(path1, path2, uuid)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe( {
-                comment!!.text = UtilBase64Cipher.decode(it)
-
+                _boardForm.value = BoardFormState(
+                    setCommentCount = UtilBase64Cipher.decode(it)
+                )
             }, {})
 
         disposables.add(load)
     }
 
-    fun updateCommentCount(path1: String, path2: String, uuid: String, num: String) {
-        val load = repository.updateCommentCount(path1, path2, uuid, num)
+    // 댓글 개수 업데이트
+    fun updateCommentCount(path1: String, path2: String, uuid: String) {
+
+            val load = repository.updateCommentCount(path1, path2, uuid)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe()
+
+            disposables.add(load)
+    }
+
+    // 키워드 검색
+    fun searchKeyword(path1: String, path2: String, keyword: String) {
+
+        val load = repository.searchKeyword(path1, path2, keyword)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
 
         disposables.add(load)
-    }
-
-    // 아이템 설정
-    private fun setBoard(board: Board) {
-        val date = Date(UtilBase64Cipher.decode(board.time).toLong())
-        val format = SimpleDateFormat("MM/dd HH:mm", Locale.KOREA)
-
-        _boardForm.value = BoardFormState(
-            setId = "by. " + UtilBase64Cipher.decode(board.id),
-            setTitle = UtilBase64Cipher.decode(board.title),
-            setContents = UtilBase64Cipher.decode(board.contents),
-            setTime = format.format(date),
-            setImgCount = UtilBase64Cipher.decode(board.imgCount)
-        )
     }
 
     // 제목 공백 체크

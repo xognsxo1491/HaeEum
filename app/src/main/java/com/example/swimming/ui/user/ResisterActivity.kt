@@ -27,22 +27,30 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
     private val factory: UserViewModelFactory by instance()
     private lateinit var mBuilder: AlertDialog.Builder
 
+    var binding: ActivityResisterBinding? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
-        val binding: ActivityResisterBinding = DataBindingUtil.setContentView(this, R.layout.activity_resister)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_resister)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        setSupportActionBar(binding.toolbarRegister)
+        setSupportActionBar(binding!!.toolbarRegister)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        binding.viewModel = viewModel
+        binding!!.viewModel = viewModel
         viewModel.userActionResult = this
+        viewModel.name = edit_register_name
+        viewModel.id = edit_register_id
+        viewModel.password = edit_register_password
+        viewModel.passwordCheck = edit_register_password_check
+        viewModel.email = edit_register_email
+        viewModel.code = edit_register_code
 
         viewModel.registerFormState.observe(this@ResisterActivity, Observer {
             val registerState = it ?: return@Observer
@@ -56,7 +64,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
             }
 
             if (registerState.passwordError != null) {
-                edit_login_password.error = getString(registerState.passwordError)
+                edit_register_password.error = getString(registerState.passwordError)
             }
 
             if (registerState.passwordCheckError != null) {
@@ -94,6 +102,11 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
             UtilKeyboard.hideKeyboard(this)
         }
         ////
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding!!.unbind()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

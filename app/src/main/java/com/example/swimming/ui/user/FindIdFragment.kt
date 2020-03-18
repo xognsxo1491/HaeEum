@@ -32,6 +32,8 @@ class FindIdFragment : Fragment(), Result, KodeinAware {
 
         binding.viewModel = viewModel
         viewModel.result = this
+        viewModel.name = binding.editFindIdName
+        viewModel.email = binding.editFindIdEmail
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)

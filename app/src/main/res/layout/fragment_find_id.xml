@@ -46,7 +46,6 @@
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:privateImeOptions="defaultInputmode=korean"
-                    android:text="@={viewModel.name}"
                     tools:ignore="LabelFor" />
             </androidx.cardview.widget.CardView>
 
@@ -73,7 +72,6 @@
                     android:backgroundTint="@color/colorWhiteVariant"
                     android:importantForAutofill="no"
                     android:inputType="textEmailAddress"
-                    android:text="@={viewModel.email}"
                     tools:ignore="Autofill,LabelFor" />
             </androidx.cardview.widget.CardView>
 

@@ -11,6 +11,7 @@ import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
 
 class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     private var id: TextView = itemView.findViewById(R.id.text_board_id)
     private var title: TextView = itemView.findViewById(R.id.text_board_title)
     private var contents: TextView = itemView.findViewById(R.id.text_board_contents)
@@ -18,7 +19,6 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var image: TextView = itemView.findViewById(R.id.text_board_imgCount)
     private var comments: TextView = itemView.findViewById(R.id.text_board_commentCount)
     private var uuid: String? = null
-    private var imgCount: String? = null
 
     fun setItem(post: Board) {
         id.text = UtilBase64Cipher.decode(post.id)
@@ -28,20 +28,24 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         image.text = UtilBase64Cipher.decode(post.imgCount)
         comments.text = UtilBase64Cipher.decode(post.commentCount)
         uuid = post.uuid
-        imgCount = post.imgCount
 
-        if (imgCount!! == UtilBase64Cipher.encode("0")) {
+        if (image.text.toString() == "0") {
             val layout: LinearLayout = itemView.findViewById(R.id.layout_list_img)
             layout.visibility = View.GONE
         }
     }
 
-    fun onClick(view: View, context: Context, kind: String) {
+    fun onClick(view: View, context: Context, post: Board, kind: String) {
         view.setOnClickListener {
             val intent = Intent(context, BoardInfoActivity::class.java)
-            intent.putExtra("uuid", uuid)
-            intent.putExtra("imgCount", imgCount)
             intent.putExtra("BoardKind", kind)
+            intent.putExtra("uuid", post.uuid)
+            intent.putExtra("id", UtilBase64Cipher.decode(post.id))
+            intent.putExtra("title", UtilBase64Cipher.decode(post.title))
+            intent.putExtra("contents", UtilBase64Cipher.decode(post.contents))
+            intent.putExtra("time", UtilBase64Cipher.decode(post.time))
+            intent.putExtra("imgCount",UtilBase64Cipher.decode(post.imgCount))
+            intent.putExtra("comment", UtilBase64Cipher.decode(post.commentCount))
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }

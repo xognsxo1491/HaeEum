@@ -24,14 +24,18 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
     private val factory: UserViewModelFactory by instance()
     private var mLastClickTime: Int = 0
 
+    var binding: ActivityLoginBinding? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityLoginBinding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        binding.viewModel = viewModel
+        binding!!.viewModel = viewModel
         viewModel.result = this
+        viewModel.id = edit_login_id
+        viewModel.password = edit_login_password
 
         btn_login_register.setOnClickListener {
             val intent = Intent(this, ResisterActivity::class.java)
@@ -74,6 +78,11 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
                     progress_login.visibility = View.INVISIBLE
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding!!.unbind()
     }
 
     override fun onSuccess() {

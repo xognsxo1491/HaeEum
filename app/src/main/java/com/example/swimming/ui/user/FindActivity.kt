@@ -18,18 +18,20 @@ class FindActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()
 
+    var binding: ActivityFindBinding? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityFindBinding = DataBindingUtil.setContentView(this, R.layout.activity_find)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_find)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        setSupportActionBar(binding.toolbarFind)
+        setSupportActionBar(binding!!.toolbarFind)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        binding.viewModel = viewModel
+        binding!!.viewModel = viewModel
 
         val adapter = ViewPagerAdapter(supportFragmentManager)
         adapter.addFragment(FindIdFragment(), "아이디 찾기")
@@ -37,6 +39,11 @@ class FindActivity : AppCompatActivity(), KodeinAware {
 
         viewPager_find.adapter = adapter
         tabLayout_find.setupWithViewPager(viewPager_find)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding!!.unbind()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

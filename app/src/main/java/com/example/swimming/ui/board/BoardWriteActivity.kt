@@ -27,19 +27,20 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
     private val code = 1000
 
     lateinit var viewModel: BoardViewModel
+    var binding: ActivityBoardWriteBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityBoardWriteBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_write)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_board_write)
         viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
-        setSupportActionBar(binding.toolbarBoard)
+        setSupportActionBar(binding!!.toolbarBoard)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_close_24)
 
-        binding.viewModel = viewModel
+        binding!!.viewModel = viewModel
         viewModel.result = this
 
         viewModel.linearLayout = layout_write
@@ -78,6 +79,8 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             startActivityForResult(intent, code)
         }
+
+        edit_board_title.requestFocus()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -87,6 +90,11 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             viewModel.data = data
             viewModel.setImage()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding!!.unbind()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -101,6 +109,7 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         }
 
         if (item.itemId == R.id.menu_write) {
+
             when (intent.getStringExtra("BoardKind")) {
                 "FreeBoard" -> {
                     viewModel.writeBoard("FreeBoard", "FreeBoardInfo")

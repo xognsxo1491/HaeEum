@@ -3,6 +3,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_contents"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/style_rounding_variant"
@@ -15,7 +16,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="TextView"
         android:textColor="@color/colorWhite"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -40,7 +40,6 @@
             android:id="@+id/text_board_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
             android:textColor="@color/colorGrayVariant"
             android:textSize="12sp" />
 
@@ -51,14 +50,13 @@
             android:layout_marginStart="8dp"
             android:background="@color/colorGrayVariant"
             android:orientation="horizontal"
-            tools:ignore="UselessLeaf" />
+            tools:ignore="SmallSp,UselessLeaf" />
 
         <TextView
             android:id="@+id/text_board_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="TextView"
             android:textColor="@color/colorGrayVariant"
             android:textSize="10sp"
             tools:ignore="SmallSp" />
@@ -72,7 +70,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="TextView"
         android:textColor="@color/colorWhiteVariant"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -234,24 +231,26 @@
         app:layout_constraintTop_toBottomOf="@+id/text_board_contents">
 
         <LinearLayout
+            android:id="@+id/layout_contents_favorite"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/img_favorite"
                 android:layout_width="20sp"
                 android:layout_height="20sp"
                 android:paddingTop="4dp"
                 android:paddingBottom="2dp"
-                app:srcCompat="@drawable/round_favorite_border_24" />
+                app:srcCompat="@drawable/round_favorite_border_24"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="4dp"
-                android:text="0"
                 android:textColor="@color/colorGradientPink"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -259,16 +258,17 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
-
                 android:layout_width="20sp"
                 android:layout_height="20sp"
                 android:layout_marginStart="20dp"
                 android:paddingTop="4dp"
                 android:paddingBottom="2dp"
-                app:srcCompat="@drawable/round_chat_bubble_outline_24" />
+                app:srcCompat="@drawable/round_chat_bubble_outline_24"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/text_board_commentCount"
@@ -276,7 +276,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="4dp"
-                android:text="0"
                 android:textColor="@color/colorGradientOrange"
                 android:textSize="14sp" />
 
@@ -286,7 +285,8 @@
             android:id="@+id/layout_board_img"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
 
             <ImageView
@@ -295,7 +295,8 @@
                 android:layout_marginStart="20dp"
                 android:paddingTop="4dp"
                 android:paddingBottom="2dp"
-                app:srcCompat="@drawable/round_filter_24" />
+                app:srcCompat="@drawable/round_filter_24"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/text_board_imgCount"
@@ -303,7 +304,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="4dp"
-                android:text="0"
                 android:textColor="@color/colorPurple"
                 android:textSize="14sp" />
         </LinearLayout>

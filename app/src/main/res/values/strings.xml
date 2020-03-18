@@ -20,7 +20,9 @@
     <string name="verification">인증</string>
     <string name="certification">인증 번호</string>
     <string name="message_register_name_length">2~10자 사이로 길이를 맞춰주세요.</string>
+    <string name="message_register_name_form">한글로 입력해주세요.</string>
     <string name="message_register_id_length">6~20자 사이로 길이를 맞춰주세요.</string>
+    <string name="message_register_id_form">한글이 아닌 영문 또는 숫자로 입력해주세요.</string>
     <string name="message_register_password_length">8~30자 사이로 길이를 맞춰주세요</string>
     <string name="message_register_blank">공백을 포함할 수 없습니다.</string>
     <string name="message_register_password_incorrect">비밀번호가 일치하지 않습니다.</string>
@@ -47,7 +49,15 @@
     <string name="write">작성</string>
     <string name="anonymous">익명</string>
     <string name="loading">헤엄 중..</string>
-    <string name="comments">이 곳에 댓글을 작성하세요.</string>
+    <string name="comments">이 곳에 댓글을 입력하세요.</string>
+    <string name="commentError">댓글란이 공백입니다.</string>
+    <string name="imageError">이미지 로딩에 오류가 발생하였습니다.</string>
+    <string name="commentsError">댓글 로딩에 오류가 발생하였습니다.</string>
+
+
+    <string name="search">이 곳에 검색어를 입력하세요.</string>
+    <string name="searchError">2글자 이상 입력해주세요.</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -23,7 +23,7 @@ class ProfileDataSource {
     // 프로필 설정
     fun setProfile(id: String) = Observable.create<String> {
 
-        database.getReference("UserInfo").child(UtilBase64Cipher.encode(id))
+        database.reference.child("User").child("UserInfo").child(UtilBase64Cipher.encode(id))
             .addListenerForSingleValueEvent(object :
                 ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {

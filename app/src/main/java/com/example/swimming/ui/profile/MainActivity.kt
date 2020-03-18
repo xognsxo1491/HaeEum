@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
@@ -35,14 +36,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var progress: ProgressBar? = null
 
     lateinit var viewModel: ProfileViewModel
+    var binding: ActivityMainBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         viewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java)
 
-        binding.viewModel = viewModel
+        binding!!.viewModel = viewModel
         viewModel.profileActionResult = this
         viewModel.progressBar = nav_main_view.getHeaderView(0).findViewById(R.id.progress_nav)
         viewModel.setProfile()
@@ -50,8 +52,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         loadFragment(HomeFragment())
 
         setSupportActionBar(toolbar_main)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_perm_identity_24)
 
         nav_main_view.setNavigationItemSelectedListener(this)
 
@@ -92,18 +92,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 email.text = UtilBase64Cipher.decode(userState.email)
             }
         })
+
+        viewModel.profileFormState.observe(this@MainActivity, Observer {
+            val userState = it ?: return@Observer
+
+            if (userState.onError != null) {
+                Toast.makeText(this, userState.onError, Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding!!.unbind()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_profile, menu)
+        return true
     }
 
     // Drawer 불러오기
     @SuppressLint("RtlHardcoded")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
+        if (item.itemId == R.id.menu_profile) {
 
             val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-            if (!drawer.isDrawerOpen(Gravity.LEFT)) {
-                drawer.openDrawer(Gravity.LEFT)
+            if (!drawer.isDrawerOpen(Gravity.RIGHT)) {
+                drawer.openDrawer(Gravity.RIGHT)
 
-            } else drawer.closeDrawer(Gravity.LEFT)
+            } else drawer.closeDrawer(Gravity.RIGHT)
 
             return true
         }
@@ -143,8 +161,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onBackPressed() {
 
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
-        if (drawer.isDrawerOpen(Gravity.LEFT)) {
-            drawer.closeDrawer(Gravity.LEFT)
+        if (drawer.isDrawerOpen(Gravity.RIGHT)) {
+            drawer.closeDrawer(Gravity.RIGHT)
 
         } else {
             moveTaskToBack(true)

@@ -19,7 +19,7 @@ class UserDataSource {
 
     // 회원가입
     fun register(name: String, id: String, password: String, email: String) = Completable.create {
-            database.getReference("UserInfo").addListenerForSingleValueEvent(object : ValueEventListener {
+            database.reference.child("User").child("UserInfo").addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onCancelled(p0: DatabaseError) {
                         it.onError(p0.toException())
                     }
@@ -27,8 +27,8 @@ class UserDataSource {
                     override fun onDataChange(p0: DataSnapshot) {
                         if (!p0.child(id).exists()) {
                             val user = User(name, id, password, email)
-                            database.reference.child("UserInfo").child(id).setValue(user)
-                            database.reference.child("EmailInfo").child(email).setValue(id)
+                            database.reference.child("User").child("UserInfo").child(id).setValue(user)
+                            database.reference.child("User").child("EmailInfo").child(email).setValue(id)
                             it.onComplete()
 
                             auth.createUserWithEmailAndPassword(UtilBase64Cipher.decode(email), password)
@@ -41,7 +41,7 @@ class UserDataSource {
 
     // 로그인
     fun login(id: String, password: String, editor: SharedPreferences.Editor) = Completable.create {
-        database.getReference("UserInfo").child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+        database.reference.child("User").child("UserInfo").child(id).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())
             }
@@ -64,7 +64,7 @@ class UserDataSource {
 
     // 이메일 전송
     fun sendEmail(email: String, code: String) = Completable.create {
-        database.getReference("EmailInfo").addListenerForSingleValueEvent(object : ValueEventListener {
+        database.reference.child("User").child("EmailInfo").addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {
                     it.onError(p0.toException())
                 }
@@ -87,7 +87,7 @@ class UserDataSource {
 
     // 아이디 찾기
     fun findId(name: String, email: String) = Completable.create {
-        val query = database.getReference("UserInfo").orderByChild(UtilBase64Cipher.encode("email"))
+        val query = database.reference.child("User").child("UserInfo").orderByChild(UtilBase64Cipher.encode("email"))
         query.addChildEventListener(object : ChildEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
@@ -131,7 +131,7 @@ class UserDataSource {
 
     // 비밀번호 찾기
     fun findPassword(name: String, id: String, email: String) = Completable.create {
-        val query = database.getReference("UserInfo").orderByChild(UtilBase64Cipher.encode("email"))
+        val query = database.reference.child("User").child("UserInfo").orderByChild(UtilBase64Cipher.encode("email"))
         query.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())

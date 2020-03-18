@@ -24,6 +24,7 @@
         <item name="android:selectAllOnFocus">true</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColorHint">@color/colorGray</item>
+        <item name="android:textCursorDrawable">@drawable/style_cursor</item>
     </style>
 
     <style name="TextTheme_Primary" parent="@android:style/Widget.TextView">
