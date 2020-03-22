@@ -5,6 +5,7 @@
         <item name="colorPrimaryDark">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:actionOverflowButtonStyle">@style/AppTheme.OverFlow</item>
     </style>
 
     <style name="EditTheme_Primary" parent="@android:style/Widget.EditText">
@@ -41,9 +42,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="LayoutTheme">
-        <item name="android:colorControlHighlight">@color/colorGray</item>
-        <item name="android:background">?selectableItemBackground</item>
+    <style name="AppTheme.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/colorWhite</item>
     </style>
-
 </resources>

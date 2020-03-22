@@ -23,11 +23,10 @@ import org.kodein.di.generic.instance
 
 class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
     override val kodein by kodein()
-
     private val factory: UserViewModelFactory by instance()
-    private lateinit var mBuilder: AlertDialog.Builder
+    private lateinit var binding: ActivityResisterBinding
 
-    var binding: ActivityResisterBinding? = null
+    private lateinit var mBuilder: AlertDialog.Builder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +37,12 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_resister)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        setSupportActionBar(binding!!.toolbarRegister)
+        setSupportActionBar(binding.toolbarRegister)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        binding!!.viewModel = viewModel
+        binding.viewModel = viewModel
         viewModel.userActionResult = this
         viewModel.name = edit_register_name
         viewModel.id = edit_register_id
@@ -106,7 +105,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.unbind()
+        binding.unbind()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

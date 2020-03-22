@@ -1,7 +1,10 @@
 package com.example.swimming.ui.board
 
+import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -12,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardInfoBinding
+import com.example.swimming.utils.UtilDateFormat
 import com.example.swimming.utils.UtilKeyboard
 import com.example.swimming.utils.utilShowDialog
 import kotlinx.android.synthetic.main.activity_board_info.*
@@ -20,35 +24,28 @@ import kotlinx.android.synthetic.main.item_contents.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
-import java.text.SimpleDateFormat
-import java.util.*
+import java.lang.Exception
 
 // 게시글 내용
 class BoardInfoActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
-
     private val factory: BoardViewModelFactory by instance()
-    private var mLastClickTime: Int = 0
+    private lateinit var mBinding: ActivityBoardInfoBinding
 
-    var binding: ActivityBoardInfoBinding? = null
+    private lateinit var mBuilder: AlertDialog.Builder
+    private var mLastClickTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_board_info)
-
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_info)
         val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
-        val date = Date(intent.getStringExtra("time")!!.toLong())
-        val format = SimpleDateFormat("MM/dd HH:mm", Locale.KOREA)
 
-        val dialog = utilShowDialog(this, "헤엄중..")
-        dialog.show()
-
-        setSupportActionBar(binding!!.toolbarInfo)
+        setSupportActionBar(mBinding.toolbarInfo)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        binding!!.viewModel = viewModel
+        mBinding.viewModel = viewModel
         viewModel.recyclerView = recycler_Info
         viewModel.refreshLayout = swipe_info
 
@@ -58,6 +55,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         viewModel.card4 = card_info4
         viewModel.card5 = card_info5
 
+        val kind = intent.getStringExtra("BoardKind")
         val uuid = intent.getStringExtra("uuid")
         val imgCount = intent.getStringExtra("imgCount")
 
@@ -65,23 +63,30 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         text_board_title.text = intent.getStringExtra("title")
         text_board_contents.text = intent.getStringExtra("contents")
         text_board_time.text = intent.getStringExtra("time")
-        text_board_time.text = format.format(date)
+        text_board_time.text = UtilDateFormat.formatting(intent.getStringExtra("time")!!.toLong())
         text_board_imgCount.text = imgCount
         text_board_commentCount.text = intent.getStringExtra("comment")
 
-        when (intent.getStringExtra("BoardKind")) {
+        val dialog = utilShowDialog(this, "헤엄중..")
+        dialog.show()
+
+        when (kind) {
             "FreeBoard" -> {
-                viewModel.loadComments(this, "FreeBoard", "FreeBoardComments", "FreeBoardInfo", uuid!!)
+                viewModel.checkBoard("FreeBoard", "FreeBoardInfo", uuid!!)
+                viewModel.loadComments(this, "FreeBoard", "FreeBoardComments", "FreeBoardInfo", uuid)
                 viewModel.loadImage("FreeBoard/${intent.getStringExtra("uuid")}", imgCount!!)
             }
         }
 
-        if (imgCount == "0") {
-            dialog.dismiss()
-        }
-
         viewModel.boardFormState.observe(this@BoardInfoActivity, Observer {
             val boardState = it ?: return@Observer
+
+            if (boardState.check != null) {
+                mBuilder = AlertDialog.Builder(this)
+                mBuilder.setMessage( boardState.check).setCancelable(false)
+                mBuilder.setPositiveButton("확인") {_, _ -> finish()}.show()
+
+            }
 
             if (boardState.setCommentCount != null) {
                 text_board_commentCount.text = boardState.setCommentCount
@@ -91,54 +96,58 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                 Toast.makeText(this, boardState.error, Toast.LENGTH_SHORT).show()
             }
 
-            if (boardState.image0 != null) {
-                img_info0.visibility = View.VISIBLE
-                Glide.with(this).load(boardState.image0).into(img_info0).waitForLayout()
+            try {
+                if (boardState.image0 != null) {
+                    img_info0.visibility = View.VISIBLE
+                    Glide.with(this).load(boardState.image0).into(img_info0).waitForLayout()
 
-                if (imgCount == "1") {
-                    dialog.dismiss()
+                    if (imgCount == "1") {
+                        dialog.dismiss()
+                    }
                 }
-            }
 
-            if (boardState.image1 != null) {
-                card_info1.visibility = View.VISIBLE
-                Glide.with(this).load(boardState.image1).into(img_info1).waitForLayout()
-            }
-
-            if (boardState.image2 != null) {
-                card_info2.visibility = View.VISIBLE
-                Glide.with(this).load(boardState.image2).into(img_info2).waitForLayout()
-
-                if (imgCount == "2") {
-                    dialog.dismiss()
+                if (boardState.image1 != null) {
+                    card_info1.visibility = View.VISIBLE
+                    Glide.with(this).load(boardState.image1).into(img_info1).waitForLayout()
                 }
-            }
 
-            if (boardState.image3 != null) {
-                card_info3.visibility = View.VISIBLE
-                Glide.with(this).load(boardState.image3).into(img_info3).waitForLayout()
+                if (boardState.image2 != null) {
+                    card_info2.visibility = View.VISIBLE
+                    Glide.with(this).load(boardState.image2).into(img_info2).waitForLayout()
 
-                if (imgCount == "3") {
-                    dialog.dismiss()
+                    if (imgCount == "2") {
+                        dialog.dismiss()
+                    }
                 }
-            }
 
-            if (boardState.image4 != null) {
-                card_info4.visibility = View.VISIBLE
-                Glide.with(this).load(boardState.image4).into(img_info4).waitForLayout()
+                if (boardState.image3 != null) {
+                    card_info3.visibility = View.VISIBLE
+                    Glide.with(this).load(boardState.image3).into(img_info3).waitForLayout()
 
-                if (imgCount == "4") {
-                    dialog.dismiss()
+                    if (imgCount == "3") {
+                        dialog.dismiss()
+                    }
                 }
-            }
 
-            if (boardState.image5 != null) {
-                card_info5.visibility = View.VISIBLE
-                Glide.with(this).load(boardState.image5).into(img_info5).waitForLayout()
+                if (boardState.image4 != null) {
+                    card_info4.visibility = View.VISIBLE
+                    Glide.with(this).load(boardState.image4).into(img_info4).waitForLayout()
 
-                if (imgCount == "5") {
-                    dialog.dismiss()
+                    if (imgCount == "4") {
+                        dialog.dismiss()
+                    }
                 }
+
+                if (boardState.image5 != null) {
+                    card_info5.visibility = View.VISIBLE
+                    Glide.with(this).load(boardState.image5).into(img_info5).waitForLayout()
+
+                    if (imgCount == "5") {
+                        dialog.dismiss()
+                    }
+                }
+            } catch (e: Exception) {
+
             }
 
             if (boardState.setImgCount != null) {
@@ -151,6 +160,11 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             }
         })
 
+        if (imgCount == "0") {
+            dialog.dismiss()
+        }
+
+        // 댓글 작성
         img_comments.setOnClickListener {
 
             // 중복터치 방지
@@ -175,6 +189,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             }
         }
 
+        // 좋아요
         layout_contents_favorite.setOnClickListener {
             img_favorite.setImageResource(R.drawable.round_favorite_24)
         }
@@ -182,14 +197,38 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.unbind()
+        mBinding.unbind()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val pref = getSharedPreferences("Login", Context.MODE_PRIVATE)
+        val id = pref.getString("Id", "")
+
+        if (id == text_board_id.text.toString())
+            menuInflater.inflate(R.menu.menu_delete, menu)
+
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-            return true
+        when (item.itemId) {
+
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+
+            R.id.menu_delete -> {
+                val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
+                val kind = intent.getStringExtra("BoardKind")
+                val uuid = intent.getStringExtra("uuid")
+                val imgCount = intent.getStringExtra("imgCount")
+
+                viewModel.deleteBoard(kind!!, kind + "Info", kind + "Comments", uuid!!, imgCount!!)
+                return true
+            }
         }
+
         return super.onOptionsItemSelected(item)
     }
 }

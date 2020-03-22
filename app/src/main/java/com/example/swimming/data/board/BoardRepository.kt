@@ -17,6 +17,12 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
     fun writeBoard(title: String, contents: String, imgCount: String, commentCount: String, path1: String, path2: String) =
         dataSource.writeBoard(UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode(commentCount), path1, path2)
 
+    fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) =
+        dataSource.deleteBoard(path1, path2, path3, uuid, count)
+
+    fun checkBoard(path1: String, path2: String, uuid: String) =
+        dataSource.checkBoard(path1, path2, uuid)
+
     fun loadBoardList(owner: LifecycleOwner, path1: String, path2: String) =
         dataSource.loadBoardList(owner, path1, path2)
 

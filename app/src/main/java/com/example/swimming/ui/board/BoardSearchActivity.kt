@@ -21,13 +21,12 @@ import org.kodein.di.generic.instance
 class BoardSearchActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
-
-    var binding: ActivityBoardSearchBinding? = null
+    private lateinit var mBinding: ActivityBoardSearchBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_board_search)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_search)
 
         val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
         val list = ArrayList<Board>()
@@ -35,7 +34,7 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
         viewModel.recyclerView = recycler_Search
 
         edit_search.requestFocus()
-        edit_search.setOnEditorActionListener { v, actionId, event ->
+        edit_search.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
                 if (edit_search.text.toString().length >= 2) {
 
@@ -75,6 +74,6 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.unbind()
+        mBinding.unbind()
     }
 }

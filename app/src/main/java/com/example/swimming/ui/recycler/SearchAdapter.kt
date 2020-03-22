@@ -11,8 +11,6 @@ import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {

@@ -35,16 +35,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val factory: ProfileViewModelFactory by instance()
     private var progress: ProgressBar? = null
 
-    lateinit var viewModel: ProfileViewModel
-    var binding: ActivityMainBinding? = null
+    private lateinit var mBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        viewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        val viewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java)
 
-        binding!!.viewModel = viewModel
+        mBinding.viewModel = viewModel
         viewModel.profileActionResult = this
         viewModel.progressBar = nav_main_view.getHeaderView(0).findViewById(R.id.progress_nav)
         viewModel.setProfile()
@@ -104,7 +103,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.unbind()
+        mBinding.unbind()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

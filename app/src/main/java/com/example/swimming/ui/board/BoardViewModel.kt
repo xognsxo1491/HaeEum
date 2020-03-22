@@ -164,6 +164,26 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
         }
     }
 
+    fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) {
+        val delete = repository.deleteBoard(path1, path2, path3, uuid, count)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(delete)
+    }
+
+    fun checkBoard(path1: String, path2: String, uuid: String) {
+        val check = repository.checkBoard(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _boardForm.value = BoardFormState(check = R.string.deleteError)
+            }, {})
+
+        disposables.add(check)
+    }
+
     // 게시글 작성 이미지 선택
     fun setImage() {
         if (data!!.clipData != null) {

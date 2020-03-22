@@ -22,25 +22,24 @@ import org.kodein.di.generic.instance
 // 게시글 작성
 class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
     override val kodein by kodein()
-
     private val factory: BoardViewModelFactory by instance()
-    private val code = 1000
-
+    private lateinit var mBinding: ActivityBoardWriteBinding
     lateinit var viewModel: BoardViewModel
-    var binding: ActivityBoardWriteBinding? = null
+
+    private val code = 1000
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_board_write)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_write)
         viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
-        setSupportActionBar(binding!!.toolbarBoard)
+        setSupportActionBar(mBinding.toolbarBoard)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_close_24)
 
-        binding!!.viewModel = viewModel
+        mBinding.viewModel = viewModel
         viewModel.result = this
 
         viewModel.linearLayout = layout_write
@@ -94,7 +93,7 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.unbind()
+        mBinding.unbind()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

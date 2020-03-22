@@ -20,19 +20,18 @@ import org.kodein.di.generic.instance
 
 class LoginActivity : AppCompatActivity(), Result, KodeinAware {
     override val kodein by kodein()
-
     private val factory: UserViewModelFactory by instance()
-    private var mLastClickTime: Int = 0
+    private lateinit var mBinding: ActivityLoginBinding
 
-    var binding: ActivityLoginBinding? = null
+    private var mLastClickTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        binding!!.viewModel = viewModel
+        mBinding.viewModel = viewModel
         viewModel.result = this
         viewModel.id = edit_login_id
         viewModel.password = edit_login_password
@@ -82,7 +81,7 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.unbind()
+        mBinding.unbind()
     }
 
     override fun onSuccess() {

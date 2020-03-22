@@ -25,5 +25,6 @@ data class BoardFormState(
     val codeIntent: String? = null,
 
     val error: Int? = null,
-    val loading: Int? = null
+    val loading: Int? = null,
+    val check: Int? = null
 )

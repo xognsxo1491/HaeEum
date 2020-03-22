@@ -14,10 +14,18 @@ import io.reactivex.Single
 
 class BoardDataSource {
 
-    // 게시글 작성하기
+    private val database: FirebaseDatabase by lazy {
+        FirebaseDatabase.getInstance()
+    }
+
+    private val storage: FirebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
+
+    // 게시글 작성
     fun writeBoard(title: String, contents: String, context: Context, uuid: String, imgCount: String, commentCount: String, path1: String, path2: String) = Completable.create {
-        val database = FirebaseDatabase.getInstance().reference.child(path1).child(path2)
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        val reference = database.reference.child(path1).child(path2)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())
@@ -28,15 +36,71 @@ class BoardDataSource {
                 val userId = pref.getString("Id", "")
 
                 val board = Board(UtilBase64Cipher.encode(userId.toString()), title, contents, UtilBase64Cipher.encode(System.currentTimeMillis().toString()), uuid, imgCount, commentCount)
-                database.child(uuid).setValue(board)
+                reference.child(uuid).setValue(board)
                 it.onComplete()
+            }
+        })
+    }
+
+    // 게시글 삭제
+    fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) = Observable.create<Board> {
+        val board = database.reference.child(path1).child(path2).child(uuid)
+        val comment = database.reference.child(path1).child(path3).child(uuid)
+
+        board.removeValue()
+        comment.removeValue()
+
+        when (count) {
+            "1" -> {
+                storage.reference.child(path1).child(uuid).child("1").delete()
+            }
+
+            "2" -> {
+                storage.reference.child(path1).child(uuid).child("1").delete()
+                storage.reference.child(path1).child(uuid).child("2").delete()
+            }
+
+            "3" -> {
+                storage.reference.child(path1).child(uuid).child("1").delete()
+                storage.reference.child(path1).child(uuid).child("2").delete()
+                storage.reference.child(path1).child(uuid).child("3").delete()
+            }
+
+            "4" -> {
+                storage.reference.child(path1).child(uuid).child("1").delete()
+                storage.reference.child(path1).child(uuid).child("2").delete()
+                storage.reference.child(path1).child(uuid).child("3").delete()
+                storage.reference.child(path1).child(uuid).child("4").delete()
+            }
+
+            "5" -> {
+                storage.reference.child(path1).child(uuid).child("1").delete()
+                storage.reference.child(path1).child(uuid).child("2").delete()
+                storage.reference.child(path1).child(uuid).child("3").delete()
+                storage.reference.child(path1).child(uuid).child("4").delete()
+                storage.reference.child(path1).child(uuid).child("5").delete()
+            }
+        }
+    }
+
+    // 게시글 삭제 조회
+    fun checkBoard(path1: String, path2: String, uuid: String) = Completable.create {
+        database.reference.child(path1).child(path2).addValueEventListener(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if (!p0.hasChild(uuid))
+                    it.onComplete()
             }
         })
     }
 
     // 게시글 불러오기
     fun loadBoardList(owner: LifecycleOwner, path1: String, path2: String) : DatabasePagingOptions<Board> {
-        val database = FirebaseDatabase.getInstance().reference.child(path1).child(path2)
+        val reference = database.reference.child(path1).child(path2)
 
         val config = PagedList.Config.Builder()
             .setInitialLoadSizeHint(40) // 초기 개수
@@ -47,45 +111,43 @@ class BoardDataSource {
 
         return DatabasePagingOptions.Builder<Board>()
             .setLifecycleOwner(owner)
-            .setQuery(database, config, Board::class.java)
+            .setQuery(reference, config, Board::class.java)
             .build()
     }
 
     // 이미지 업로드
     fun uploadImage(path: String, uuid: String, count: String, data: Intent?) = Completable.create {
-        val storage = FirebaseStorage.getInstance()
-        val ref = storage.reference
 
         try {
             when (count) {
                 "1" -> {
-                    ref.child(path).child("$uuid/1").putFile(data!!.data!!)
+                    storage.reference.child(path).child("$uuid/1").putFile(data!!.data!!)
                 }
 
                 "2" -> {
-                    ref.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    storage.reference.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    storage.reference.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
                 }
 
                 "3" -> {
-                    ref.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    ref.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
+                    storage.reference.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    storage.reference.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    storage.reference.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
                 }
 
                 "4" -> {
-                    ref.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    ref.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
-                    ref.child(path).child("$uuid/4").putFile(data.clipData!!.getItemAt(3).uri)
+                    storage.reference.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    storage.reference.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    storage.reference.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
+                    storage.reference.child(path).child("$uuid/4").putFile(data.clipData!!.getItemAt(3).uri)
                 }
 
                 "5" -> {
-                    ref.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    ref.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    ref.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
-                    ref.child(path).child("$uuid/4").putFile(data.clipData!!.getItemAt(3).uri)
-                    ref.child(path).child("$uuid/5").putFile(data.clipData!!.getItemAt(4).uri)
+                    storage.reference.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
+                    storage.reference.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
+                    storage.reference.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
+                    storage.reference.child(path).child("$uuid/4").putFile(data.clipData!!.getItemAt(3).uri)
+                    storage.reference.child(path).child("$uuid/5").putFile(data.clipData!!.getItemAt(4).uri)
                 }
             }
         } catch (e: Exception) {
@@ -97,72 +159,71 @@ class BoardDataSource {
     fun loadImage(path: String, count: String) = Observable.create<String> { emitter ->
         when (count) {
             "1" -> {
-
-                FirebaseStorage.getInstance().getReference("$path/1").downloadUrl.addOnSuccessListener {
-                   emitter.onNext("이미지0: $it" )
+                storage.getReference("$path/1").downloadUrl.addOnSuccessListener {
+                    emitter.onNext("이미지0: $it" )
                 }
             }
 
             "2" -> {
-                FirebaseStorage.getInstance().getReference("$path/1").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/1").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지1: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/2").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/2").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지2: $it")
                 }
             }
 
             "3" -> {
-                FirebaseStorage.getInstance().getReference("$path/1").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/1").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지1: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/2").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/2").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지2: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/3").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/3").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지3: $it")
                 }
             }
 
             "4" -> {
-                FirebaseStorage.getInstance().getReference("$path/1").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/1").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지1: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/2").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/2").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지2: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/3").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/3").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지3: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/4").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/4").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지4: $it")
                 }
             }
 
             "5" -> {
-                FirebaseStorage.getInstance().getReference("$path/1").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/1").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지1: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/2").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/2").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지2: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/3").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/3").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지3: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/4").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/4").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지4: $it")
                 }
 
-                FirebaseStorage.getInstance().getReference("$path/5").downloadUrl.addOnSuccessListener {
+                storage.getReference("$path/5").downloadUrl.addOnSuccessListener {
                     emitter.onNext("이미지5: $it")
                 }
             }
@@ -171,8 +232,8 @@ class BoardDataSource {
 
     // 댓글 작성
     fun uploadComments(path1: String, path2: String, child: String, num: String, id: String, time: String, contents: String) = Completable.create {
-        val database = FirebaseDatabase.getInstance().reference.child(path1).child(path2).child(child)
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        val reference = database.reference.child(path1).child(path2).child(child)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())
@@ -180,7 +241,7 @@ class BoardDataSource {
 
             override fun onDataChange(p0: DataSnapshot) {
                 val comments = Comments(id, time, contents)
-                database.child(num).setValue(comments)
+                reference.child(num).setValue(comments)
                 it.onComplete()
             }
         })
@@ -188,7 +249,7 @@ class BoardDataSource {
 
     // 댓글 불러오기
     fun loadComments(owner: LifecycleOwner, path1: String, path2: String, child: String) : DatabasePagingOptions<Comments> {
-        val database = FirebaseDatabase.getInstance().reference.child(path1).child(path2).child(child)
+        val reference = database.reference.child(path1).child(path2).child(child)
 
         val config = PagedList.Config.Builder()
             .setInitialLoadSizeHint(20) // 초기 개수
@@ -199,14 +260,13 @@ class BoardDataSource {
 
         return DatabasePagingOptions.Builder<Comments>()
             .setLifecycleOwner(owner)
-            .setQuery(database, config, Comments::class.java)
+            .setQuery(reference, config, Comments::class.java)
             .build()
     }
 
     // 댓글 개수 불러오기
     fun loadCommentCount(path1: String, path2: String, uuid: String) = Single.create<String> {
-        val query = FirebaseDatabase.getInstance().reference.child(path1).child(path2).child(uuid)
-        query.addChildEventListener(object : ChildEventListener {
+       database.reference.child(path1).child(path2).child(uuid).addChildEventListener(object : ChildEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())
@@ -225,15 +285,14 @@ class BoardDataSource {
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {
-                TODO("Not yet implemented")
+
             }
         })
     }
 
     // 키워드 검색
     fun searchKeyword(path1: String, path2: String, keyword: String) = Observable.create<Board> {
-        val query = FirebaseDatabase.getInstance().reference.child(path1).child(path2)
-        query.addChildEventListener(object : ChildEventListener {
+        database.reference.child(path1).child(path2).addChildEventListener(object : ChildEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
                 TODO("Not yet implemented")
@@ -263,8 +322,8 @@ class BoardDataSource {
 
     // 댓글 개수 업데이트
     fun updateCommentCount(path1: String, path2: String, uuid: String) = Completable.create {
-        val database = FirebaseDatabase.getInstance().reference.child(path1).child(path2).child(uuid)
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
+        val reference = database.reference.child(path1).child(path2).child(uuid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())
@@ -277,7 +336,7 @@ class BoardDataSource {
                 val map: HashMap<String, Any> = HashMap()
                 map["commentCount"] = UtilBase64Cipher.encode((num + 1).toString())
 
-                database.updateChildren(map)
+                reference.updateChildren(map)
             }
         })
     }

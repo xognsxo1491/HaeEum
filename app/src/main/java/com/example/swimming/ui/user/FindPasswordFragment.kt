@@ -1,6 +1,5 @@
 package com.example.swimming.ui.user
 
-
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.StrictMode
@@ -9,19 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
 import com.example.swimming.R
 import com.example.swimming.databinding.FragmentFindPasswordBinding
 import com.example.swimming.ui.result.Result
-import kotlinx.android.synthetic.main.fragment_find_id.*
 import kotlinx.android.synthetic.main.fragment_find_password.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
-
 
 class FindPasswordFragment : Fragment(), Result, KodeinAware{
     override val kodein by kodein()

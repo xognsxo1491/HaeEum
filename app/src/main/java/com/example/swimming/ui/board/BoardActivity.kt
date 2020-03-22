@@ -18,28 +18,28 @@ import org.kodein.di.generic.instance
 class BoardActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
+    private lateinit var mBinding: ActivityBoardBinding
 
-    private var boardKind: String? = null
-    var binding: ActivityBoardBinding? = null
+    private var mBoardKind: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_board)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board)
         val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
-        setSupportActionBar(binding!!.toolbarFree)
+        setSupportActionBar(mBinding.toolbarFree)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        binding!!.viewModel = viewModel
-        viewModel.recyclerView = binding!!.recyclerBoard
-        viewModel.refreshLayout = binding!!.swipeFree
+        mBinding.viewModel = viewModel
+        viewModel.recyclerView = mBinding.recyclerBoard
+        viewModel.refreshLayout = mBinding.swipeFree
 
-        boardKind = intent.getStringExtra("BoardKind")
+        mBoardKind = intent.getStringExtra("BoardKind")
 
-            when (boardKind) {
+            when (mBoardKind) {
             "FreeBoard" -> {
                 viewModel.loadBoardList(this, "FreeBoard", "FreeBoardInfo")
             }
@@ -47,14 +47,14 @@ class BoardActivity : AppCompatActivity(), KodeinAware {
 
         fab_free.setOnClickListener {
             val intent = Intent(this, BoardWriteActivity::class.java)
-            intent.putExtra("BoardKind", boardKind)
+            intent.putExtra("BoardKind", mBoardKind)
             startActivity(intent)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.unbind()
+        mBinding.unbind()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -70,7 +70,7 @@ class BoardActivity : AppCompatActivity(), KodeinAware {
 
         if (item.itemId == R.id.menu_search) {
             val intent = Intent(this, BoardSearchActivity::class.java)
-            intent.putExtra("BoardKind", boardKind)
+            intent.putExtra("BoardKind", mBoardKind)
             startActivity(intent)
         }
 

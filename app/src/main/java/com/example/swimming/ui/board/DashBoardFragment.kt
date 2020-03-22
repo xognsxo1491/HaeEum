@@ -15,9 +15,7 @@ class DashBoardFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding: FragmentDashBoardBinding = FragmentDashBoardBinding.inflate(inflater, container, false)
-        val viewModel = ViewModelProvider(this,
-            BoardViewModelFactory(context!!)
-        ).get(BoardViewModel::class.java)
+        val viewModel = ViewModelProvider(this, BoardViewModelFactory(context!!)).get(BoardViewModel::class.java)
 
         binding.viewModel = viewModel
         binding.cardDashFree.setOnClickListener {

@@ -3,7 +3,6 @@ package com.example.swimming.ui.user
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
@@ -17,21 +16,20 @@ import org.kodein.di.generic.instance
 class FindActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()
-
-    var binding: ActivityFindBinding? = null
+    private lateinit var mBinding: ActivityFindBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_find)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_find)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        setSupportActionBar(binding!!.toolbarFind)
+        setSupportActionBar(mBinding.toolbarFind)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        binding!!.viewModel = viewModel
+        mBinding.viewModel = viewModel
 
         val adapter = ViewPagerAdapter(supportFragmentManager)
         adapter.addFragment(FindIdFragment(), "아이디 찾기")
@@ -43,7 +41,7 @@ class FindActivity : AppCompatActivity(), KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding!!.unbind()
+        mBinding.unbind()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
