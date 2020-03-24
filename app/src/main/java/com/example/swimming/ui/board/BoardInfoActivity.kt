@@ -54,6 +54,8 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         viewModel.card3 = card_info3
         viewModel.card4 = card_info4
         viewModel.card5 = card_info5
+        viewModel.imgLike = img_favorite
+        img_favorite.tag = Integer.valueOf(R.string.unLike)
 
         val kind = intent.getStringExtra("BoardKind")
         val uuid = intent.getStringExtra("uuid")
@@ -62,19 +64,22 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         text_board_id.text = intent.getStringExtra("id")
         text_board_title.text = intent.getStringExtra("title")
         text_board_contents.text = intent.getStringExtra("contents")
-        text_board_time.text = intent.getStringExtra("time")
         text_board_time.text = UtilDateFormat.formatting(intent.getStringExtra("time")!!.toLong())
         text_board_imgCount.text = imgCount
         text_board_commentCount.text = intent.getStringExtra("comment")
+        text_board_like.text = intent.getStringExtra("like")
 
         val dialog = utilShowDialog(this, "헤엄중..")
         dialog.show()
 
         when (kind) {
             "FreeBoard" -> {
-                viewModel.checkBoard("FreeBoard", "FreeBoardInfo", uuid!!)
-                viewModel.loadComments(this, "FreeBoard", "FreeBoardComments", "FreeBoardInfo", uuid)
-                viewModel.loadImage("FreeBoard/${intent.getStringExtra("uuid")}", imgCount!!)
+                text_info_tTitle.text = getString(R.string.free_board)
+                viewModel.checkBoard("FreeBoard", "FreeBoardInfo", uuid!!) // 취소 확인
+                viewModel.loadImage("FreeBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
+                viewModel.loadComments(this, "FreeBoard", "FreeBoardComments", "FreeBoardInfo", uuid) // 댓글 불러오기
+                viewModel.checkBoardLike("FreeBoard", "FreeBoardLike", uuid) // 좋아요 구독 상태
+                viewModel.loadBoardLike("FreeBoard", "FreeBoardInfo", uuid) // 좋아요 개수
             }
         }
 
@@ -90,6 +95,14 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
             if (boardState.setCommentCount != null) {
                 text_board_commentCount.text = boardState.setCommentCount
+            }
+
+            if (boardState.setLikeCount != null) {
+                text_board_like.text = boardState.setLikeCount
+            }
+
+            if (boardState.messageLike != null) {
+                Toast.makeText(this, boardState.messageLike, Toast.LENGTH_SHORT).show()
             }
 
             if (boardState.error != null) {
@@ -175,8 +188,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             //
 
             if (edit_comments.text.toString().isNotEmpty()) {
-                when (intent.getStringExtra("BoardKind")) {
-
+                when (kind) {
                     "FreeBoard" -> {
                         viewModel.uploadComments("FreeBoard", "FreeBoardComments", uuid!!)
                         viewModel.updateCommentCount("FreeBoard", "FreeBoardInfo", uuid)
@@ -189,9 +201,32 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             }
         }
 
-        // 좋아요
         layout_contents_favorite.setOnClickListener {
-            img_favorite.setImageResource(R.drawable.round_favorite_24)
+
+            if (img_favorite.tag == Integer.valueOf(R.string.unLike)) {
+                img_favorite.tag = Integer.valueOf(R.string.like)
+                img_favorite.setImageResource(R.drawable.round_favorite_24)
+                text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) + 1).toString()
+
+                when (kind) {
+                    "FreeBoard" -> {
+                        viewModel.uploadBoardLike("FreeBoard", "FreeBoardLike", uuid!!)
+                        viewModel.updateBoardLikeCountPlus("FreeBoard", "FreeBoardInfo", uuid)
+                    }
+                }
+
+            } else if (img_favorite.tag == Integer.valueOf(R.string.like)){
+                img_favorite.tag = Integer.valueOf(R.string.unLike)
+                img_favorite.setImageResource(R.drawable.round_favorite_border_24)
+                text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) - 1).toString()
+
+                when (kind) {
+                    "FreeBoard" -> {
+                        viewModel.deleteBoardLike("FreeBoard", "FreeBoardLike", uuid!!)
+                        viewModel.updateBoardLikeCountMinus("FreeBoard", "FreeBoardInfo", uuid)
+                    }
+                }
+            }
         }
     }
 
@@ -225,6 +260,11 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                 val imgCount = intent.getStringExtra("imgCount")
 
                 viewModel.deleteBoard(kind!!, kind + "Info", kind + "Comments", uuid!!, imgCount!!)
+                viewModel.deleteBoardLike(kind, kind + "Like", uuid)
+
+                mBuilder = AlertDialog.Builder(this)
+                mBuilder.setMessage("해당 글이 삭제되었습니다.").setCancelable(false)
+                mBuilder.setPositiveButton("확인") {_, _ -> finish()}.show()
                 return true
             }
         }

@@ -14,6 +14,7 @@ data class BoardFormState(
     val setTime: String? = null,
     val setImgCount: String? = null,
     val setCommentCount: String? = null,
+    val setLikeCount: String? = null,
 
     val image0: String? = null,
     val image1: String? = null,
@@ -22,6 +23,7 @@ data class BoardFormState(
     val image4: String? = null,
     val image5: String? = null,
 
+    val messageLike: Int? = null,
     val codeIntent: String? = null,
 
     val error: Int? = null,

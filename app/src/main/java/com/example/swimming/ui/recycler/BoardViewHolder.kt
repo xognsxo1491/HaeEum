@@ -20,6 +20,7 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var time: TextView = itemView.findViewById(R.id.text_board_time)
     private var image: TextView = itemView.findViewById(R.id.text_board_imgCount)
     private var comments: TextView = itemView.findViewById(R.id.text_board_commentCount)
+    private var like: TextView = itemView.findViewById(R.id.text_board_like)
     private var uuid: String? = null
 
     fun setItem(post: Board) {
@@ -29,6 +30,7 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         time.text = (UtilTimeFormat.formatting((UtilBase64Cipher.decode(post.time).toLong())))
         image.text = UtilBase64Cipher.decode(post.imgCount)
         comments.text = UtilBase64Cipher.decode(post.commentCount)
+        like.text = UtilBase64Cipher.decode(post.like)
         uuid = post.uuid
 
         if (image.text.toString() == "0") {
@@ -48,6 +50,7 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             intent.putExtra("time", UtilBase64Cipher.decode(post.time))
             intent.putExtra("imgCount", UtilBase64Cipher.decode(post.imgCount))
             intent.putExtra("comment", UtilBase64Cipher.decode(post.commentCount))
+            intent.putExtra("like", UtilBase64Cipher.decode(post.like))
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }

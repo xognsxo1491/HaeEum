@@ -23,7 +23,7 @@ class BoardDataSource {
     }
 
     // 게시글 작성
-    fun writeBoard(title: String, contents: String, context: Context, uuid: String, imgCount: String, commentCount: String, path1: String, path2: String) = Completable.create {
+    fun writeBoard(title: String, contents: String, context: Context, uuid: String, imgCount: String, commentCount: String, like: String, path1: String, path2: String) = Completable.create {
         val reference = database.reference.child(path1).child(path2)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
@@ -35,7 +35,7 @@ class BoardDataSource {
                 val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
                 val userId = pref.getString("Id", "")
 
-                val board = Board(UtilBase64Cipher.encode(userId.toString()), title, contents, UtilBase64Cipher.encode(System.currentTimeMillis().toString()), uuid, imgCount, commentCount)
+                val board = Board(UtilBase64Cipher.encode(userId.toString()), title, contents, UtilBase64Cipher.encode(System.currentTimeMillis().toString()), uuid, imgCount, commentCount, like)
                 reference.child(uuid).setValue(board)
                 it.onComplete()
             }
@@ -85,10 +85,10 @@ class BoardDataSource {
 
     // 게시글 삭제 조회
     fun checkBoard(path1: String, path2: String, uuid: String) = Completable.create {
-        database.reference.child(path1).child(path2).addValueEventListener(object : ValueEventListener {
+        database.reference.child(path1).child(path2).addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
+                it.onError(p0.toException())
             }
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -231,8 +231,8 @@ class BoardDataSource {
     }
 
     // 댓글 작성
-    fun uploadComments(path1: String, path2: String, child: String, num: String, id: String, time: String, contents: String) = Completable.create {
-        val reference = database.reference.child(path1).child(path2).child(child)
+    fun uploadComments(path1: String, path2: String, uuid1: String, uuid2: String, id: String, time: String, contents: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(uuid1)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
@@ -241,15 +241,15 @@ class BoardDataSource {
 
             override fun onDataChange(p0: DataSnapshot) {
                 val comments = Comments(id, time, contents)
-                reference.child(num).setValue(comments)
+                reference.child(uuid2).setValue(comments)
                 it.onComplete()
             }
         })
     }
 
     // 댓글 불러오기
-    fun loadComments(owner: LifecycleOwner, path1: String, path2: String, child: String) : DatabasePagingOptions<Comments> {
-        val reference = database.reference.child(path1).child(path2).child(child)
+    fun loadComments(owner: LifecycleOwner, path1: String, path2: String, uuid: String) : DatabasePagingOptions<Comments> {
+        val reference = database.reference.child(path1).child(path2).child(uuid)
 
         val config = PagedList.Config.Builder()
             .setInitialLoadSizeHint(20) // 초기 개수
@@ -266,26 +266,139 @@ class BoardDataSource {
 
     // 댓글 개수 불러오기
     fun loadCommentCount(path1: String, path2: String, uuid: String) = Single.create<String> {
-       database.reference.child(path1).child(path2).child(uuid).addChildEventListener(object : ChildEventListener {
+       database.reference.child(path1).child(path2).child(uuid).addListenerForSingleValueEvent(object : ValueEventListener {
+
+           override fun onCancelled(p0: DatabaseError) {
+               it.onError(p0.toException())
+           }
+
+           override fun onDataChange(p0: DataSnapshot) {
+               val board = p0.getValue(Board::class.java)
+
+               if (board != null)
+                   it.onSuccess(board.commentCount)
+           }
+       })
+    }
+
+    // 댓글 개수 업데이트
+    fun updateCommentCount(path1: String, path2: String, uuid: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(uuid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())
             }
 
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+            override fun onDataChange(p0: DataSnapshot) {
+                val board = p0.getValue(Board::class.java)
+                val num = Integer.parseInt(UtilBase64Cipher.decode(board!!.commentCount))
+
+                val map: HashMap<String, Any> = HashMap()
+                map["commentCount"] = UtilBase64Cipher.encode((num + 1).toString())
+
+                reference.updateChildren(map)
+            }
+        })
+    }
+
+    // 좋아요 누르기
+    fun uploadBoardLike(path1: String, path2: String, uuid: String, id: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(uuid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
             }
 
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                it.onSuccess(p0.value.toString())
+            override fun onDataChange(p0: DataSnapshot) {
+                reference.child(id).setValue(id)
+                it.onComplete()
+            }
+        })
+    }
+
+    // 좋아요 개수 업데이트 플러스
+    fun updateBoardLikeCountPlus(path1: String, path2: String, uuid: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(uuid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
             }
 
-            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                it.onSuccess(p0.value.toString())
+            override fun onDataChange(p0: DataSnapshot) {
+                val board = p0.getValue(Board::class.java)
+                val num = Integer.parseInt(UtilBase64Cipher.decode(board!!.like))
+
+                val map: HashMap<String, Any> = HashMap()
+                map["like"] = UtilBase64Cipher.encode((num + 1).toString())
+
+                reference.updateChildren(map)
+            }
+        })
+    }
+
+    fun updateBoardLikeCountMinus(path1: String, path2: String, uuid: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(uuid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
             }
 
-            override fun onChildRemoved(p0: DataSnapshot) {
+            override fun onDataChange(p0: DataSnapshot) {
+                val board = p0.getValue(Board::class.java)
+                val num = Integer.parseInt(UtilBase64Cipher.decode(board!!.like))
 
+                val map: HashMap<String, Any> = HashMap()
+                map["like"] = UtilBase64Cipher.encode((num - 1).toString())
+
+                reference.updateChildren(map)
+            }
+        })
+    }
+
+    // 좋아요 취소
+    fun deleteBoardLike(path1: String, path2: String, uuid: String, id: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(uuid).child(id)
+        reference.removeValue()
+
+        it.onComplete()
+    }
+
+    // 좋아요 개수 불러오기
+    fun loadBoardLike(path1: String, path2: String, uuid: String) = Single.create<String> {
+        database.reference.child(path1).child(path2).child(uuid).addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val board = p0.getValue(Board::class.java)
+
+                if (board != null) {
+                    it.onSuccess(board.like)
+                }
+            }
+        })
+    }
+
+    // 좋아요 눌렀는지 체크
+    fun checkBoardLike(path1: String, path2: String, uuid: String, id: String) = Completable.create {
+        database.reference.child(path1).child(path2).child(uuid).addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if (p0.value != null) {
+                    if (p0.hasChild(id)) {
+                        it.onComplete()
+                    }
+                }
             }
         })
     }
@@ -295,7 +408,7 @@ class BoardDataSource {
         database.reference.child(path1).child(path2).addChildEventListener(object : ChildEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
+                it.onError(p0.toException())
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
@@ -316,27 +429,6 @@ class BoardDataSource {
 
             override fun onChildRemoved(p0: DataSnapshot) {
                 TODO("Not yet implemented")
-            }
-        })
-    }
-
-    // 댓글 개수 업데이트
-    fun updateCommentCount(path1: String, path2: String, uuid: String) = Completable.create {
-        val reference = database.reference.child(path1).child(path2).child(uuid)
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
-
-            override fun onCancelled(p0: DatabaseError) {
-                it.onError(p0.toException())
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                val board = p0.getValue(Board::class.java)
-                val num = Integer.parseInt(UtilBase64Cipher.decode(board!!.commentCount))
-
-                val map: HashMap<String, Any> = HashMap()
-                map["commentCount"] = UtilBase64Cipher.encode((num + 1).toString())
-
-                reference.updateChildren(map)
             }
         })
     }

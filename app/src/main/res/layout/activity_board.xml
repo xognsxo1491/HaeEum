@@ -36,11 +36,11 @@
                     android:layout_height="?attr/actionBarSize" />
 
                 <TextView
+                    android:id="@+id/text_board_tTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="@string/free_board"
                     android:textColor="@color/colorWhite" />
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 

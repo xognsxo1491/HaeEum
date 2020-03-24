@@ -28,7 +28,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class BoardViewModel(val repository: BoardRepository, val context: Context) : ViewModel() {
+class BoardViewModel(val repository: BoardRepository) : ViewModel() {
     private val disposables = CompositeDisposable()
     private val _boardForm = MutableLiveData<BoardFormState>()
 
@@ -54,6 +54,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
     var img3 : ImageView? = null
     var img4 : ImageView? = null
     var img5 : ImageView? = null
+    var imgLike : ImageView? = null
 
     var card1 : CardView? = null
     var card2 : CardView? = null
@@ -63,7 +64,6 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
     // 작성하기
     fun writeBoard(path1: String, path2: String) {
-
         checkTitle()
         checkContents()
 
@@ -72,7 +72,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
             if (card1!!.visibility != View.VISIBLE) {
 
-                val write = repository.writeBoard(title!!, contents!!, String.format("0"), String.format("0"), path1, path2)
+                val write = repository.writeBoard(title!!, contents!!, String.format("0"), path1, path2)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -90,7 +90,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
 
-                            val write = repository.writeBoard(title!!, contents!!, String.format("2"), String.format("0"), path1, path2)
+                            val write = repository.writeBoard(title!!, contents!!, String.format("2"), path1, path2)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -105,7 +105,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
 
-                            val write = repository.writeBoard(title!!, contents!!, String.format("3"), String.format("0"), path1, path2)
+                            val write = repository.writeBoard(title!!, contents!!, String.format("3"), path1, path2)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -120,7 +120,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
 
-                            val write = repository.writeBoard(title!!, contents!!, String.format("4"), String.format("0"), path1, path2)
+                            val write = repository.writeBoard(title!!, contents!!, String.format("4"), path1, path2)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -135,7 +135,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
 
-                            val write = repository.writeBoard(title!!, contents!!, String.format("5"), String.format("0"), path1, path2)
+                            val write = repository.writeBoard(title!!, contents!!, String.format("5"), path1, path2)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -152,7 +152,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
                         .observeOn(Schedulers.newThread())
                         .subscribe()
 
-                    val write = repository.writeBoard(title!!, contents!!, String.format("1"), String.format("0"), path1, path2)
+                    val write = repository.writeBoard(title!!, contents!!, String.format("1"), path1, path2)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -164,6 +164,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
         }
     }
 
+    // 게시글 삭제
     fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) {
         val delete = repository.deleteBoard(path1, path2, path3, uuid, count)
             .subscribeOn(Schedulers.io())
@@ -173,6 +174,7 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
         disposables.add(delete)
     }
 
+    // 게시글 삭제 조회
     fun checkBoard(path1: String, path2: String, uuid: String) {
         val check = repository.checkBoard(path1, path2, uuid)
             .subscribeOn(Schedulers.io())
@@ -253,7 +255,6 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
     // 이미지 불러오기
     fun loadImage(path: String, count: String) {
-
         val load = repository.loadImage(path, count)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -304,17 +305,19 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
     // 게시글 불러오기
     fun loadBoardList(owner: LifecycleOwner, path1: String, path2: String) {
         val option = repository.loadBoardList(owner, path1, path2)
+        var context: Context? = null
 
         val adapter = object : FirebaseRecyclerPagingAdapter<Board, BoardViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
+                context = parent.context
                 return BoardViewHolder(
-                    LayoutInflater.from(parent.context).inflate(R.layout.item_list, parent, false)
+                    LayoutInflater.from(context).inflate(R.layout.item_list, parent, false)
                 )
             }
 
             override fun onBindViewHolder(p0: BoardViewHolder, p1: Int, p2: Board) {
                 p0.setItem(p2)
-                p0.onClick(p0.itemView, context, p2, path1)
+                p0.onClick(p0.itemView, context!!, p2, path1)
             }
 
             override fun onLoadingStateChanged(state: LoadingState) {
@@ -355,7 +358,6 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
     // 댓글 작성
     fun uploadComments(path1: String, path2: String, uuid: String) {
-
             val upload = repository.uploadComments(path1, path2, uuid, comments!!)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -418,12 +420,12 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
             // 새로고침 시 댓글, 하트수 불러오기
             loadCommentCount(path1, path3, uuid)
+            loadBoardLike(path1, path3, uuid)
         }
     }
 
     // 댓글 개수 불러오기
     private fun loadCommentCount(path1: String, path2: String, uuid: String) {
-
         val load = repository.loadCommentCount(path1, path2, uuid)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -438,7 +440,6 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
 
     // 댓글 개수 업데이트
     fun updateCommentCount(path1: String, path2: String, uuid: String) {
-
             val load = repository.updateCommentCount(path1, path2, uuid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -447,9 +448,75 @@ class BoardViewModel(val repository: BoardRepository, val context: Context) : Vi
             disposables.add(load)
     }
 
+    // 좋아요
+    fun uploadBoardLike(path1: String, path2: String, uuid: String) {
+        val upload = repository.uploadBoardLike(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _boardForm.value = BoardFormState(messageLike = R.string.like)
+            },{})
+
+        disposables.add(upload)
+    }
+
+    // 좋아요 취소
+    fun deleteBoardLike(path1: String, path2: String, uuid: String) {
+        val delete = repository.deleteBoardLike(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({}, {})
+
+        disposables.add(delete)
+    }
+
+    // 좋아요 구독 상태
+    fun checkBoardLike(path1: String, path2: String, uuid: String) {
+        val check = repository.checkBoardLike(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                imgLike!!.tag = R.string.like
+                imgLike!!.setImageResource(R.drawable.round_favorite_24)
+            },{})
+
+        disposables.add(check)
+    }
+
+    // 좋아요 개수 불러오기
+    fun loadBoardLike(path1: String, path2: String, uuid: String) {
+        val load = repository.loadBoardLike(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _boardForm.value = BoardFormState(
+                    setLikeCount = UtilBase64Cipher.decode(it)
+                )}, {}
+            )
+
+        disposables.add(load)
+    }
+
+    fun updateBoardLikeCountPlus(path1: String, path2: String, uuid: String) {
+        val update = repository.updateBoardLikeCount(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(update)
+    }
+
+    fun updateBoardLikeCountMinus(path1: String, path2: String, uuid: String) {
+        val update = repository.updateBoardLikeCountMinus(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(update)
+    }
+
     // 키워드 검색
     fun searchKeyword(path1: String, path2: String, keyword: String) {
-
         val load = repository.searchKeyword(path1, path2, keyword)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

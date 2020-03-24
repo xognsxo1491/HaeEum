@@ -14,8 +14,8 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
     private val time = System.currentTimeMillis().toString()
     private val uuid = System.currentTimeMillis().toString() + UUID.randomUUID().toString()
 
-    fun writeBoard(title: String, contents: String, imgCount: String, commentCount: String, path1: String, path2: String) =
-        dataSource.writeBoard(UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode(commentCount), path1, path2)
+    fun writeBoard(title: String, contents: String, imgCount: String, path1: String, path2: String) =
+        dataSource.writeBoard(UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode("0"), UtilBase64Cipher.encode("0"), path1, path2)
 
     fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) =
         dataSource.deleteBoard(path1, path2, path3, uuid, count)
@@ -43,6 +43,24 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
 
     fun updateCommentCount(path1: String, path2: String, uuid: String) =
         dataSource.updateCommentCount(path1, path2, uuid)
+
+    fun uploadBoardLike(path1: String, path2: String, uuid1: String) =
+        dataSource.uploadBoardLike(path1, path2, uuid1, UtilBase64Cipher.encode(id!!))
+
+    fun loadBoardLike(path1: String, path2: String, uuid: String) =
+        dataSource.loadBoardLike(path1, path2, uuid)
+
+    fun deleteBoardLike(path1: String, path2: String, uuid1: String) =
+        dataSource.deleteBoardLike(path1, path2, uuid1, UtilBase64Cipher.encode(id!!))
+
+    fun checkBoardLike(path1: String, path2: String, uuid: String) =
+        dataSource.checkBoardLike(path1, path2, uuid, UtilBase64Cipher.encode(id!!))
+
+    fun updateBoardLikeCount(path1: String, path2: String, uuid: String) =
+        dataSource.updateBoardLikeCountPlus(path1, path2, uuid)
+
+    fun updateBoardLikeCountMinus(path1: String, path2: String, uuid: String) =
+        dataSource.updateBoardLikeCountMinus(path1, path2, uuid)
 
     fun searchKeyword(path1: String, path2: String, keyword: String) =
         dataSource.searchKeyword(path1, path2, keyword)

@@ -33,7 +33,7 @@ class MyApplication : Application(), KodeinAware {
 
         bind() from singleton { BoardDataSource() }
         bind() from singleton { BoardRepository(instance(), instance()) }
-        bind() from provider { BoardViewModel(instance(), instance()) }
+        bind() from provider { BoardViewModel(instance()) }
         bind() from provider { BoardViewModelFactory(instance()) }
 
         bind() from singleton { ProfileDataSource() }

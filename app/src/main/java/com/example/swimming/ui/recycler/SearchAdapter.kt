@@ -33,6 +33,7 @@ class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView
         holder.time.text = UtilTimeFormat.formatting(UtilBase64Cipher.decode((item.time)).toLong())
         holder.image.text = UtilBase64Cipher.decode(item.imgCount)
         holder.comments.text = UtilBase64Cipher.decode(item.commentCount)
+        holder.like.text = UtilBase64Cipher.decode(item.like)
 
         if (holder.image.text.toString() == "0") {
             holder.layout.visibility = View.GONE
@@ -50,6 +51,7 @@ class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView
         val time: TextView = itemView.findViewById(R.id.text_board_time)
         val image: TextView = itemView.findViewById(R.id.text_board_imgCount)
         val comments: TextView = itemView.findViewById(R.id.text_board_commentCount)
+        val like: TextView = itemView.findViewById(R.id.text_board_like)
         val layout: LinearLayout = itemView.findViewById(R.id.layout_list_img)
 
     }

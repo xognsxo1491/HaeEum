@@ -8,5 +8,6 @@ data class Board(
     var time: String = "",
     var uuid: String = "",
     var imgCount: String = "",
-    var commentCount: String = ""
+    var commentCount: String = "",
+    var like: String = ""
 )

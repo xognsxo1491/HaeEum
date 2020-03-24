@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardBinding
 import kotlinx.android.synthetic.main.activity_board.*
+import kotlinx.android.synthetic.main.activity_board_info.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
@@ -41,6 +42,7 @@ class BoardActivity : AppCompatActivity(), KodeinAware {
 
             when (mBoardKind) {
             "FreeBoard" -> {
+                text_board_tTitle.text = getString(R.string.free_board)
                 viewModel.loadBoardList(this, "FreeBoard", "FreeBoardInfo")
             }
         }

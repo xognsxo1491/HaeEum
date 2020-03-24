@@ -8,6 +8,19 @@
             android:id="@+id/nav_logout"
             android:icon="@drawable/baseline_exit_to_app_24"
             android:title="@string/logout" />
-
     </group>
+
+    <item android:title="@string/activity">
+        <menu>
+            <item
+                android:id="@+id/nav_myBoard"
+                android:icon="@drawable/round_create_24"
+                android:title="@string/myBoard" />
+
+            <item
+                android:id="@+id/nav_myComment"
+                android:icon="@drawable/round_comment_24"
+                android:title="@string/myComment" />
+        </menu>
+    </item>
 </menu>

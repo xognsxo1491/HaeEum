@@ -10,7 +10,11 @@
     <color name="colorGrayVariant">#7E8188</color>
 
     <color name="colorBlack">#292929</color>
+
     <color name="colorGradientPink">#ED5A81</color>
     <color name="colorGradientOrange">#F4786C</color>
     <color name="colorPurple">#B89FFC</color>
+
+    <color name="colorFreeBoard">#DA5A45</color>
+    <color name="colorInfoBoard">#FDDA20</color>
 </resources>
