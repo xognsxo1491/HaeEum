@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">헤엄</string>
     <string name="none"> </string>
+    <string name="Authorization">AAAAK0p2Znc:APA91bFfNLF5VZODxRqr8q41rahjhn9UZUWzSg0w9EaYaXU5jihaN48m8_h-sHPT3JD5ScwFkhqNg9mNfFTa1loqHZt9H4RyDayofrxFQ8tXQUiq5dFYdHxhqFQ_MsG2jCn_0CJTYvr7</string>
+    <string name="fcm">https://fcm.googleapis.com/fcm/send</string>
 
     <string name="title_home">Home</string>
     <string name="title_dashboard">DashBoard</string>
@@ -36,12 +38,17 @@
     <string name="message_isBlank">해당란이 공백입니다.</string>
     <string name="message_logout">로그아웃 되었습니다.</string>
 
+    <string name="message_comments">작성한 게시글에 댓글이 달렸습니다.</string>
+
     <string name="find_id">아이디 찾기</string>
     <string name="find_password">비밀번호 찾기</string>
     <string name="message_find_error">* 입력 정보 오류시 이메일이 전송되지 않습니다.</string>
 
     <string name="free_board">자유 게시판</string>
-    <string name="information_board">정보 게시판</string>
+    <string name="info_board">정보 게시판</string>
+    <string name="free">Free</string>
+    <string name="info">Info</string>
+
     <string name="board_write">게시글 작성하기</string>
     <string name="board_title">제목</string>
     <string name="board_contents">내용</string>
@@ -65,6 +72,10 @@
     <string name="search">이 곳에 검색어를 입력하세요.</string>
     <string name="searchError">2글자 이상 입력해주세요.</string>
 
+    <string name="freeBoardContents">자유로운 주제로 이야기를 나눠보세요.</string>
+    <string name="infoBoardContents">물고기에 대한 다양한 정보를 교환해요.</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

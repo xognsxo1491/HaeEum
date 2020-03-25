@@ -9,6 +9,9 @@ class ProfileRepository(private val dataSource: ProfileDataSource, val context: 
     private val id = pref.getString("Id", "")
     private val editor = pref.edit()
 
+    fun checkToken() =
+        dataSource.checkToken(editor)
+
     fun setProfile() =
         dataSource.setProfile(id!!)
 

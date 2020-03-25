@@ -11,6 +11,9 @@ import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 
 class BoardDataSource {
 
@@ -23,7 +26,7 @@ class BoardDataSource {
     }
 
     // 게시글 작성
-    fun writeBoard(title: String, contents: String, context: Context, uuid: String, imgCount: String, commentCount: String, like: String, path1: String, path2: String) = Completable.create {
+    fun writeBoard(token: String, title: String, contents: String, context: Context, uuid: String, imgCount: String, commentCount: String, like: String, path1: String, path2: String) = Completable.create {
         val reference = database.reference.child(path1).child(path2)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
@@ -35,7 +38,7 @@ class BoardDataSource {
                 val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
                 val userId = pref.getString("Id", "")
 
-                val board = Board(UtilBase64Cipher.encode(userId.toString()), title, contents, UtilBase64Cipher.encode(System.currentTimeMillis().toString()), uuid, imgCount, commentCount, like)
+                val board = Board(UtilBase64Cipher.encode(path1), UtilBase64Cipher.encode(userId.toString()), token, title, contents, UtilBase64Cipher.encode(System.currentTimeMillis().toString()), uuid, imgCount, commentCount, like)
                 reference.child(uuid).setValue(board)
                 it.onComplete()
             }
@@ -339,6 +342,7 @@ class BoardDataSource {
         })
     }
 
+    // 좋아요 개수 업데이트 마이너스
     fun updateBoardLikeCountMinus(path1: String, path2: String, uuid: String) = Completable.create {
         val reference = database.reference.child(path1).child(path2).child(uuid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -428,8 +432,119 @@ class BoardDataSource {
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {
-                TODO("Not yet implemented")
+
             }
         })
+    }
+
+    // 내가 쓴 글
+    fun myBoard(path1: String, path2: String, id: String) = Observable.create<Board> {
+        database.reference.child(path1).child(path2).addChildEventListener(object : ChildEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val board = p0.getValue(Board::class.java)
+
+                if (UtilBase64Cipher.decode(board!!.id) == id) {
+                    it.onNext(board)
+                }
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+        })
+    }
+
+    // 댓글 단 글
+    fun myComments(path1: String, path2: String, path3: String, id: String) = Observable.create<Board> {
+        database.reference.child(path1).child(path2).addChildEventListener(object : ChildEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val split = p0.value.toString().split(", id=")[1]
+                val splitId = split.split(", time=")[0]
+
+                if (splitId == id)
+                    database.reference.child(path1).child(path3).addChildEventListener(object : ChildEventListener {
+
+                        override fun onCancelled(p0: DatabaseError) {
+                            it.onError(p0.toException())
+                        }
+
+                        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+                        }
+
+                        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                            val board = p0.getValue(Board::class.java)
+                            it.onNext(board!!)
+                        }
+
+                        override fun onChildRemoved(p0: DataSnapshot) {
+
+                        }
+                    })
+            }
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+        })
+    }
+
+    fun pushToken(title: String, message: String, token: String, fcm: String, key: String) = Completable.create {
+        try {
+            val root = JSONObject()
+            val notification = JSONObject()
+
+            notification.put("title", title)
+            notification.put("body", message)
+            root.put("notification", notification)
+            root.put("to", token)
+
+            val url = URL(fcm)
+            val conn = url.openConnection() as HttpURLConnection
+            conn.requestMethod = "POST"
+            conn.doOutput = true
+            conn.doInput = true
+            conn.addRequestProperty("Authorization", "key=$key")
+            conn.setRequestProperty("Accept", "application/json")
+            conn.setRequestProperty("Content-type", "application/json")
+
+            val os = conn.outputStream
+            os.write(root.toString().toByteArray())
+            os.flush()
+
+            conn.responseCode
+
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
     }
 }

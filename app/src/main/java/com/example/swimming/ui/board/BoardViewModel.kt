@@ -85,7 +85,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
                     // 업로드할 이미지 여러개
                     when (data!!.clipData!!.itemCount) {
                         2 -> {
-                            val uploadImage = repository.uploadImage("FreeBoard/","2", data)
+                            val uploadImage = repository.uploadImage("$path1/","2", data)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
@@ -100,7 +100,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
                         }
 
                         3 -> {
-                            val uploadImage = repository.uploadImage("FreeBoard/","3", data)
+                            val uploadImage = repository.uploadImage("$path1/","3", data)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
@@ -115,7 +115,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
                         }
 
                         4 -> {
-                            val uploadImage = repository.uploadImage("FreeBoard/","4", data)
+                            val uploadImage = repository.uploadImage("$path1/","4", data)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
@@ -130,7 +130,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
                         }
 
                         5 -> {
-                            val uploadImage = repository.uploadImage("FreeBoard/","5", data)
+                            val uploadImage = repository.uploadImage("$path1/","5", data)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(Schedulers.newThread())
                                 .subscribe()
@@ -147,7 +147,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
 
                 } else {
                     // 업로드 할 이미지가 1개
-                    val uploadImage = repository.uploadImage("FreeBoard/","1", data)
+                    val uploadImage = repository.uploadImage("$path1/","1", data)
                         .subscribeOn(Schedulers.io())
                         .observeOn(Schedulers.newThread())
                         .subscribe()
@@ -310,9 +310,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
         val adapter = object : FirebaseRecyclerPagingAdapter<Board, BoardViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardViewHolder {
                 context = parent.context
-                return BoardViewHolder(
-                    LayoutInflater.from(context).inflate(R.layout.item_list, parent, false)
-                )
+                return BoardViewHolder(LayoutInflater.from(context).inflate(R.layout.item_list, parent, false))
             }
 
             override fun onBindViewHolder(p0: BoardViewHolder, p1: Int, p2: Board) {
@@ -497,6 +495,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
         disposables.add(load)
     }
 
+    // 좋아요 개수 플러스
     fun updateBoardLikeCountPlus(path1: String, path2: String, uuid: String) {
         val update = repository.updateBoardLikeCount(path1, path2, uuid)
             .subscribeOn(Schedulers.io())
@@ -506,6 +505,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
         disposables.add(update)
     }
 
+    // 좋아요 개수 마이너스
     fun updateBoardLikeCountMinus(path1: String, path2: String, uuid: String) {
         val update = repository.updateBoardLikeCountMinus(path1, path2, uuid)
             .subscribeOn(Schedulers.io())
@@ -525,6 +525,38 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             }, {})
 
         disposables.add(load)
+    }
+
+    // 내가 쓴 글
+    fun myBoard(path1: String, path2: String) {
+        val load = repository.myBoard(path1, path2)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _boardForm.value = BoardFormState(board = it)
+            },{})
+
+        disposables.add(load)
+    }
+
+    fun myComments(path1: String, path2: String, path3: String) {
+        val load = repository.myComments(path1, path2, path3)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _boardForm.value = BoardFormState(board = it)
+            },{})
+
+        disposables.add(load)
+    }
+
+    fun pushToken(title: String, message: String, token: String, fcm: String, key: String) {
+        val push = repository.pushToken(title, message, token, fcm, key)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(push)
     }
 
     // 제목 공백 체크

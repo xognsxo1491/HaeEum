@@ -2,7 +2,9 @@ package com.example.swimming.data.board
 
 // 게시글 정보
 data class Board(
+    var kind: String = "",
     var id: String = "",
+    var token: String = "",
     var title: String = "",
     var contents: String = "",
     var time: String = "",

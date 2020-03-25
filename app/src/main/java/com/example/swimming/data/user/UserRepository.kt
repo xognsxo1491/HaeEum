@@ -1,11 +1,7 @@
 package com.example.swimming.data.user
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.widget.TextView
 import com.example.swimming.utils.UtilBase64Cipher
-import io.reactivex.Single
 
 class UserRepository(private val dataSource: UserDataSource, val context: Context) {
 

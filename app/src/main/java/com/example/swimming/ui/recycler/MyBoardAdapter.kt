@@ -15,14 +15,14 @@ import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
 import kotlin.collections.ArrayList
 
-class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
+class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerView.Adapter<MyBoardAdapter.ViewHolder>() {
     private var mData: ArrayList<Board> = list
     private var context: Context? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.item_list, parent, false)
+        val view = inflater.inflate(R.layout.item_mylist, parent, false)
 
         return ViewHolder(view)
     }
@@ -37,6 +37,11 @@ class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView
         holder.image.text = UtilBase64Cipher.decode(item.imgCount)
         holder.comments.text = UtilBase64Cipher.decode(item.commentCount)
         holder.like.text = UtilBase64Cipher.decode(item.like)
+
+        when (UtilBase64Cipher.decode(item.kind)) {
+            "FreeBoard" -> holder.kind.text = "자유 게시판"
+            "InfoBoard" -> holder.kind.text = "정보 게시판"
+        }
 
         holder.onClick(
             holder.itemView, context!!,
@@ -62,14 +67,15 @@ class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val id: TextView = itemView.findViewById(R.id.text_board_id)
-        val title: TextView = itemView.findViewById(R.id.text_board_title)
-        val contents: TextView = itemView.findViewById(R.id.text_board_contents)
-        val time: TextView = itemView.findViewById(R.id.text_board_time)
-        val image: TextView = itemView.findViewById(R.id.text_board_imgCount)
-        val comments: TextView = itemView.findViewById(R.id.text_board_commentCount)
-        val like: TextView = itemView.findViewById(R.id.text_board_like)
-        val layout: LinearLayout = itemView.findViewById(R.id.layout_list_img)
+        val id: TextView = itemView.findViewById(R.id.text_myBoard_id)
+        val title: TextView = itemView.findViewById(R.id.text_myBoard_title)
+        val contents: TextView = itemView.findViewById(R.id.text_myBoard_contents)
+        val time: TextView = itemView.findViewById(R.id.text_myBoard_time)
+        val image: TextView = itemView.findViewById(R.id.text_myBoard_imgCount)
+        val comments: TextView = itemView.findViewById(R.id.text_myBoard_commentCount)
+        val like: TextView = itemView.findViewById(R.id.text_myBoard_like)
+        val kind: TextView = itemView.findViewById(R.id.text_myBoard_kind)
+        val layout: LinearLayout = itemView.findViewById(R.id.layout_myList_img)
 
         fun onClick(itemView: View, context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String) {
             itemView.setOnClickListener {

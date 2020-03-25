@@ -23,6 +23,15 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
     var progressBar: ProgressBar? = null
     var data: Intent? = null
 
+    fun checkToken() {
+        val check = repository.checkToken()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(check)
+    }
+
     // 프로필 불러오기
     fun setProfile() {
         val setProfile = repository.setProfile()

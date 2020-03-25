@@ -21,7 +21,6 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var image: TextView = itemView.findViewById(R.id.text_board_imgCount)
     private var comments: TextView = itemView.findViewById(R.id.text_board_commentCount)
     private var like: TextView = itemView.findViewById(R.id.text_board_like)
-    private var uuid: String? = null
 
     fun setItem(post: Board) {
         id.text = UtilBase64Cipher.decode(post.id)
@@ -31,7 +30,6 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         image.text = UtilBase64Cipher.decode(post.imgCount)
         comments.text = UtilBase64Cipher.decode(post.commentCount)
         like.text = UtilBase64Cipher.decode(post.like)
-        uuid = post.uuid
 
         if (image.text.toString() == "0") {
             val layout: LinearLayout = itemView.findViewById(R.id.layout_list_img)
@@ -51,6 +49,7 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             intent.putExtra("imgCount", UtilBase64Cipher.decode(post.imgCount))
             intent.putExtra("comment", UtilBase64Cipher.decode(post.commentCount))
             intent.putExtra("like", UtilBase64Cipher.decode(post.like))
+            intent.putExtra("token", post.token)
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }

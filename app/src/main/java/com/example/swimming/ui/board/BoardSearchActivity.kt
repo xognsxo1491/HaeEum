@@ -2,6 +2,7 @@ package com.example.swimming.ui.board
 
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +43,12 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
                         "FreeBoard" -> {
                             list.clear()
                             viewModel.searchKeyword("FreeBoard", "FreeBoardInfo", edit_search.text.toString())
+                            UtilKeyboard.hideKeyboard(this)
+                        }
+
+                        "InfoBoard" -> {
+                            list.clear()
+                            viewModel.searchKeyword("InfoBoard", "InfoBoardInfo", edit_search.text.toString())
                             UtilKeyboard.hideKeyboard(this)
                         }
                     }

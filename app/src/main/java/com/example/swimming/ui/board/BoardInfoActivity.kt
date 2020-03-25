@@ -60,6 +60,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         val kind = intent.getStringExtra("BoardKind")
         val uuid = intent.getStringExtra("uuid")
         val imgCount = intent.getStringExtra("imgCount")
+        val toekn = intent.getStringExtra("token")
 
         text_board_id.text = intent.getStringExtra("id")
         text_board_title.text = intent.getStringExtra("title")
@@ -80,6 +81,15 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                 viewModel.loadComments(this, "FreeBoard", "FreeBoardComments", "FreeBoardInfo", uuid) // 댓글 불러오기
                 viewModel.checkBoardLike("FreeBoard", "FreeBoardLike", uuid) // 좋아요 구독 상태
                 viewModel.loadBoardLike("FreeBoard", "FreeBoardInfo", uuid) // 좋아요 개수
+            }
+
+            "InfoBoard" -> {
+                text_info_tTitle.text = getString(R.string.info_board)
+                viewModel.checkBoard("InfoBoard", "InfoBoardInfo", uuid!!) // 취소 확인
+                viewModel.loadImage("InfoBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
+                viewModel.loadComments(this, "InfoBoard", "InfoBoardComments", "InfoBoardInfo", uuid) // 댓글 불러오기
+                viewModel.checkBoardLike("InfoBoard", "InfoBoardLike", uuid) // 좋아요 구독 상태
+                viewModel.loadBoardLike("InfoBoard", "InfoBoardInfo", uuid) // 좋아요 개수
             }
         }
 
@@ -194,8 +204,15 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                         viewModel.updateCommentCount("FreeBoard", "FreeBoardInfo", uuid)
                         text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
                     }
+
+                    "InfoBoard" -> {
+                        viewModel.uploadComments("InfoBoard", "InfoBoardComments", uuid!!)
+                        viewModel.updateCommentCount("InfoBoard", "InfoBoardInfo", uuid)
+                        text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
+                    }
                 }
 
+                viewModel.pushToken(getString(R.string.message_comments), edit_comments.text.toString(), toekn!!, getString(R.string.fcm), getString(R.string.Authorization))
                 edit_comments.text = null
                 UtilKeyboard.hideKeyboard(this)
             }
@@ -213,6 +230,11 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                         viewModel.uploadBoardLike("FreeBoard", "FreeBoardLike", uuid!!)
                         viewModel.updateBoardLikeCountPlus("FreeBoard", "FreeBoardInfo", uuid)
                     }
+
+                    "InfoBoard" -> {
+                        viewModel.uploadBoardLike("InfoBoard", "InfoBoardLike", uuid!!)
+                        viewModel.updateBoardLikeCountPlus("InfoBoard", "InfoBoardInfo", uuid)
+                    }
                 }
 
             } else if (img_favorite.tag == Integer.valueOf(R.string.like)){
@@ -224,6 +246,11 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                     "FreeBoard" -> {
                         viewModel.deleteBoardLike("FreeBoard", "FreeBoardLike", uuid!!)
                         viewModel.updateBoardLikeCountMinus("FreeBoard", "FreeBoardInfo", uuid)
+                    }
+
+                    "InfoBoard" -> {
+                        viewModel.deleteBoardLike("InfoBoard", "InfoBoardLike", uuid!!)
+                        viewModel.updateBoardLikeCountMinus("InfoBoard", "InfoBoardInfo", uuid)
                     }
                 }
             }

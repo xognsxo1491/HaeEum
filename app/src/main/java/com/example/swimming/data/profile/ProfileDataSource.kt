@@ -8,8 +8,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.iid.FirebaseInstanceId
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 class ProfileDataSource {
     private val database: FirebaseDatabase by lazy {
@@ -18,6 +20,18 @@ class ProfileDataSource {
 
     private val auth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
+    }
+
+    private val instanceId: FirebaseInstanceId by lazy {
+        FirebaseInstanceId.getInstance()
+    }
+
+
+    fun checkToken(editor: SharedPreferences.Editor) = Completable.create {
+        instanceId.instanceId.addOnCompleteListener {
+            val token = it.result?.token
+            editor.putString("token", token).apply()
+        }
     }
 
     // 프로필 설정

@@ -3,7 +3,7 @@
     package="com.example.swimming">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    
     <application
         android:name=".di.MyApplication"
         android:allowBackup="true"
@@ -13,9 +13,11 @@
         android:roundIcon="@mipmap/ic_launcher_swimming"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.board.MyBoardActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.board.BoardSearchActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.board.BoardInfoActivity"
             android:screenOrientation="portrait"
@@ -48,6 +50,16 @@
         <activity
             android:name=".ui.user.LoginActivity"
             android:screenOrientation="portrait" />
+
+        <service
+            android:name=".utils.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

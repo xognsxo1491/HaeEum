@@ -41,10 +41,15 @@ class BoardActivity : AppCompatActivity(), KodeinAware {
         mBoardKind = intent.getStringExtra("BoardKind")
 
             when (mBoardKind) {
-            "FreeBoard" -> {
-                text_board_tTitle.text = getString(R.string.free_board)
-                viewModel.loadBoardList(this, "FreeBoard", "FreeBoardInfo")
+                "FreeBoard" -> {
+                    text_board_tTitle.text = getString(R.string.free_board)
+                    viewModel.loadBoardList(this, "FreeBoard", "FreeBoardInfo")
             }
+
+                "InfoBoard" -> {
+                    text_board_tTitle.text = getString(R.string.info_board)
+                    viewModel.loadBoardList(this, "InfoBoard", "InfoBoardInfo")
+                }
         }
 
         fab_free.setOnClickListener {

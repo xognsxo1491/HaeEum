@@ -57,18 +57,18 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         viewModel.card5 = card_write_5
 
         viewModel.boardFormState.observe(this@BoardWriteActivity, Observer {
-            val writeState = it ?: return@Observer
+            val state = it ?: return@Observer
 
-            if (writeState.titleError != null) {
-                edit_board_title.error = getString(writeState.titleError)
+            if (state.titleError != null) {
+                edit_board_title.error = getString(state.titleError)
             }
 
-            if (writeState.contentsError != null) {
-                edit_board_contents.error = getString(writeState.contentsError)
+            if (state.contentsError != null) {
+                edit_board_contents.error = getString(state.contentsError)
             }
 
-            if (writeState.loading != null) {
-                utilShowDialog(this, getString(writeState.loading)).show()
+            if (state.loading != null) {
+                utilShowDialog(this, getString(state.loading)).show()
             }
         })
 
@@ -114,6 +114,11 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
                     viewModel.writeBoard("FreeBoard", "FreeBoardInfo")
                     return true
                 }
+
+                "InfoBoard" -> {
+                    viewModel.writeBoard("InfoBoard", "InfoBoardInfo")
+                    return true
+                }
             }
         }
 
@@ -125,6 +130,13 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             "FreeBoard" -> {
                 val intent = Intent(this,BoardActivity::class.java)
                 intent.putExtra("BoardKind", "FreeBoard")
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+            }
+
+            "InfoBoard" -> {
+                val intent = Intent(this,BoardActivity::class.java)
+                intent.putExtra("BoardKind", "InfoBoard")
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(intent)
             }

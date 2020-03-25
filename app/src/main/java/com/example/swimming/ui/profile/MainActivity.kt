@@ -2,6 +2,8 @@ package com.example.swimming.ui.profile
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
@@ -47,6 +49,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel.profileActionResult = this
         viewModel.progressBar = nav_main_view.getHeaderView(0).findViewById(R.id.progress_nav)
         viewModel.setProfile()
+        viewModel.checkToken()
 
         loadFragment(HomeFragment())
 
@@ -142,6 +145,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     onLogout()
                 }
                 mBuilder.setNegativeButton("취소") {_, _ -> }.show()
+            }
+
+            R.id.nav_myBoard -> {
+                val intent = Intent(this, MyBoardActivity::class.java)
+                intent.putExtra("Kind", "Board")
+                startActivity(intent)
+            }
+
+            R.id.nav_myComment -> {
+                val intent = Intent(this, MyBoardActivity::class.java)
+                intent.putExtra("Kind", "Comments")
+                startActivity(intent)
             }
         }
         return true

@@ -10,12 +10,13 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
 
     private val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
     private val id = pref.getString("Id", "")
+    private val token = pref.getString("token", "")
 
     private val time = System.currentTimeMillis().toString()
     private val uuid = System.currentTimeMillis().toString() + UUID.randomUUID().toString()
 
     fun writeBoard(title: String, contents: String, imgCount: String, path1: String, path2: String) =
-        dataSource.writeBoard(UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode("0"), UtilBase64Cipher.encode("0"), path1, path2)
+        dataSource.writeBoard(token!!, UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode("0"), UtilBase64Cipher.encode("0"), path1, path2)
 
     fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) =
         dataSource.deleteBoard(path1, path2, path3, uuid, count)
@@ -64,4 +65,13 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
 
     fun searchKeyword(path1: String, path2: String, keyword: String) =
         dataSource.searchKeyword(path1, path2, keyword)
+
+    fun myBoard(path1: String, path2: String) =
+        dataSource.myBoard(path1, path2, id!!)
+
+    fun myComments(path1: String, path2: String, path3: String) =
+        dataSource.myComments(path1, path2, path3, UtilBase64Cipher.encode(id!!))
+
+    fun pushToken(title: String, message: String, token: String, fcm: String, key: String) =
+        dataSource.pushToken(title, message, token, fcm, key)
 }
