@@ -3,7 +3,6 @@ package com.example.swimming.ui.board
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -44,12 +43,12 @@ class MyBoardActivity : AppCompatActivity(), KodeinAware {
             "Comments" -> {
                 text_myBoard_title.text  = getString(R.string.myComment)
                 viewModel.myComments("FreeBoard", "FreeBoardComments", "FreeBoardInfo")
-                viewModel.myComments("InfoBoard", "InfoBoardComments", "InfoBoardInfo")
+                viewModel.myComments( "InfoBoard", "InfoBoardComments", "InfoBoardInfo")
             }
         }
 
         val list = ArrayList<Board>()
-        viewModel.boardFormState.observe(this, Observer {
+        viewModel.boardFormStatus.observe(this, Observer {
             val state = it ?: return@Observer
 
             if (state.board != null) {

@@ -19,10 +19,4 @@ class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         time.text = (UtilTimeFormat.formatting((UtilBase64Cipher.decode(post.time).toLong())))
         contents.text = UtilBase64Cipher.decode(post.contents)
     }
-
-    fun onClick(view: View, context: Context) {
-        view.setOnClickListener {
-
-        }
-    }
 }

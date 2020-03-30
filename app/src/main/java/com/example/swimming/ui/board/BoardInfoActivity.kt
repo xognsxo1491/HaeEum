@@ -93,7 +93,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             }
         }
 
-        viewModel.boardFormState.observe(this@BoardInfoActivity, Observer {
+        viewModel.boardFormStatus.observe(this@BoardInfoActivity, Observer {
             val boardState = it ?: return@Observer
 
             if (boardState.check != null) {
@@ -202,17 +202,19 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                     "FreeBoard" -> {
                         viewModel.uploadComments("FreeBoard", "FreeBoardComments", uuid!!)
                         viewModel.updateCommentCount("FreeBoard", "FreeBoardInfo", uuid)
+                        viewModel.pushMessage("User", "MessageInfo", uuid, "FreeBoard", text_board_title.text.toString(), edit_comments.text.toString())
                         text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
                     }
 
                     "InfoBoard" -> {
                         viewModel.uploadComments("InfoBoard", "InfoBoardComments", uuid!!)
                         viewModel.updateCommentCount("InfoBoard", "InfoBoardInfo", uuid)
+                        viewModel.pushMessage("User", "MessageInfo", uuid, "InfoBoard", text_board_title.text.toString(), edit_comments.text.toString())
                         text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
                     }
                 }
 
-                viewModel.pushToken(getString(R.string.message_comments), edit_comments.text.toString(), toekn!!, getString(R.string.fcm), getString(R.string.Authorization))
+                viewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), toekn!!, getString(R.string.post_fcm), getString(R.string.authorization))
                 edit_comments.text = null
                 UtilKeyboard.hideKeyboard(this)
             }

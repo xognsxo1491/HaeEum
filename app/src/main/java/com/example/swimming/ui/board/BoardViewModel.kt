@@ -27,15 +27,16 @@ import com.shreyaspatil.firebase.recyclerpagination.LoadingState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 class BoardViewModel(val repository: BoardRepository) : ViewModel() {
     private val disposables = CompositeDisposable()
-    private val _boardForm = MutableLiveData<BoardFormState>()
+    private val _boardForm = MutableLiveData<BoardFormStatus>()
 
-    val boardFormState: LiveData<BoardFormState> = _boardForm
+    val boardFormStatus: LiveData<BoardFormStatus> = _boardForm
 
-    private var stateTitle: Boolean = false
-    private var stateContents: Boolean = false
+    private var statusTitle: Boolean = false
+    private var statusContents: Boolean = false
 
     var recyclerView: RecyclerView? = null
     var refreshLayout: SwipeRefreshLayout? = null
@@ -67,8 +68,8 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
         checkTitle()
         checkContents()
 
-        if (stateTitle && stateContents) {
-            _boardForm.value = BoardFormState(loading = R.string.loading)
+        if (statusTitle && statusContents) {
+            _boardForm.value = BoardFormStatus(loading = R.string.loading)
 
             if (card1!!.visibility != View.VISIBLE) {
 
@@ -180,7 +181,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                _boardForm.value = BoardFormState(check = R.string.deleteError)
+                _boardForm.value = BoardFormStatus(check = R.string.message_delete)
             }, {})
 
         disposables.add(check)
@@ -260,43 +261,43 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it.contains("이미지0: ")) {
-                    _boardForm.value = BoardFormState(
+                    _boardForm.value = BoardFormStatus(
                         image0 = it.split("이미지0: ")[1]
                     )
                 }
 
                 if (it.contains("이미지1: ")) {
-                    _boardForm.value = BoardFormState(
+                    _boardForm.value = BoardFormStatus(
                         image1 = it.split("이미지1: ")[1]
                     )
                 }
 
                 if (it.contains("이미지2: ")) {
-                    _boardForm.value = BoardFormState(
+                    _boardForm.value = BoardFormStatus(
                         image2 = it.split("이미지2: ")[1]
                     )
                 }
 
                 if (it.contains("이미지3: ")) {
-                    _boardForm.value = BoardFormState(
+                    _boardForm.value = BoardFormStatus(
                         image3 = it.split("이미지3: ")[1]
                     )
                 }
 
                 if (it.contains("이미지4: ")) {
-                    _boardForm.value = BoardFormState(
+                    _boardForm.value = BoardFormStatus(
                         image4 = it.split("이미지4: ")[1]
                     )
                 }
 
                 if (it.contains("이미지5: ")) {
-                    _boardForm.value = BoardFormState(
+                    _boardForm.value = BoardFormStatus(
                         image5 = it.split("이미지5: ")[1]
                     )
                 }
 
             }, {
-                _boardForm.value = BoardFormState( error = R.string.imageError)
+                _boardForm.value = BoardFormStatus( error = R.string.message_image)
             })
 
         disposables.add(load)
@@ -428,7 +429,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe( {
-                _boardForm.value = BoardFormState(
+                _boardForm.value = BoardFormStatus(
                     setCommentCount = UtilBase64Cipher.decode(it)
                 )
             }, {})
@@ -452,7 +453,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                _boardForm.value = BoardFormState(messageLike = R.string.like)
+                _boardForm.value = BoardFormStatus(messageLike = R.string.like)
             },{})
 
         disposables.add(upload)
@@ -487,7 +488,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                _boardForm.value = BoardFormState(
+                _boardForm.value = BoardFormStatus(
                     setLikeCount = UtilBase64Cipher.decode(it)
                 )}, {}
             )
@@ -521,7 +522,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                _boardForm.value = BoardFormState(board = it)
+                _boardForm.value = BoardFormStatus(board = it)
             }, {})
 
         disposables.add(load)
@@ -533,7 +534,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                _boardForm.value = BoardFormState(board = it)
+                _boardForm.value = BoardFormStatus(board = it)
             },{})
 
         disposables.add(load)
@@ -544,7 +545,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                _boardForm.value = BoardFormState(board = it)
+                _boardForm.value = BoardFormStatus(board = it)
             },{})
 
         disposables.add(load)
@@ -559,24 +560,34 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
         disposables.add(push)
     }
 
+    fun pushMessage(path1: String, path2: String, uuid: String, kind: String, title: String, contents: String) {
+
+        val push = repository.pushMessage(path1, path2, uuid, System.currentTimeMillis().toString() + UUID.randomUUID().toString(), kind, title, contents)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(push)
+    }
+
     // 제목 공백 체크
     private fun checkTitle() {
         if (title.isNullOrEmpty()) {
-            _boardForm.value = BoardFormState(titleError = R.string.message_isBlank)
+            _boardForm.value = BoardFormStatus(titleError = R.string.message_isBlank)
             return
 
         } else
-            stateTitle = true
+            statusTitle = true
     }
 
     // 내용 공백 체크
     private fun checkContents() {
         if (contents.isNullOrEmpty()) {
-            _boardForm.value = BoardFormState(contentsError = R.string.message_isBlank)
+            _boardForm.value = BoardFormStatus(contentsError = R.string.message_isBlank)
             return
 
         } else
-            stateContents = true
+            statusContents = true
     }
 
     override fun onCleared() {

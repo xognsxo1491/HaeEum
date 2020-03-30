@@ -51,7 +51,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
         viewModel.email = edit_register_email
         viewModel.code = edit_register_code
 
-        viewModel.registerFormState.observe(this@ResisterActivity, Observer {
+        viewModel.registerFormStatus.observe(this@ResisterActivity, Observer {
             val registerState = it ?: return@Observer
 
             if (registerState.nameError != null) {

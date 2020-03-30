@@ -62,20 +62,27 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 app:cardBackgroundColor="@color/colorWhite"
-                app:cardCornerRadius="2dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="0dp"
                 app:cardUseCompatPadding="true">
 
-                <EditText
-                    android:id="@+id/edit_login_id"
-                    style="@style/EditTheme_Primary"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:backgroundTint="@color/colorWhiteVariant"
-                    android:hint="@string/id"
-                    android:inputType="textEmailAddress"
-                    android:textColorHint="@color/colorWhiteVariant"
-                    android:importantForAutofill="no" />
+                    android:layout_height="match_parent"
+                    android:background="@drawable/style_dash"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edit_login_id"
+                        style="@style/EditTheme_White"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:backgroundTint="@color/colorWhiteVariant"
+                        android:hint="@string/id"
+                        android:importantForAutofill="no"
+                        android:inputType="textEmailAddress"
+                        android:textColorHint="@color/colorGray" />
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
@@ -85,20 +92,27 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 app:cardBackgroundColor="@color/colorWhite"
-                app:cardCornerRadius="2dp"
-                app:cardElevation="2dp"
+                app:cardCornerRadius="4dp"
+                app:cardElevation="0dp"
                 app:cardUseCompatPadding="true">
 
-                <EditText
-                    android:id="@+id/edit_login_password"
-                    style="@style/EditTheme_Primary"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
-                    android:backgroundTint="@color/colorWhiteVariant"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:textColorHint="@color/colorWhiteVariant"
-                    android:importantForAutofill="no" />
+                    android:layout_height="match_parent"
+                    android:background="@drawable/style_dash"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edit_login_password"
+                        style="@style/EditTheme_White"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:backgroundTint="@color/colorWhiteVariant"
+                        android:hint="@string/password"
+                        android:importantForAutofill="no"
+                        android:inputType="textPassword"
+                        android:textColorHint="@color/colorGray" />
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 

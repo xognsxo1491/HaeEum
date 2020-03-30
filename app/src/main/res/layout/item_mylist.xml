@@ -155,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="4dp"
-                    android:textColor="@color/colorPurple"
+                    android:textColor="@color/colorGradientPurple"
                     android:textSize="10sp"
                     tools:ignore="SmallSp" />
 

@@ -2,7 +2,6 @@ package com.example.swimming.ui.board
 
 import android.os.Bundle
 import android.view.KeyEvent
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -67,7 +66,7 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
             finish()
         }
 
-        viewModel.boardFormState.observe(this@BoardSearchActivity, Observer {
+        viewModel.boardFormStatus.observe(this@BoardSearchActivity, Observer {
             val boardState = it ?: return@Observer
 
             if (boardState.board != null) {

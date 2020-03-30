@@ -58,7 +58,7 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
             viewModel.login()
         }
 
-        viewModel.registerFormState.observe(this@LoginActivity, Observer {
+        viewModel.registerFormStatus.observe(this@LoginActivity, Observer {
             val registerState = it ?: return@Observer
 
             if (registerState.idError != null) {

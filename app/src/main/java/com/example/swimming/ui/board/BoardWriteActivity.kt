@@ -56,7 +56,7 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         viewModel.card4 = card_write_4
         viewModel.card5 = card_write_5
 
-        viewModel.boardFormState.observe(this@BoardWriteActivity, Observer {
+        viewModel.boardFormStatus.observe(this@BoardWriteActivity, Observer {
             val state = it ?: return@Observer
 
             if (state.titleError != null) {

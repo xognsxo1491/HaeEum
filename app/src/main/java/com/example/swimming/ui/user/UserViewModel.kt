@@ -16,8 +16,8 @@ import java.util.regex.Pattern
 class UserViewModel(private val repository: UserRepository) : ViewModel() {
     private val mRandom = System.currentTimeMillis()
 
-    private val _registerForm = MutableLiveData<RegisterFormState>()
-    val registerFormState: LiveData<RegisterFormState> = _registerForm
+    private val _registerForm = MutableLiveData<RegisterFormStatus>()
+    val registerFormStatus: LiveData<RegisterFormStatus> = _registerForm
 
     var name: EditText? = null
     var id: EditText? = null
@@ -26,12 +26,12 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     var email: EditText? = null
     var code: EditText? = null
 
-    private var stateName: Boolean = false
-    private var stateId: Boolean = false
-    private var statePassword: Boolean = false
-    private var statePasswordCheck: Boolean = false
-    private var stateEmail: Boolean = false
-    private var stateCode: Boolean = false
+    private var statusName: Boolean = false
+    private var statusId: Boolean = false
+    private var statusPassword: Boolean = false
+    private var statusPasswordCheck: Boolean = false
+    private var statusEmail: Boolean = false
+    private var statusCode: Boolean = false
 
     private val disposables = CompositeDisposable()
     var userActionResult: UserActionResult? = null
@@ -46,7 +46,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         checkEmail()
         checkCode()
 
-        if (stateName && stateId && statePassword && statePasswordCheck && stateEmail && stateCode) {
+        if (statusName && statusId && statusPassword && statusPasswordCheck && statusEmail && statusCode) {
             val register = repository.register(name!!.text.toString(), id!!.text.toString(), password!!.text.toString(), email!!.text.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -57,7 +57,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
                         }
                     })
 
-            _registerForm.value = RegisterFormState(isProgressValid = true)
+            _registerForm.value = RegisterFormStatus(isProgressValid = true)
             disposables.add(register)
 
         } else userActionResult?.onFailed()
@@ -68,7 +68,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         checkName()
         checkEmail()
 
-        if (stateName && stateEmail) {
+        if (statusName && statusEmail) {
             val findId = repository.findId(name!!.text.toString(), email!!.text.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
@@ -79,7 +79,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
                         }
                     })
 
-            _registerForm.value = RegisterFormState(isProgressValid = true)
+            _registerForm.value = RegisterFormStatus(isProgressValid = true)
             disposables.add(findId)
         }
     }
@@ -90,7 +90,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         checkId()
         checkEmail()
 
-        if (stateName && stateId  && stateEmail) {
+        if (statusName && statusId  && statusEmail) {
             val findPassword = repository.findPassword(name!!.text.toString(), id!!.text.toString(), email!!.text.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
@@ -101,7 +101,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
                         }
                     })
 
-            _registerForm.value = RegisterFormState(isProgressValid = true)
+            _registerForm.value = RegisterFormStatus(isProgressValid = true)
             disposables.add(findPassword)
         }
     }
@@ -109,13 +109,13 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     // 이메일 보내기
     fun sendEmail() {
         if (email!!.text.toString().isEmpty()) {
-            _registerForm.value = RegisterFormState(emailError = R.string.message_isBlank)
-            stateEmail = false
+            _registerForm.value = RegisterFormStatus(emailError = R.string.message_isBlank)
+            statusEmail = false
             return
 
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email!!.text.toString()).matches()) {
-            _registerForm.value = RegisterFormState(emailError = R.string.message_register_email_format)
-            stateEmail = false
+            _registerForm.value = RegisterFormStatus(emailError = R.string.message_register_email_format)
+            statusEmail = false
             return
         }
 
@@ -129,7 +129,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
                     }
                 })
 
-        _registerForm.value = RegisterFormState(isProgressValid = true)
+        _registerForm.value = RegisterFormStatus(isProgressValid = true)
         disposables.add(sendEmail)
     }
 
@@ -138,7 +138,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         checkId()
         checkPassword()
 
-        if (stateId && statePassword) {
+        if (statusId && statusPassword) {
             val login = repository.login(id!!.text.toString(), password!!.text.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -149,7 +149,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
                         }
                     })
 
-            _registerForm.value = RegisterFormState(isProgressValid = true)
+            _registerForm.value = RegisterFormStatus(isProgressValid = true)
             disposables.add(login)
         }
     }
@@ -159,27 +159,27 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         val pattern = Pattern.compile("^[a-zA-Z0-9]+$")
 
         if (name!!.text.toString().isEmpty()) {
-            _registerForm.value = RegisterFormState(nameError = R.string.message_isBlank)
-            stateName = false
+            _registerForm.value = RegisterFormStatus(nameError = R.string.message_isBlank)
+            statusName = false
             return
 
         } else if (name!!.text.toString().contains(" ")) {
-            _registerForm.value = RegisterFormState(nameError = R.string.message_register_blank)
-            stateName = false
+            _registerForm.value = RegisterFormStatus(nameError = R.string.message_register_blank)
+            statusName = false
             return
 
         } else if (name!!.text.toString().length < 2 || name!!.text.toString().length > 10) {
             _registerForm.value =
-                RegisterFormState(nameError = R.string.message_register_name_length)
-            stateName = false
+                RegisterFormStatus(nameError = R.string.message_register_name_length)
+            statusName = false
             return
 
         } else if (pattern.matcher(name!!.text.toString()).matches()) {
-            _registerForm.value = RegisterFormState(nameError = R.string.message_register_name_form)
-            stateName = false
+            _registerForm.value = RegisterFormStatus(nameError = R.string.message_register_name_form)
+            statusName = false
             return
 
-        } else stateName = true
+        } else statusName = true
     }
 
     // 아이디 형식 체크
@@ -187,92 +187,92 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         val pattern = Pattern.compile("^[a-zA-Z0-9]+$")
 
         if (id!!.text.toString().isEmpty()) {
-            _registerForm.value = RegisterFormState(idError = R.string.message_isBlank)
-            stateId = false
+            _registerForm.value = RegisterFormStatus(idError = R.string.message_isBlank)
+            statusId = false
             return
 
         } else if (id!!.text.toString().contains(" ")) {
-            _registerForm.value = RegisterFormState(idError = R.string.message_register_blank)
-            stateId = false
+            _registerForm.value = RegisterFormStatus(idError = R.string.message_register_blank)
+            statusId = false
             return
 
         } else if (id!!.text.toString().length < 6 || id!!.text.toString().length > 20) {
-            _registerForm.value = RegisterFormState(idError = R.string.message_register_id_length)
-            stateId = false
+            _registerForm.value = RegisterFormStatus(idError = R.string.message_register_id_length)
+            statusId = false
             return
 
         } else if (!pattern.matcher(id!!.text.toString()).matches()) {
-            _registerForm.value = RegisterFormState(idError = R.string.message_register_id_form)
-            stateId = false
+            _registerForm.value = RegisterFormStatus(idError = R.string.message_register_id_form)
+            statusId = false
             return
 
-        } else stateId = true
+        } else statusId = true
     }
 
     // 비밀번호 형식 체크
     private fun checkPassword() {
         if (password!!.text.toString().isEmpty()) {
-            _registerForm.value = RegisterFormState(passwordError = R.string.message_isBlank)
-            statePassword = false
+            _registerForm.value = RegisterFormStatus(passwordError = R.string.message_isBlank)
+            statusPassword = false
             return
 
         } else if (password!!.text.toString().contains(" ")) {
-            _registerForm.value = RegisterFormState(passwordError = R.string.message_register_blank)
-            statePassword = false
+            _registerForm.value = RegisterFormStatus(passwordError = R.string.message_register_blank)
+            statusPassword = false
             return
 
         } else if (password!!.text.toString().length < 8 || password!!.text.toString().length > 30) {
-            _registerForm.value = RegisterFormState(passwordError = R.string.message_register_password_length)
-            statePassword = false
+            _registerForm.value = RegisterFormStatus(passwordError = R.string.message_register_password_length)
+            statusPassword = false
             return
 
-        } else statePassword = true
+        } else statusPassword = true
     }
 
     // 비민번호 확인 형식 체크
     private fun checkPasswordCheck() {
         if (passwordCheck!!.text.toString().isEmpty()) {
-            _registerForm.value = RegisterFormState(passwordCheckError = R.string.message_isBlank)
-            statePasswordCheck = false
+            _registerForm.value = RegisterFormStatus(passwordCheckError = R.string.message_isBlank)
+            statusPasswordCheck = false
             return
 
         } else if (passwordCheck!!.text.toString() != password!!.text.toString()) {
-            _registerForm.value = RegisterFormState(passwordCheckError = R.string.message_register_password_incorrect)
-            statePasswordCheck = false
+            _registerForm.value = RegisterFormStatus(passwordCheckError = R.string.message_register_password_incorrect)
+            statusPasswordCheck = false
             return
 
-        } else statePasswordCheck = true
+        } else statusPasswordCheck = true
     }
 
     // 이메일 형식 체크
     private fun checkEmail() {
 
         if (email!!.text.toString().isEmpty()) {
-            _registerForm.value = RegisterFormState(emailError = R.string.message_isBlank)
-            stateEmail = false
+            _registerForm.value = RegisterFormStatus(emailError = R.string.message_isBlank)
+            statusEmail = false
             return
 
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email!!.text.toString()).matches()) {
-            _registerForm.value = RegisterFormState(emailError = R.string.message_register_email_format)
-            stateEmail = false
+            _registerForm.value = RegisterFormStatus(emailError = R.string.message_register_email_format)
+            statusEmail = false
             return
 
-        } else stateEmail = true
+        } else statusEmail = true
     }
 
     // 코드 형식 체크
     private fun checkCode() {
         if (code!!.text.toString().isEmpty()) {
-            _registerForm.value = RegisterFormState(codeError = R.string.message_isBlank)
-            stateCode = false
+            _registerForm.value = RegisterFormStatus(codeError = R.string.message_isBlank)
+            statusCode = false
             return
 
         } else if (code!!.text.toString() != mRandom.toString()) {
-            _registerForm.value = RegisterFormState(codeError = R.string.message_register_code_incorrect)
-            stateCode = false
+            _registerForm.value = RegisterFormStatus(codeError = R.string.message_register_code_incorrect)
+            statusCode = false
             return
 
-        } else stateCode = true
+        } else statusCode = true
     }
 
     override fun onCleared() {

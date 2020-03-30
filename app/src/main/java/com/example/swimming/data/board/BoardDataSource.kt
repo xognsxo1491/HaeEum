@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
+import com.example.swimming.data.profile.Message
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
@@ -26,7 +27,7 @@ class BoardDataSource {
     }
 
     // 게시글 작성
-    fun writeBoard(token: String, title: String, contents: String, context: Context, uuid: String, imgCount: String, commentCount: String, like: String, path1: String, path2: String) = Completable.create {
+    fun writeBoard(token: String, title: String, contents: String, context: Context, time: String, uuid: String, imgCount: String, commentCount: String, like: String, path1: String, path2: String) = Completable.create {
         val reference = database.reference.child(path1).child(path2)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
@@ -38,7 +39,7 @@ class BoardDataSource {
                 val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
                 val userId = pref.getString("Id", "")
 
-                val board = Board(UtilBase64Cipher.encode(path1), UtilBase64Cipher.encode(userId.toString()), token, title, contents, UtilBase64Cipher.encode(System.currentTimeMillis().toString()), uuid, imgCount, commentCount, like)
+                val board = Board(UtilBase64Cipher.encode(path1), UtilBase64Cipher.encode(userId.toString()), token, title, contents, time, uuid, imgCount, commentCount, like)
                 reference.child(uuid).setValue(board)
                 it.onComplete()
             }
@@ -488,27 +489,15 @@ class BoardDataSource {
                 val splitId = split.split(", time=")[0]
 
                 if (splitId == id)
-                    database.reference.child(path1).child(path3).addChildEventListener(object : ChildEventListener {
+                    database.reference.child(path1).child(path3).child(p0.key!!).addListenerForSingleValueEvent(object : ValueEventListener {
 
                         override fun onCancelled(p0: DatabaseError) {
                             it.onError(p0.toException())
                         }
 
-                        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                            TODO("Not yet implemented")
-                        }
-
-                        override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-
-                        }
-
-                        override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                        override fun onDataChange(p0: DataSnapshot) {
                             val board = p0.getValue(Board::class.java)
                             it.onNext(board!!)
-                        }
-
-                        override fun onChildRemoved(p0: DataSnapshot) {
-
                         }
                     })
             }
@@ -518,6 +507,7 @@ class BoardDataSource {
         })
     }
 
+    // 토큰 메시지 전달
     fun pushToken(title: String, message: String, token: String, fcm: String, key: String) = Completable.create {
         try {
             val root = JSONObject()
@@ -546,5 +536,21 @@ class BoardDataSource {
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
+    }
+
+    // 나의 알림
+    fun pushMessage(path1: String, path2: String, id: String, uuid1: String, uuid2: String, kind: String, title: String, contents: String, time: String, status: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(id)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val message = Message(uuid2, uuid1, kind, title, contents, time, status)
+                reference.child(uuid2).setValue(message)
+            }
+        })
     }
 }

@@ -2,7 +2,6 @@ package com.example.swimming.ui.profile
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -33,8 +32,8 @@ import org.kodein.di.generic.instance
 // Singleton
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, KodeinAware, ProfileActionResult {
     override val kodein by kodein()
-
     private val factory: ProfileViewModelFactory by instance()
+
     private var progress: ProgressBar? = null
 
     private lateinit var mBinding: ActivityMainBinding
@@ -69,7 +68,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     supportFragmentManager.beginTransaction().replace(R.id.frame_main, dashBoardFragment).commit()
                 }
                 R.id.navigation_notifications -> {
-                    val notificationBoard = NotificationFragment()
+                    val notificationBoard =
+                        NotificationFragment()
                     supportFragmentManager.beginTransaction().replace(R.id.frame_main, notificationBoard).commit()
                 }
             }
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         // 프로필 이미지 업로드 UI
-        viewModel.profileFormState.observe(this@MainActivity, Observer {
+        viewModel.profileFormStatus.observe(this@MainActivity, Observer {
             val userState = it ?: return@Observer
 
             if (userState.onError != null) {
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        viewModel.profileFormState.observe(this@MainActivity, Observer {
+        viewModel.profileFormStatus.observe(this@MainActivity, Observer {
             val userState = it ?: return@Observer
 
             if (userState.onError != null) {

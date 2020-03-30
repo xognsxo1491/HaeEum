@@ -1,6 +1,8 @@
 package com.example.swimming.data.profile
 
 import android.content.SharedPreferences
+import androidx.lifecycle.LifecycleOwner
+import androidx.paging.PagedList
 import com.example.swimming.data.user.User
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.firebase.auth.FirebaseAuth
@@ -9,9 +11,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.iid.FirebaseInstanceId
+import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Single
 
 class ProfileDataSource {
     private val database: FirebaseDatabase by lazy {
@@ -26,7 +28,7 @@ class ProfileDataSource {
         FirebaseInstanceId.getInstance()
     }
 
-
+    // 토큰 확인
     fun checkToken(editor: SharedPreferences.Editor) = Completable.create {
         instanceId.instanceId.addOnCompleteListener {
             val token = it.result?.token
@@ -36,7 +38,6 @@ class ProfileDataSource {
 
     // 프로필 설정
     fun setProfile(id: String) = Observable.create<String> {
-
         database.reference.child("User").child("UserInfo").child(UtilBase64Cipher.encode(id))
             .addListenerForSingleValueEvent(object :
                 ValueEventListener {
@@ -56,9 +57,47 @@ class ProfileDataSource {
 
     // 로그아웃
     fun logout(editor: SharedPreferences.Editor) = Completable.create {
-
         editor.clear().apply()
         auth.signOut()
         it.onComplete()
+    }
+
+    // 알림 체크
+    fun checkMessage(owner: LifecycleOwner, path1: String, path2: String, id: String) : DatabasePagingOptions<Message> {
+        val reference = database.reference.child(path1).child(path2).child(id)
+
+        val config = PagedList.Config.Builder()
+            .setInitialLoadSizeHint(20) // 초기 개수
+            .setEnablePlaceholders(false)
+            .setPrefetchDistance(5) // 몇개 남았을 때 불러올지
+            .setPageSize(20) // 불러올 개수
+            .build()
+
+        return DatabasePagingOptions.Builder<Message>()
+            .setLifecycleOwner(owner)
+            .setQuery(reference, config, Message::class.java)
+            .build()
+    }
+
+    // 알림 읽음 표시
+    fun updateMessageStatus(path1: String, path2: String, id: String, uuid: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(id).child(uuid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val map: HashMap<String, Any> = HashMap()
+                map["status"] = UtilBase64Cipher.encode("true")
+
+                reference.updateChildren(map)
+            }
+        })
+    }
+
+    fun deleteMessage(path1: String, path2: String, id: String, uuid: String) = Completable.create {
+        database.reference.child(path1).child(path2).child(id).child(uuid).removeValue()
     }
 }

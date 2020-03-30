@@ -38,7 +38,7 @@ class FindPasswordFragment : Fragment(), Result, KodeinAware{
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
-        viewModel.registerFormState.observe(viewLifecycleOwner, Observer {
+        viewModel.registerFormStatus.observe(viewLifecycleOwner, Observer {
             val registerState = it ?: return@Observer
 
             if (registerState.nameError != null) {

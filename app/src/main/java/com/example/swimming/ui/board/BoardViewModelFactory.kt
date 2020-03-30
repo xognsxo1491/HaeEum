@@ -12,8 +12,7 @@ class BoardViewModelFactory(private val context: Context) : ViewModelProvider.Fa
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(BoardViewModel::class.java)) {
             return BoardViewModel(
-                repository = BoardRepository(
-                    BoardDataSource(), context = context)) as T
+                repository = BoardRepository(BoardDataSource(), context = context)) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

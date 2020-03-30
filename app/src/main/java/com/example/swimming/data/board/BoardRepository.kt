@@ -16,7 +16,7 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
     private val uuid = System.currentTimeMillis().toString() + UUID.randomUUID().toString()
 
     fun writeBoard(title: String, contents: String, imgCount: String, path1: String, path2: String) =
-        dataSource.writeBoard(token!!, UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode("0"), UtilBase64Cipher.encode("0"), path1, path2)
+        dataSource.writeBoard(token!!, UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, UtilBase64Cipher.encode(time), uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode("0"), UtilBase64Cipher.encode("0"), path1, path2)
 
     fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) =
         dataSource.deleteBoard(path1, path2, path3, uuid, count)
@@ -74,4 +74,8 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
 
     fun pushToken(title: String, message: String, token: String, fcm: String, key: String) =
         dataSource.pushToken(title, message, token, fcm, key)
+
+    fun pushMessage(path1: String, path2: String, uuid1: String, uuid2: String, kind: String, title: String, contents: String) =
+        dataSource.pushMessage(path1, path2, UtilBase64Cipher.encode(id!!), uuid1, uuid2, UtilBase64Cipher.encode(kind), UtilBase64Cipher.encode(title),
+            UtilBase64Cipher.encode(contents), UtilBase64Cipher.encode(time), UtilBase64Cipher.encode("false"))
 }

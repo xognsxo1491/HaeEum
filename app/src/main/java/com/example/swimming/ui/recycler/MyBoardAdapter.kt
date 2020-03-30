@@ -1,5 +1,6 @@
 package com.example.swimming.ui.recycler
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -13,7 +14,7 @@ import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
-import kotlin.collections.ArrayList
+
 
 class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerView.Adapter<MyBoardAdapter.ViewHolder>() {
     private var mData: ArrayList<Board> = list
@@ -57,6 +58,20 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
             item.token
         )
 
+        holder.check(
+            context!!,
+            UtilBase64Cipher.decode(item.kind),
+            item.uuid,
+            holder.id.text.toString(),
+            holder.title.text.toString(),
+            holder.contents.text.toString(),
+            UtilBase64Cipher.decode(item.time),
+            holder.image.text.toString(),
+            holder.comments.text.toString(),
+            holder.like.text.toString(),
+            item.token
+        )
+
         if (holder.image.text.toString() == "0") {
             holder.layout.visibility = View.GONE
         }
@@ -67,6 +82,8 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private var mIntent: Intent? = null
+
         val id: TextView = itemView.findViewById(R.id.text_myBoard_id)
         val title: TextView = itemView.findViewById(R.id.text_myBoard_title)
         val contents: TextView = itemView.findViewById(R.id.text_myBoard_contents)
@@ -79,6 +96,25 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
 
         fun onClick(itemView: View, context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String) {
             itemView.setOnClickListener {
+                val intent = Intent(context, BoardInfoActivity::class.java)
+                intent.putExtra("BoardKind", kind)
+                intent.putExtra("uuid", uuid)
+                intent.putExtra("id", id)
+                intent.putExtra("title", title)
+                intent.putExtra("contents", contents)
+                intent.putExtra("time", time)
+                intent.putExtra("imgCount", imgCount)
+                intent.putExtra("comment", commentCount)
+                intent.putExtra("like", like)
+                intent.putExtra("token", token)
+                context.startActivity(intent)
+            }
+        }
+
+        fun check(context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String) {
+            mIntent = (context as Activity).intent
+
+            if (mIntent!!.getStringExtra("message") == uuid) {
                 val intent = Intent(context, BoardInfoActivity::class.java)
                 intent.putExtra("BoardKind", kind)
                 intent.putExtra("uuid", uuid)

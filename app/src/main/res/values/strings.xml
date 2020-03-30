@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">헤엄</string>
     <string name="none"> </string>
-    <string name="Authorization">AAAAK0p2Znc:APA91bFfNLF5VZODxRqr8q41rahjhn9UZUWzSg0w9EaYaXU5jihaN48m8_h-sHPT3JD5ScwFkhqNg9mNfFTa1loqHZt9H4RyDayofrxFQ8tXQUiq5dFYdHxhqFQ_MsG2jCn_0CJTYvr7</string>
-    <string name="fcm">https://fcm.googleapis.com/fcm/send</string>
+    <string name="authorization">AAAAK0p2Znc:APA91bFfNLF5VZODxRqr8q41rahjhn9UZUWzSg0w9EaYaXU5jihaN48m8_h-sHPT3JD5ScwFkhqNg9mNfFTa1loqHZt9H4RyDayofrxFQ8tXQUiq5dFYdHxhqFQ_MsG2jCn_0CJTYvr7</string>
+    <string name="post_fcm">https://fcm.googleapis.com/fcm/send</string>
 
     <string name="title_home">Home</string>
     <string name="title_dashboard">DashBoard</string>
@@ -57,14 +57,15 @@
     <string name="anonymous">익명</string>
     <string name="loading">헤엄 중..</string>
     <string name="comments">이 곳에 댓글을 입력하세요.</string>
-    <string name="imageError">이미지 로딩에 오류가 발생하였습니다.</string>
-    <string name="commentsError">댓글 로딩에 오류가 발생하였습니다.</string>
-    <string name="deleteError">해당 글이 삭제되었습니다.</string>
+    <string name="message_image">이미지 로딩에 오류가 발생하였습니다.</string>
+    <string name="message_comment">댓글 로딩에 오류가 발생하였습니다.</string>
+    <string name="message_delete">해당 글이 삭제되었습니다.</string>
 
     <string name="logout">로그아웃</string>
     <string name="activity">활동</string>
     <string name="myBoard">내가 쓴 글</string>
     <string name="myComment">댓글 단 글</string>
+    <string name="board_delete">지우기</string>
 
     <string name="like">좋아요를 눌렀습니다</string>
     <string name="unLike">좋아요를 취소하였습니다</string>
@@ -72,11 +73,8 @@
     <string name="search">이 곳에 검색어를 입력하세요.</string>
     <string name="searchError">2글자 이상 입력해주세요.</string>
 
-    <string name="freeBoardContents">자유로운 주제로 이야기를 나눠보세요.</string>
-    <string name="infoBoardContents">물고기에 대한 다양한 정보를 교환해요.</string>
+    <string name="freeBoardContents">자유롭게 이야기를 나눠보세요.</string>
+    <string name="infoBoardContents">다양한 정보를 헤엄 유저들과 공유해보세요.</string>
 
-    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

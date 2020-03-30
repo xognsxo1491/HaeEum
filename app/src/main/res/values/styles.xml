@@ -35,6 +35,13 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="TextTheme_PrimaryVariant" parent="@android:style/Widget.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimaryVariant</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TextTheme_White" parent="@android:style/Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -45,6 +52,7 @@
     <style name="TextTheme_Dash" parent="@android:style/Widget.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorWhite</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
     </style>
