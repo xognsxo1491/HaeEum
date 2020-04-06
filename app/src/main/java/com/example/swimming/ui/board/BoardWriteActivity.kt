@@ -60,11 +60,11 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             val state = it ?: return@Observer
 
             if (state.titleError != null) {
-                edit_board_title.error = getString(state.titleError)
+                mBinding.editBoardTitle.error = getString(state.titleError)
             }
 
             if (state.contentsError != null) {
-                edit_board_contents.error = getString(state.contentsError)
+                mBinding.editBoardContents.error = getString(state.contentsError)
             }
 
             if (state.loading != null) {
@@ -72,14 +72,14 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             }
         })
 
-        fab_board_gallery.setOnClickListener {
+        mBinding.fabBoardGallery.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             startActivityForResult(intent, code)
         }
 
-        edit_board_title.requestFocus()
+        mBinding.editBoardTitle.requestFocus()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -119,6 +119,11 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
                     viewModel.writeBoard("InfoBoard", "InfoBoardInfo")
                     return true
                 }
+
+                "StoreBoard" -> {
+                    viewModel.writeBoard2("StoreBoard", "StoreBoardInfo", intent.getStringExtra("storeName")!!, intent.getDoubleExtra("latitude", 0.0), intent.getDoubleExtra("longitude", 0.0))
+                    return true
+                }
             }
         }
 
@@ -137,6 +142,13 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             "InfoBoard" -> {
                 val intent = Intent(this,BoardActivity::class.java)
                 intent.putExtra("BoardKind", "InfoBoard")
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+            }
+
+            "StoreBoard" -> {
+                val intent = Intent(this,BoardActivity::class.java)
+                intent.putExtra("BoardKind", "StoreBoard")
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(intent)
             }

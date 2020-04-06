@@ -11,5 +11,8 @@ data class Board(
     var uuid: String = "",
     var imgCount: String = "",
     var commentCount: String = "",
-    var like: String = ""
+    var like: String = "",
+    var store: String = "",
+    var latitude: Double = 0.0,
+    var longitude: Double = 0.0
 )

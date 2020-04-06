@@ -16,7 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.swimming.R
 import com.example.swimming.data.profile.Message
 import com.example.swimming.data.profile.ProfileRepository
-import com.example.swimming.ui.recycler.MessageViewHolder
+import com.example.swimming.ui.adapter.MessageViewHolder
 import com.example.swimming.ui.result.ProfileActionResult
 import com.example.swimming.ui.result.Result
 import com.google.firebase.database.DatabaseError
@@ -57,6 +57,8 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
             .subscribe({ t: String? ->
                 _profileForm.value = ProfileFormStatus(id = t!!.split(" ")[0])
                 _profileForm.value = ProfileFormStatus(email = t.split(" ")[1])
+                val a = "asdasd"
+                a.replace("a", "")
 
                 progressBar!!.visibility = View.INVISIBLE
             }, {

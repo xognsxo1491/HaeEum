@@ -46,6 +46,27 @@ class BoardDataSource {
         })
     }
 
+    // 게시글 작성 (수조관 게시판)
+    // 게시글 작성
+    fun writeBoard2(token: String, title: String, contents: String, context: Context, time: String, uuid: String, imgCount: String, commentCount: String, like: String, path1: String, path2: String, store: String, latitude: Double, longitude: Double) = Completable.create {
+        val reference = database.reference.child(path1).child(path2)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
+                val userId = pref.getString("Id", "")
+
+                val board = Board(UtilBase64Cipher.encode(path1), UtilBase64Cipher.encode(userId.toString()), token, title, contents, time, uuid, imgCount, commentCount, like, store, latitude, longitude)
+                reference.child(uuid).setValue(board)
+                it.onComplete()
+            }
+        })
+    }
+
     // 게시글 삭제
     fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) = Observable.create<Board> {
         val board = database.reference.child(path1).child(path2).child(uuid)
@@ -508,13 +529,13 @@ class BoardDataSource {
     }
 
     // 토큰 메시지 전달
-    fun pushToken(title: String, message: String, token: String, fcm: String, key: String) = Completable.create {
+    fun pushToken(title: String, contents: String, token: String, fcm: String, key: String) = Completable.create {
         try {
             val root = JSONObject()
             val notification = JSONObject()
 
             notification.put("title", title)
-            notification.put("body", message)
+            notification.put("body", contents)
             root.put("notification", notification)
             root.put("to", token)
 
@@ -525,7 +546,7 @@ class BoardDataSource {
             conn.doInput = true
             conn.addRequestProperty("Authorization", "key=$key")
             conn.setRequestProperty("Accept", "application/json")
-            conn.setRequestProperty("Content-type", "application/json")
+            conn.setRequestProperty("Content-Type", "application/json")
 
             val os = conn.outputStream
             os.write(root.toString().toByteArray())

@@ -6,6 +6,7 @@ import com.example.swimming.utils.UtilBase64Cipher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import io.reactivex.Completable
+import io.reactivex.Single
 
 class UserDataSource {
 
@@ -173,4 +174,89 @@ class UserDataSource {
             }
         })
     }
+
+    // 비밀번호 변경
+    fun changePassword(id: String, password1: String, password3: String, editor: SharedPreferences.Editor) =  Single.create<String> {
+        val reference = database.reference.child("User").child("UserInfo").child(id)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val user = p0.getValue(User::class.java)
+
+                if (password3 == user!!.password) {
+                    it.onSuccess("duplicate")
+                }
+
+                else if (password1 == user.password && password3 != user.password) {
+                    val map: HashMap<String, Any> = HashMap()
+                    map["password"] = password3
+
+                    reference.updateChildren(map)
+                    editor.putString("Id", "").apply()
+                    it.onSuccess("success")
+
+                } else {
+                    it.onSuccess("error")
+                }
+            }
+        })
+    }
+
+    // 이메일 변경
+    fun changeEmail(id: String, email: String, code1: String, code2: String) = Single.create<String> {
+        val reference = database.reference.child("User").child("UserInfo").child(id)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if (code1 == code2) {
+                    val map: HashMap<String, Any> = HashMap()
+                    map["email"] = email
+
+                    reference.updateChildren(map)
+
+                    it.onSuccess("success")
+                } else {
+                    it.onSuccess("error")
+                }
+            }
+        })
+
+    }
+
+    // 이메일 전송
+    fun sendEmailForChange(id: String, email1: String, email2: String, code: String) = Single.create<String> {
+        database.reference.child("User").child("UserInfo").child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val user = p0.getValue(User::class.java)
+
+                if (UtilBase64Cipher.encode(email2) == user!!.email) {
+                    it.onSuccess("duplication")
+
+                } else if (email1 == user.email && UtilBase64Cipher.encode(email2) != user.email) {
+                    try {
+                        UtilSendEmail().sendMail("헤엄 인증코드 발송 메일입니다.", "인증번호는 다음과 같습니다.\n 인증번호: $code", email2)
+                        it.onSuccess("success")
+
+                    } catch (e: Exception) {
+                        it.onError(e)
+                    }
+                } else  {
+                    it.onSuccess("error")
+                }
+            }
+        })
+    }
+
 }

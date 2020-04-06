@@ -13,10 +13,13 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
     private val token = pref.getString("token", "")
 
     private val time = System.currentTimeMillis().toString()
-    private val uuid = System.currentTimeMillis().toString() + UUID.randomUUID().toString()
+    private val uuid = (9999999999999 - System.currentTimeMillis()).toString() + UUID.randomUUID().toString()
 
     fun writeBoard(title: String, contents: String, imgCount: String, path1: String, path2: String) =
         dataSource.writeBoard(token!!, UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, UtilBase64Cipher.encode(time), uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode("0"), UtilBase64Cipher.encode("0"), path1, path2)
+
+    fun writeBoard2(title: String, contents: String, imgCount: String, path1: String, path2: String, store: String, latitude: Double, longitude: Double) =
+        dataSource.writeBoard2(token!!, UtilBase64Cipher.encode(title), UtilBase64Cipher.encode(contents), context, UtilBase64Cipher.encode(time), uuid, UtilBase64Cipher.encode(imgCount), UtilBase64Cipher.encode("0"), UtilBase64Cipher.encode("0"), path1, path2, UtilBase64Cipher.encode(store), latitude, longitude)
 
     fun deleteBoard(path1: String, path2: String, path3: String, uuid: String, count: String) =
         dataSource.deleteBoard(path1, path2, path3, uuid, count)
@@ -34,7 +37,7 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
         dataSource.loadImage(path, count)
 
     fun uploadComments(path1: String, path2: String, child: String, comments: String) =
-        dataSource.uploadComments(path1, path2, child,System.currentTimeMillis().toString() + UUID.randomUUID().toString(), UtilBase64Cipher.encode(id!!), UtilBase64Cipher.encode(time), UtilBase64Cipher.encode(comments))
+        dataSource.uploadComments(path1, path2, child,(9999999999999 - System.currentTimeMillis()).toString() + UUID.randomUUID().toString(), UtilBase64Cipher.encode(id!!), UtilBase64Cipher.encode(time), UtilBase64Cipher.encode(comments))
 
     fun loadComments(owner: LifecycleOwner, path1: String, path2: String, child: String) =
         dataSource.loadComments(owner, path1, path2, child)
@@ -72,8 +75,8 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
     fun myComments(path1: String, path2: String, path3: String) =
         dataSource.myComments(path1, path2, path3, UtilBase64Cipher.encode(id!!))
 
-    fun pushToken(title: String, message: String, token: String, fcm: String, key: String) =
-        dataSource.pushToken(title, message, token, fcm, key)
+    fun pushToken(title: String, contents: String, token: String, fcm: String, key: String) =
+        dataSource.pushToken(title, contents, token, fcm, key)
 
     fun pushMessage(path1: String, path2: String, uuid1: String, uuid2: String, kind: String, title: String, contents: String) =
         dataSource.pushMessage(path1, path2, UtilBase64Cipher.encode(id!!), uuid1, uuid2, UtilBase64Cipher.encode(kind), UtilBase64Cipher.encode(title),

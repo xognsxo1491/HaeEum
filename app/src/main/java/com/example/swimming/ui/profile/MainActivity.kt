@@ -21,6 +21,7 @@ import com.example.swimming.R
 import com.example.swimming.databinding.ActivityMainBinding
 import com.example.swimming.ui.board.*
 import com.example.swimming.ui.result.ProfileActionResult
+import com.example.swimming.ui.user.ChangeActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val viewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java)
+        val notification = intent.getStringExtra("message")
 
         mBinding.viewModel = viewModel
         viewModel.profileActionResult = this
@@ -50,11 +52,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel.setProfile()
         viewModel.checkToken()
 
-        loadFragment(HomeFragment())
+        if (notification == "notification") {
+            loadFragment(NotificationFragment())
+            nav_main.selectedItemId = R.id.navigation_notifications
+        } else
+            loadFragment(HomeFragment())
 
         setSupportActionBar(toolbar_main)
 
-        nav_main_view.setNavigationItemSelectedListener(this)
+        mBinding.navMainView.setNavigationItemSelectedListener(this)
 
         // 하단 네비게이션 클릭 리스너
         nav_main.setOnNavigationItemSelectedListener {p0 ->
@@ -76,7 +82,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             true
         }
 
-        // 프로필 이미지 업로드 UI
+        // 프로필 불러오기
         viewModel.profileFormStatus.observe(this@MainActivity, Observer {
             val userState = it ?: return@Observer
 
@@ -85,12 +91,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             if (userState.id != null) {
-                val id = nav_main_view.getHeaderView(0).findViewById<TextView>(R.id.text_nav_id)
+                val id = mBinding.navMainView.getHeaderView(0).findViewById<TextView>(R.id.text_nav_id)
                 id.text = userState.id
             }
 
             if (userState.email != null) {
-                val email = nav_main_view.getHeaderView(0).findViewById<TextView>(R.id.text_nav_email)
+                val email = mBinding.navMainView.getHeaderView(0).findViewById<TextView>(R.id.text_nav_email)
                 email.text = UtilBase64Cipher.decode(userState.email)
             }
         })
@@ -147,6 +153,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 mBuilder.setNegativeButton("취소") {_, _ -> }.show()
             }
 
+            R.id.nav_change -> {
+                val intent = Intent(this, ChangeActivity::class.java)
+                startActivity(intent)
+            }
+
             R.id.nav_myBoard -> {
                 val intent = Intent(this, MyBoardActivity::class.java)
                 intent.putExtra("Kind", "Board")
@@ -164,6 +175,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     // 프래그먼트 초기화면 설정
     private fun loadFragment(fragment: Fragment) {
+
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment)
         transaction.addToBackStack(null)

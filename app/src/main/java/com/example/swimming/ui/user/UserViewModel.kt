@@ -8,6 +8,7 @@ import com.example.swimming.R
 import com.example.swimming.ui.result.UserActionResult
 import com.example.swimming.data.user.UserRepository
 import com.example.swimming.ui.result.Result
+import com.example.swimming.utils.UtilBase64Cipher
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -21,9 +22,11 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
     var name: EditText? = null
     var id: EditText? = null
-    var password: EditText? = null
+    var password1: EditText? = null
+    var password2: EditText? = null
     var passwordCheck: EditText? = null
-    var email: EditText? = null
+    var email1: EditText? = null
+    var email2: EditText? = null
     var code: EditText? = null
 
     private var statusName: Boolean = false
@@ -47,7 +50,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         checkCode()
 
         if (statusName && statusId && statusPassword && statusPasswordCheck && statusEmail && statusCode) {
-            val register = repository.register(name!!.text.toString(), id!!.text.toString(), password!!.text.toString(), email!!.text.toString())
+            val register = repository.register(name!!.text.toString(), id!!.text.toString(), password1!!.text.toString(), email1!!.text.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ userActionResult?.onSuccessRegister() },
@@ -69,7 +72,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         checkEmail()
 
         if (statusName && statusEmail) {
-            val findId = repository.findId(name!!.text.toString(), email!!.text.toString())
+            val findId = repository.findId(name!!.text.toString(), email1!!.text.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
                 .subscribe({result?.onSuccess()},
@@ -91,7 +94,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         checkEmail()
 
         if (statusName && statusId  && statusEmail) {
-            val findPassword = repository.findPassword(name!!.text.toString(), id!!.text.toString(), email!!.text.toString())
+            val findPassword = repository.findPassword(name!!.text.toString(), id!!.text.toString(), email1!!.text.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.newThread())
                 .subscribe({result?.onSuccess()},
@@ -108,18 +111,18 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
     // 이메일 보내기
     fun sendEmail() {
-        if (email!!.text.toString().isEmpty()) {
+        if (email1!!.text.toString().isEmpty()) {
             _registerForm.value = RegisterFormStatus(emailError = R.string.message_isBlank)
             statusEmail = false
             return
 
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email!!.text.toString()).matches()) {
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email1!!.text.toString()).matches()) {
             _registerForm.value = RegisterFormStatus(emailError = R.string.message_register_email_format)
             statusEmail = false
             return
         }
 
-        val sendEmail = repository.sendEmail(email!!.text.toString(), mRandom.toString())
+        val sendEmail = repository.sendEmail(email1!!.text.toString(), mRandom.toString())
             .subscribeOn(Schedulers.io())
             .observeOn(Schedulers.newThread())
             .subscribe({ userActionResult?.onSuccessSend()},
@@ -139,7 +142,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         checkPassword()
 
         if (statusId && statusPassword) {
-            val login = repository.login(id!!.text.toString(), password!!.text.toString())
+            val login = repository.login(id!!.text.toString(), password1!!.text.toString())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({result?.onSuccess()},
@@ -151,6 +154,108 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
             _registerForm.value = RegisterFormStatus(isProgressValid = true)
             disposables.add(login)
+        }
+    }
+
+    // 비밀번호 변경
+    fun changePassword() {
+        checkPassword()
+        checkPasswordCheck()
+
+        if (statusPassword && statusPasswordCheck) {
+            val change = repository.changePassword(
+                    password2!!.text.toString(),
+                    passwordCheck!!.text.toString()
+                )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { t ->
+                        when(t) {
+                            "success" -> {
+                                _registerForm.value = RegisterFormStatus(success = R.string.success_change_password)
+                                result!!.onSuccess()
+                            }
+                            "error" -> {
+                                _registerForm.value = RegisterFormStatus(passwordNowError = R.string.message_change_password)
+                                result!!.onFailed()
+                            }
+                            "duplicate" -> {
+                                _registerForm.value = RegisterFormStatus(passwordError = R.string.message_change_password_duplicate)
+                                result!!.onFailed()
+                            }
+                        }
+
+                    }, {
+                        _registerForm.value = RegisterFormStatus(error = R.string.message_error)
+                        result!!.onError()
+                    }
+                )
+
+            _registerForm.value = RegisterFormStatus(isProgressValid = true)
+            disposables.add(change)
+        }
+    }
+
+    // 이메일 변경
+    fun changeEmail() {
+
+        val change  = repository.changeEmail(email1!!.text.toString(), mRandom.toString(), code!!.text.toString())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { t ->
+                    when(t) {
+                        "success" -> {
+                            _registerForm.value = RegisterFormStatus(success = R.string.success_change_email)
+                        }
+
+                        "error" -> {
+                            _registerForm.value = RegisterFormStatus(codeError = R.string.message_register_code_incorrect)
+                            result!!.onFailed()
+                        }
+                    }
+
+                }, {
+                    it.printStackTrace()
+                    _registerForm.value = RegisterFormStatus(error = R.string.message_error)
+                })
+
+        disposables.add(change)
+    }
+
+    // 이메일 변경 인증메일
+    fun sendEmailForChange() {
+        checkEmail()
+
+        if (statusEmail) {
+            val send = repository.sendEmailForChange(email2!!.text.toString(), email1!!.text.toString(), mRandom.toString())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { t ->
+                        when(t) {
+                            "success" -> {
+                                _registerForm.value = RegisterFormStatus(send = R.string.message_register_send_email)
+                               result!!.onSuccess()
+                            }
+                            "duplication" -> {
+                                _registerForm.value = RegisterFormStatus(emailError = R.string.message_change_email_duplicate)
+                                result!!.onFailed()
+                            }
+                            "error" -> {
+                                _registerForm.value = RegisterFormStatus(emailNowError = R.string.message_change_email_none)
+                                result!!.onFailed()
+                            }
+                        }
+
+                    }, {
+                        it.printStackTrace()
+                        _registerForm.value = RegisterFormStatus(error = R.string.message_error)
+                    })
+
+            _registerForm.value = RegisterFormStatus(isProgressValid = true)
+            disposables.add(send)
         }
     }
 
@@ -211,17 +316,17 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
     // 비밀번호 형식 체크
     private fun checkPassword() {
-        if (password!!.text.toString().isEmpty()) {
+        if (password1!!.text.toString().isEmpty()) {
             _registerForm.value = RegisterFormStatus(passwordError = R.string.message_isBlank)
             statusPassword = false
             return
 
-        } else if (password!!.text.toString().contains(" ")) {
+        } else if (password1!!.text.toString().contains(" ")) {
             _registerForm.value = RegisterFormStatus(passwordError = R.string.message_register_blank)
             statusPassword = false
             return
 
-        } else if (password!!.text.toString().length < 8 || password!!.text.toString().length > 30) {
+        } else if (password1!!.text.toString().length < 8 || password1!!.text.toString().length > 30) {
             _registerForm.value = RegisterFormStatus(passwordError = R.string.message_register_password_length)
             statusPassword = false
             return
@@ -236,7 +341,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
             statusPasswordCheck = false
             return
 
-        } else if (passwordCheck!!.text.toString() != password!!.text.toString()) {
+        } else if (passwordCheck!!.text.toString() != password1!!.text.toString()) {
             _registerForm.value = RegisterFormStatus(passwordCheckError = R.string.message_register_password_incorrect)
             statusPasswordCheck = false
             return
@@ -247,12 +352,12 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     // 이메일 형식 체크
     private fun checkEmail() {
 
-        if (email!!.text.toString().isEmpty()) {
+        if (email1!!.text.toString().isEmpty()) {
             _registerForm.value = RegisterFormStatus(emailError = R.string.message_isBlank)
             statusEmail = false
             return
 
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email!!.text.toString()).matches()) {
+        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email1!!.text.toString()).matches()) {
             _registerForm.value = RegisterFormStatus(emailError = R.string.message_register_email_format)
             statusEmail = false
             return

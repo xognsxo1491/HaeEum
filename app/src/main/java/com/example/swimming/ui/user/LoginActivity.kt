@@ -34,19 +34,19 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
         mBinding.viewModel = viewModel
         viewModel.result = this
         viewModel.id = edit_login_id
-        viewModel.password = edit_login_password
+        viewModel.password1 = edit_login_password
 
-        btn_login_register.setOnClickListener {
+        mBinding.btnLoginRegister.setOnClickListener {
             val intent = Intent(this, ResisterActivity::class.java)
             startActivity(intent)
         }
 
-        btn_login_find.setOnClickListener {
+        mBinding.btnLoginFind.setOnClickListener {
             val intent = Intent(this, FindActivity::class.java)
             startActivity(intent)
         }
 
-        btn_login_login.setOnClickListener {
+        mBinding.btnLoginLogin.setOnClickListener {
 
             // 중복터치 방지
             if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
@@ -62,19 +62,19 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
             val registerState = it ?: return@Observer
 
             if (registerState.idError != null) {
-                edit_login_id.error = getString(registerState.idError)
+                mBinding.editLoginId.error = getString(registerState.idError)
             }
 
             if (registerState.passwordError != null) {
-                edit_login_password.error = getString(registerState.passwordError)
+                mBinding.editLoginPassword.error = getString(registerState.passwordError)
             }
 
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
-                    progress_login.visibility = View.VISIBLE
+                    mBinding.progressLogin.visibility = View.VISIBLE
 
                 } else
-                    progress_login.visibility = View.INVISIBLE
+                    mBinding.progressLogin.visibility = View.INVISIBLE
             }
         })
     }
@@ -85,7 +85,7 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
     }
 
     override fun onSuccess() {
-        progress_login.visibility = View.INVISIBLE
+        mBinding.progressLogin.visibility = View.INVISIBLE
 
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
@@ -93,11 +93,11 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
 
     override fun onError() {
         Toast.makeText(this, R.string.message_error, Toast.LENGTH_SHORT).show()
-        progress_login.visibility = View.INVISIBLE
+        mBinding.progressLogin.visibility = View.INVISIBLE
     }
 
     override fun onFailed() {
         Toast.makeText(this, R.string.message_register_failed, Toast.LENGTH_SHORT).show()
-        progress_login.visibility = View.INVISIBLE
+        mBinding.progressLogin.visibility = View.INVISIBLE
     }
 }

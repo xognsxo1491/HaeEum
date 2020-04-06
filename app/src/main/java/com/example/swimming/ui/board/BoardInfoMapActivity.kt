@@ -2,22 +2,28 @@ package com.example.swimming.ui.board
 
 import android.app.AlertDialog
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.os.SystemClock
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.swimming.R
-import com.example.swimming.databinding.ActivityBoardInfoBinding
+import com.example.swimming.databinding.ActivityBoardInfoMapBinding
 import com.example.swimming.utils.UtilDateFormat
 import com.example.swimming.utils.UtilKeyboard
 import com.example.swimming.utils.utilShowDialog
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_board_info.*
 import kotlinx.android.synthetic.main.item_board.*
 import kotlinx.android.synthetic.main.item_contents.*
@@ -27,26 +33,36 @@ import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import java.lang.Exception
 
-// 게시글 내용
-class BoardInfoActivity : AppCompatActivity(), KodeinAware {
+class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
-    private lateinit var mBinding: ActivityBoardInfoBinding
+    private lateinit var mBinding: ActivityBoardInfoMapBinding
 
+    private val key = "AIzaSyC-x0hbrLoMnWp607rYLIMzuKQP7QL0PKs"
     private lateinit var mBuilder: AlertDialog.Builder
+    private lateinit var mMap: GoogleMap
     private var mLastClickTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_info)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_info_map)
         val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
-        setSupportActionBar(mBinding.toolbarInfo)
+        setSupportActionBar(mBinding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
         mBinding.viewModel = viewModel
+
+        var bundle: Bundle? = null
+        if (savedInstanceState != null) {
+            bundle = savedInstanceState.getBundle(key)
+        }
+
+        mBinding.mapView.onCreate(bundle)
+        mBinding.mapView.getMapAsync(this)
+
         viewModel.recyclerView = recycler_Info
         viewModel.refreshLayout = swipe_info
 
@@ -58,7 +74,6 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         viewModel.imgLike = img_favorite
         img_favorite.tag = Integer.valueOf(R.string.unLike)
 
-        val kind = intent.getStringExtra("BoardKind")
         val uuid = intent.getStringExtra("uuid")
         val imgCount = intent.getStringExtra("imgCount")
         val toekn = intent.getStringExtra("token")
@@ -70,31 +85,18 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         mBinding.includeInfo.text_board_imgCount.text = imgCount
         mBinding.includeInfo. text_board_commentCount.text = intent.getStringExtra("comment")
         mBinding.includeInfo. text_board_like.text = intent.getStringExtra("like")
+        mBinding.slide.setScrollableView(mBinding.scrollView)
 
         val dialog = utilShowDialog(this, "헤엄중..")
         dialog.show()
 
-        when (kind) {
-            "FreeBoard" -> {
-                mBinding.textInfoTTitle.text = getString(R.string.free_board)
-                viewModel.checkBoard("FreeBoard", "FreeBoardInfo", uuid!!) // 취소 확인
-                viewModel.loadImage("FreeBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
-                viewModel.loadComments(this, "FreeBoard", "FreeBoardComments", "FreeBoardInfo", uuid) // 댓글 불러오기
-                viewModel.checkBoardLike("FreeBoard", "FreeBoardLike", uuid) // 좋아요 구독 상태
-                viewModel.loadBoardLike("FreeBoard", "FreeBoardInfo", uuid) // 좋아요 개수
-            }
+        viewModel.checkBoard("StoreBoard", "StoreBoardInfo", uuid!!) // 취소 확인
+        viewModel.loadImage("StoreBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
+        viewModel.loadComments(this, "StoreBoard", "StoreBoardComments", "StoreBoardInfo", uuid) // 댓글 불러오기
+        viewModel.checkBoardLike("StoreBoard", "StoreBoardLike", uuid) // 좋아요 구독 상태
+        viewModel.loadBoardLike("StoreBoard", "StoreBoardInfo", uuid) // 좋아요 개수
 
-            "InfoBoard" -> {
-                mBinding.textInfoTTitle.text = getString(R.string.info_board)
-                viewModel.checkBoard("InfoBoard", "InfoBoardInfo", uuid!!) // 취소 확인
-                viewModel.loadImage("InfoBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
-                viewModel.loadComments(this, "InfoBoard", "InfoBoardComments", "InfoBoardInfo", uuid) // 댓글 불러오기
-                viewModel.checkBoardLike("InfoBoard", "InfoBoardLike", uuid) // 좋아요 구독 상태
-                viewModel.loadBoardLike("InfoBoard", "InfoBoardInfo", uuid) // 좋아요 개수
-            }
-        }
-
-        viewModel.boardFormStatus.observe(this@BoardInfoActivity, Observer {
+        viewModel.boardFormStatus.observe(this@BoardInfoMapActivity, Observer {
             val boardState = it ?: return@Observer
 
             if (boardState.check != null) {
@@ -199,21 +201,11 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             //
 
             if (edit_comments.text.toString().isNotEmpty()) {
-                when (kind) {
-                    "FreeBoard" -> {
-                        viewModel.uploadComments("FreeBoard", "FreeBoardComments", uuid!!)
-                        viewModel.updateCommentCount("FreeBoard", "FreeBoardInfo", uuid)
-                        viewModel.pushMessage("User", "MessageInfo", uuid, "FreeBoard", text_board_title.text.toString(), edit_comments.text.toString())
-                        mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
-                    }
 
-                    "InfoBoard" -> {
-                        viewModel.uploadComments("InfoBoard", "InfoBoardComments", uuid!!)
-                        viewModel.updateCommentCount("InfoBoard", "InfoBoardInfo", uuid)
-                        viewModel.pushMessage("User", "MessageInfo", uuid, "InfoBoard", text_board_title.text.toString(), edit_comments.text.toString())
-                        mBinding.includeInfo.text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
-                    }
-                }
+                viewModel.uploadComments("StoreBoard", "StoreBoardComments", uuid)
+                viewModel.updateCommentCount("StoreBoard", "StoreBoardInfo", uuid)
+                viewModel.pushMessage("User", "MessageInfo", uuid, "FreeBoard", text_board_title.text.toString(), edit_comments.text.toString())
+                mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
                 viewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), toekn!!, getString(R.string.post_fcm), getString(R.string.authorization))
                 mBinding.editComments.text = null
@@ -228,41 +220,42 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_24)
                 mBinding.includeInfo.text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) + 1).toString()
 
-                when (kind) {
-                    "FreeBoard" -> {
-                        viewModel.uploadBoardLike("FreeBoard", "FreeBoardLike", uuid!!)
-                        viewModel.updateBoardLikeCountPlus("FreeBoard", "FreeBoardInfo", uuid)
-                    }
-
-                    "InfoBoard" -> {
-                        viewModel.uploadBoardLike("InfoBoard", "InfoBoardLike", uuid!!)
-                        viewModel.updateBoardLikeCountPlus("InfoBoard", "InfoBoardInfo", uuid)
-                    }
-                }
+                viewModel.uploadBoardLike("StoreBoard", "StoreBoardLike", uuid)
+                viewModel.updateBoardLikeCountPlus("StoreBoard", "StoreBoardInfo", uuid)
 
             } else if (mBinding.includeInfo.img_favorite.tag == Integer.valueOf(R.string.like)){
                 mBinding.includeInfo.img_favorite.tag = Integer.valueOf(R.string.unLike)
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_border_24)
                 mBinding.includeInfo. text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) - 1).toString()
 
-                when (kind) {
-                    "FreeBoard" -> {
-                        viewModel.deleteBoardLike("FreeBoard", "FreeBoardLike", uuid!!)
-                        viewModel.updateBoardLikeCountMinus("FreeBoard", "FreeBoardInfo", uuid)
-                    }
+                viewModel.deleteBoardLike("StoreBoard", "StoreBoardLike", uuid)
+                viewModel.updateBoardLikeCountMinus("StoreBoard", "StoreBoardInfo", uuid)
 
-                    "InfoBoard" -> {
-                        viewModel.deleteBoardLike("InfoBoard", "InfoBoardLike", uuid!!)
-                        viewModel.updateBoardLikeCountMinus("InfoBoard", "InfoBoardInfo", uuid)
-                    }
-                }
             }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mBinding.unbind()
+    override fun onMapReady(p0: GoogleMap?) {
+        mMap = p0!!
+        val option = MarkerOptions()
+
+        val latitude = intent.getDoubleExtra("latitude", 37.52487)
+        val longitude = intent.getDoubleExtra("longitude", 126.92723)
+        val store = intent.getStringExtra("store")
+        option.position(LatLng(latitude, longitude)).title(store)
+
+        mMap.addMarker(option)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom( LatLng(latitude, longitude), 14f))
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+
+        var bundle = outState.getBundle(key)
+        if (bundle == null) {
+            bundle = Bundle()
+            outState.putBundle(key, bundle)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -284,21 +277,42 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             }
 
             R.id.menu_delete -> {
-                val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
-                val kind = intent.getStringExtra("BoardKind")
-                val uuid = intent.getStringExtra("uuid")
-                val imgCount = intent.getStringExtra("imgCount")
-
-                viewModel.deleteBoard(kind!!, kind + "Info", kind + "Comments", uuid!!, imgCount!!)
-                viewModel.deleteBoardLike(kind, kind + "Like", uuid)
-
-                mBuilder = AlertDialog.Builder(this)
-                mBuilder.setMessage("해당 글이 삭제되었습니다.").setCancelable(false)
-                mBuilder.setPositiveButton("확인") {_, _ -> finish()}.show()
                 return true
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mBinding.mapView.onResume()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mBinding.mapView.onStart()
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mBinding.mapView.onStop()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mBinding.mapView.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mBinding.mapView.onDestroy()
+        mBinding.unbind()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mBinding.mapView.onLowMemory()
     }
 }

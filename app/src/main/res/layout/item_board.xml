@@ -18,8 +18,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/include_board"
         android:nestedScrollingEnabled="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:reverseLayout="true"
-        app:stackFromEnd="true" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
 </RelativeLayout>

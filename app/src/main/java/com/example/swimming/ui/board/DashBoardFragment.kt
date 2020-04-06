@@ -1,17 +1,16 @@
 package com.example.swimming.ui.board
 
-
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.databinding.FragmentDashBoardBinding
+import com.example.swimming.ui.map.BoardMapSelectActivity
 
-// 자유 게시판
+// 게시판 프레그먼트
 class DashBoardFragment : Fragment() {
     private lateinit var mBinding: FragmentDashBoardBinding
 
@@ -29,6 +28,12 @@ class DashBoardFragment : Fragment() {
         mBinding.cardDashInfo.setOnClickListener {
             val intent = Intent(context, BoardActivity::class.java)
             intent.putExtra("BoardKind", "InfoBoard")
+            startActivity(intent)
+        }
+
+        mBinding.cardDashReview.setOnClickListener {
+            val intent = Intent(context, BoardActivity::class.java)
+            intent.putExtra("BoardKind", "StoreBoard")
             startActivity(intent)
         }
 

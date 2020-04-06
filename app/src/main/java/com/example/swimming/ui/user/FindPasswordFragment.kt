@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.FragmentFindPasswordBinding
 import com.example.swimming.ui.result.Result
-import kotlinx.android.synthetic.main.fragment_find_password.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
@@ -23,17 +22,18 @@ class FindPasswordFragment : Fragment(), Result, KodeinAware{
     override val kodein by kodein()
 
     private val factory: UserViewModelFactory by instance()
+    private lateinit var mBinding: FragmentFindPasswordBinding
     private lateinit var mBuilder: AlertDialog.Builder
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding: FragmentFindPasswordBinding = FragmentFindPasswordBinding.inflate(inflater, container, false)
+        mBinding = FragmentFindPasswordBinding.inflate(inflater, container, false)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        binding.viewModel = viewModel
+        mBinding.viewModel = viewModel
         viewModel.result = this
-        viewModel.name = binding.editFindPwName
-        viewModel.id = binding.editFindPwId
-        viewModel.email = binding.editFindPwEmail
+        viewModel.name = mBinding.editFindPwName
+        viewModel.id = mBinding.editFindPwId
+        viewModel.email1 = mBinding.editFindPwEmail
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -42,27 +42,27 @@ class FindPasswordFragment : Fragment(), Result, KodeinAware{
             val registerState = it ?: return@Observer
 
             if (registerState.nameError != null) {
-                edit_find_pw_name.error = getString(registerState.nameError)
+                mBinding.editFindPwName.error = getString(registerState.nameError)
             }
 
             if (registerState.idError != null) {
-                edit_find_pw_id.error = getString(registerState.idError)
+                mBinding.editFindPwId.error = getString(registerState.idError)
             }
 
             if (registerState.emailError != null) {
-                edit_find_pw_email.error = getString(registerState.emailError)
+                mBinding.editFindPwEmail.error = getString(registerState.emailError)
             }
 
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
-                    progress_find_password.visibility = View.VISIBLE
+                    mBinding.progressFindPassword.visibility = View.VISIBLE
 
                 } else
-                    progress_find_password.visibility = View.INVISIBLE
+                    mBinding.progressFindPassword.visibility = View.INVISIBLE
             }
         })
 
-        return binding.root
+        return mBinding.root
     }
 
     override fun onSuccess() {
@@ -70,21 +70,26 @@ class FindPasswordFragment : Fragment(), Result, KodeinAware{
             mBuilder = AlertDialog.Builder(activity)
             mBuilder.setMessage(getString(R.string.message_register_send_email))
             mBuilder.setPositiveButton("확인") {_, _ -> }.show()
-            progress_find_password.visibility = View.INVISIBLE
+            mBinding.progressFindPassword.visibility = View.INVISIBLE
         }
     }
 
     override fun onError() {
         activity!!.runOnUiThread {
             Toast.makeText(view!!.context, R.string.message_error, Toast.LENGTH_SHORT).show()
-            progress_find_password.visibility = View.INVISIBLE
+            mBinding.progressFindPassword.visibility = View.INVISIBLE
         }
     }
 
     override fun onFailed() {
         activity!!.runOnUiThread {
             Toast.makeText(view!!.context, R.string.message_register_failed, Toast.LENGTH_SHORT).show()
-            progress_find_password.visibility = View.INVISIBLE
+            mBinding.progressFindPassword.visibility = View.INVISIBLE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mBinding.unbind()
     }
 }

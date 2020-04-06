@@ -6,25 +6,25 @@ import android.view.MenuItem
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
-import com.example.swimming.databinding.ActivityFindBinding
+import com.example.swimming.databinding.ActivityChangeBinding
 import com.example.swimming.ui.adapter.ViewPagerAdapter
-import kotlinx.android.synthetic.main.activity_find.*
+import kotlinx.android.synthetic.main.activity_change.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
-class FindActivity : AppCompatActivity(), KodeinAware {
+class ChangeActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()
-    private lateinit var mBinding: ActivityFindBinding
+    private lateinit var mBinding: ActivityChangeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_find)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_change)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        setSupportActionBar(mBinding.toolbarFind)
+        setSupportActionBar(mBinding.toolbarChange)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
@@ -34,11 +34,11 @@ class FindActivity : AppCompatActivity(), KodeinAware {
         val adapter = ViewPagerAdapter(
             supportFragmentManager
         )
-        adapter.addFragment(FindIdFragment(), "아이디 찾기")
-        adapter.addFragment(FindPasswordFragment(),"비밀번호 찾기")
+        adapter.addFragment(ChangePasswordFragment(), "비밀번호 변경")
+        adapter.addFragment(ChangeEmailFragment(), "이메일 변경")
 
-        mBinding.viewPagerFind.adapter = adapter
-        mBinding.tabLayoutFind.setupWithViewPager(viewPager_find)
+        viewPager_change.adapter = adapter
+        tabLayout_change.setupWithViewPager(viewPager_change)
     }
 
     override fun onDestroy() {

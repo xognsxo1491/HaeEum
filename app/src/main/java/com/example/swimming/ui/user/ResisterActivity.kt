@@ -3,6 +3,7 @@ package com.example.swimming.ui.user
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.StrictMode
+import android.os.SystemClock
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
@@ -24,9 +25,10 @@ import org.kodein.di.generic.instance
 class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()
-    private lateinit var binding: ActivityResisterBinding
+    private lateinit var mBinding: ActivityResisterBinding
 
     private lateinit var mBuilder: AlertDialog.Builder
+    private var mLastClickTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,61 +36,61 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_resister)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_resister)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        setSupportActionBar(binding.toolbarRegister)
+        setSupportActionBar(mBinding.toolbarRegister)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        binding.viewModel = viewModel
+        mBinding.viewModel = viewModel
         viewModel.userActionResult = this
         viewModel.name = edit_register_name
         viewModel.id = edit_register_id
-        viewModel.password = edit_register_password
+        viewModel.password1 = edit_register_password
         viewModel.passwordCheck = edit_register_password_check
-        viewModel.email = edit_register_email
+        viewModel.email1 = edit_register_email
         viewModel.code = edit_register_code
 
         viewModel.registerFormStatus.observe(this@ResisterActivity, Observer {
             val registerState = it ?: return@Observer
 
             if (registerState.nameError != null) {
-                edit_register_name.error = getString(registerState.nameError)
+                mBinding.editRegisterName.error = getString(registerState.nameError)
             }
 
             if (registerState.idError != null) {
-                edit_register_id.error = getString(registerState.idError)
+                mBinding.editRegisterId.error = getString(registerState.idError)
             }
 
             if (registerState.passwordError != null) {
-                edit_register_password.error = getString(registerState.passwordError)
+                mBinding.editRegisterPassword.error = getString(registerState.passwordError)
             }
 
             if (registerState.passwordCheckError != null) {
-                edit_register_password_check.error = getString(registerState.passwordCheckError)
+                mBinding.editRegisterPasswordCheck.error = getString(registerState.passwordCheckError)
             }
 
             if (registerState.emailError != null) {
-                edit_register_email.error = getString(registerState.emailError)
+                mBinding.editRegisterEmail.error = getString(registerState.emailError)
             }
 
             if (registerState.codeError != null) {
-                edit_register_code.error = getString(registerState.codeError)
+                mBinding.editRegisterCode.error = getString(registerState.codeError)
             }
 
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
-                    progress_register.visibility = View.VISIBLE
+                    mBinding.progressRegister.visibility = View.VISIBLE
 
                 } else
-                    progress_register.visibility = View.INVISIBLE
+                    mBinding.progressRegister.visibility = View.INVISIBLE
             }
         })
 
         //// 키보드 숨기기 액션
-        edit_register_email.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
+        mBinding.editRegisterEmail.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
                 UtilKeyboard.hideKeyboard(this)
                 return@OnKeyListener true
@@ -96,7 +98,14 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
             false
         })
 
-        btn_register_verification.setOnClickListener {
+        mBinding.btnRegisterVerification.setOnClickListener {
+            // 중복터치 방지
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
+                return@setOnClickListener
+            }
+            mLastClickTime = SystemClock.elapsedRealtime().toInt()
+            //
+
             viewModel.sendEmail()
             UtilKeyboard.hideKeyboard(this)
         }
@@ -105,7 +114,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.unbind()
+        mBinding.unbind()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -130,31 +139,31 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
 
     override fun onDuplicateId() {
         Toast.makeText(this, R.string.message_register_duplicate_id, Toast.LENGTH_SHORT).show()
-        edit_register_id.error = getString(R.string.message_register_duplicate_id)
+        mBinding.editRegisterId.error = getString(R.string.message_register_duplicate_id)
         progress_register.visibility = View.INVISIBLE
     }
 
     override fun onSuccessSend() {
         runOnUiThread {
-            edit_register_email.isEnabled = false
-            edit_register_email.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
+            mBinding.editRegisterEmail.isEnabled = false
+            mBinding.editRegisterEmail.setTextColor(ContextCompat.getColor(applicationContext, R.color.colorPrimary))
 
             mBuilder = AlertDialog.Builder(this)
             mBuilder.setMessage(getString(R.string.message_register_send_email))
             mBuilder.setPositiveButton("확인") {_, _ -> }.show()
-            progress_register.visibility = View.INVISIBLE
+            mBinding.progressRegister.visibility = View.INVISIBLE
         }
     }
 
     override fun onDuplicateEmail() {
         runOnUiThread {
             Toast.makeText(this, R.string.message_register_duplicate_email, Toast.LENGTH_SHORT).show()
-            progress_register.visibility = View.INVISIBLE
+            mBinding.progressRegister.visibility = View.INVISIBLE
         }
     }
 
     override fun onFailed() {
         Toast.makeText(this, R.string.message_register_failed, Toast.LENGTH_SHORT).show()
-        progress_register.visibility = View.INVISIBLE
+        mBinding.progressRegister.visibility = View.INVISIBLE
     }
 }

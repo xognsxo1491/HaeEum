@@ -1,4 +1,4 @@
-package com.example.swimming.ui.recycler
+package com.example.swimming.ui.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
+import com.example.swimming.ui.board.BoardInfoMapActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
 
@@ -50,6 +51,27 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             intent.putExtra("comment", UtilBase64Cipher.decode(post.commentCount))
             intent.putExtra("like", UtilBase64Cipher.decode(post.like))
             intent.putExtra("token", post.token)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(intent)
+        }
+    }
+
+    fun onClick2(view: View, context: Context, post: Board, kind: String) {
+        view.setOnClickListener {
+            val intent = Intent(context, BoardInfoMapActivity::class.java)
+            intent.putExtra("BoardKind", kind)
+            intent.putExtra("uuid", post.uuid)
+            intent.putExtra("id", UtilBase64Cipher.decode(post.id))
+            intent.putExtra("title", UtilBase64Cipher.decode(post.title))
+            intent.putExtra("contents", UtilBase64Cipher.decode(post.contents))
+            intent.putExtra("time", UtilBase64Cipher.decode(post.time))
+            intent.putExtra("imgCount", UtilBase64Cipher.decode(post.imgCount))
+            intent.putExtra("comment", UtilBase64Cipher.decode(post.commentCount))
+            intent.putExtra("like", UtilBase64Cipher.decode(post.like))
+            intent.putExtra("token", post.token)
+            intent.putExtra("store", UtilBase64Cipher.decode(post.store))
+            intent.putExtra("latitude", post.latitude)
+            intent.putExtra("longitude", post.longitude)
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }

@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.databinding.ActivityBoardSearchBinding
-import com.example.swimming.ui.recycler.SearchAdapter
+import com.example.swimming.ui.adapter.SearchAdapter
 import com.example.swimming.utils.UtilKeyboard
 import kotlinx.android.synthetic.main.activity_board_search.*
 import org.kodein.di.KodeinAware
@@ -33,10 +33,10 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
 
         viewModel.recyclerView = recycler_Search
 
-        edit_search.requestFocus()
-        edit_search.setOnEditorActionListener { _, actionId, event ->
+        mBinding.editSearch.requestFocus()
+        mBinding.editSearch.setOnEditorActionListener { _, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN) {
-                if (edit_search.text.toString().length >= 2) {
+                if (mBinding.editSearch.text.toString().length >= 2) {
 
                     when (intent.getStringExtra("BoardKind")) {
                         "FreeBoard" -> {
@@ -62,7 +62,7 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
             }
         }
 
-        layout_search.setOnClickListener {
+        mBinding.layoutSearch.setOnClickListener {
             finish()
         }
 

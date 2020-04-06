@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.FragmentFindIdBinding
 import com.example.swimming.ui.result.Result
-import kotlinx.android.synthetic.main.fragment_find_id.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
@@ -24,16 +23,17 @@ class FindIdFragment : Fragment(), Result, KodeinAware {
     override val kodein by kodein()
 
     private val factory: UserViewModelFactory by instance()
+    private lateinit var mBinding: FragmentFindIdBinding
     private lateinit var mBuilder: AlertDialog.Builder
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding: FragmentFindIdBinding = FragmentFindIdBinding.inflate(inflater, container, false)
+        mBinding = FragmentFindIdBinding.inflate(inflater, container, false)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
-        binding.viewModel = viewModel
+        mBinding.viewModel = viewModel
         viewModel.result = this
-        viewModel.name = binding.editFindIdName
-        viewModel.email = binding.editFindIdEmail
+        viewModel.name = mBinding.editFindIdName
+        viewModel.email1 = mBinding.editFindIdEmail
 
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
@@ -42,23 +42,23 @@ class FindIdFragment : Fragment(), Result, KodeinAware {
             val registerState = it ?: return@Observer
 
             if (registerState.nameError != null) {
-                edit_find_id_name.error = getString(registerState.nameError)
+                mBinding.editFindIdName.error = getString(registerState.nameError)
             }
 
             if (registerState.emailError != null) {
-                edit_find_id_email.error = getString(registerState.emailError)
+                mBinding.editFindIdEmail.error = getString(registerState.emailError)
             }
 
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
-                    progress_find_id.visibility = View.VISIBLE
+                    mBinding.progressFindId.visibility = View.VISIBLE
 
                 } else
-                    progress_find_id.visibility = View.INVISIBLE
+                    mBinding.progressFindId.visibility = View.INVISIBLE
             }
         })
 
-        return binding.root
+        return mBinding.root
     }
 
     override fun onSuccess() {
@@ -66,21 +66,26 @@ class FindIdFragment : Fragment(), Result, KodeinAware {
             mBuilder = AlertDialog.Builder(activity)
             mBuilder.setMessage(getString(R.string.message_register_send_email))
             mBuilder.setPositiveButton("확인") {_, _ -> }.show()
-            progress_find_id.visibility = View.INVISIBLE
+            mBinding.progressFindId.visibility = View.INVISIBLE
         }
     }
 
     override fun onError() {
         activity!!.runOnUiThread {
             Toast.makeText(view!!.context, R.string.message_error, Toast.LENGTH_SHORT).show()
-            progress_find_id.visibility = View.INVISIBLE
+            mBinding.progressFindId.visibility = View.INVISIBLE
         }
     }
 
     override fun onFailed() {
         activity!!.runOnUiThread {
             Toast.makeText(view!!.context, R.string.message_register_failed, Toast.LENGTH_SHORT).show()
-            progress_find_id.visibility = View.INVISIBLE
+            mBinding.progressFindId.visibility = View.INVISIBLE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mBinding.unbind()
     }
 }

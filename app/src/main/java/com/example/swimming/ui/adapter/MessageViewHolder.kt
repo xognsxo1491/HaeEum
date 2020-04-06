@@ -1,4 +1,4 @@
-package com.example.swimming.ui.recycler
+package com.example.swimming.ui.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView

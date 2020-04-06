@@ -18,8 +18,8 @@ import com.example.swimming.data.board.Board
 import com.example.swimming.data.board.BoardRepository
 import com.example.swimming.data.board.Comments
 import com.example.swimming.ui.result.Result
-import com.example.swimming.ui.recycler.BoardViewHolder
-import com.example.swimming.ui.recycler.CommentViewHolder
+import com.example.swimming.ui.adapter.BoardViewHolder
+import com.example.swimming.ui.adapter.CommentViewHolder
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.firebase.database.DatabaseError
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter
@@ -154,6 +154,108 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
                         .subscribe()
 
                     val write = repository.writeBoard(title!!, contents!!, String.format("1"), path1, path2)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({ result?.onSuccess() }, { result?.onError() })
+
+                    disposables.add(write)
+                    disposables.add(uploadImage)
+                }
+            }
+        }
+    }
+
+    // 게시글 작성 (수족관 게시판)
+    fun writeBoard2(path1: String, path2: String, store: String, latitude: Double, longitude: Double) {
+        checkTitle()
+        checkContents()
+
+        if (statusTitle && statusContents) {
+            _boardForm.value = BoardFormStatus(loading = R.string.loading)
+
+            if (card1!!.visibility != View.VISIBLE) {
+
+                val write = repository.writeBoard2(title!!, contents!!, String.format("0"), path1, path2, store, latitude, longitude)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ result?.onSuccess() }, { result?.onError() })
+
+                disposables.add(write)
+            }
+
+            if (card1!!.visibility == View.VISIBLE) {
+                if (data!!.clipData != null) {
+                    // 업로드할 이미지 여러개
+                    when (data!!.clipData!!.itemCount) {
+                        2 -> {
+                            val uploadImage = repository.uploadImage("$path1/","2", data)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.newThread())
+                                .subscribe()
+
+                            val write = repository.writeBoard2(title!!, contents!!, String.format("2"), path1, path2, store, latitude, longitude)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ result?.onSuccess() }, { result?.onError() })
+
+                            disposables.add(write)
+                            disposables.add(uploadImage)
+                        }
+
+                        3 -> {
+                            val uploadImage = repository.uploadImage("$path1/","3", data)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.newThread())
+                                .subscribe()
+
+                            val write = repository.writeBoard2(title!!, contents!!, String.format("3"), path1, path2, store, latitude, longitude)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ result?.onSuccess() }, { result?.onError() })
+
+                            disposables.add(write)
+                            disposables.add(uploadImage)
+                        }
+
+                        4 -> {
+                            val uploadImage = repository.uploadImage("$path1/","4", data)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.newThread())
+                                .subscribe()
+
+                            val write = repository.writeBoard2(title!!, contents!!, String.format("4"), path1, path2, store, latitude, longitude)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ result?.onSuccess() }, { result?.onError() })
+
+                            disposables.add(write)
+                            disposables.add(uploadImage)
+                        }
+
+                        5 -> {
+                            val uploadImage = repository.uploadImage("$path1/","5", data)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(Schedulers.newThread())
+                                .subscribe()
+
+                            val write = repository.writeBoard2(title!!, contents!!, String.format("5"), path1, path2, store, latitude, longitude)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ result?.onSuccess() }, { result?.onError() })
+
+                            disposables.add(write)
+                            disposables.add(uploadImage)
+                        }
+                    }
+
+                } else {
+                    // 업로드 할 이미지가 1개
+                    val uploadImage = repository.uploadImage("$path1/","1", data)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.newThread())
+                        .subscribe()
+
+                    val write = repository.writeBoard2(title!!, contents!!, String.format("1"), path1, path2, store, latitude, longitude)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe({ result?.onSuccess() }, { result?.onError() })
@@ -316,7 +418,12 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
 
             override fun onBindViewHolder(p0: BoardViewHolder, p1: Int, p2: Board) {
                 p0.setItem(p2)
-                p0.onClick(p0.itemView, context!!, p2, path1)
+
+                if (path1 == "StoreBoard")
+                    p0.onClick2(p0.itemView, context!!, p2, path1)
+                else
+                    p0.onClick(p0.itemView, context!!, p2, path1)
+
             }
 
             override fun onLoadingStateChanged(state: LoadingState) {
@@ -551,8 +658,8 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
         disposables.add(load)
     }
 
-    fun pushToken(title: String, message: String, token: String, fcm: String, key: String) {
-        val push = repository.pushToken(title, message, token, fcm, key)
+    fun pushToken(title: String, contents: String, token: String, fcm: String, key: String) {
+        val push = repository.pushToken(title, contents, token, fcm, key)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
@@ -562,7 +669,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
 
     fun pushMessage(path1: String, path2: String, uuid: String, kind: String, title: String, contents: String) {
 
-        val push = repository.pushMessage(path1, path2, uuid, System.currentTimeMillis().toString() + UUID.randomUUID().toString(), kind, title, contents)
+        val push = repository.pushMessage(path1, path2, uuid, (9999999999999 - System.currentTimeMillis()).toString() + UUID.randomUUID().toString(), kind, title, contents)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()

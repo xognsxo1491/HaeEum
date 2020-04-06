@@ -3,7 +3,9 @@
     package="com.example.swimming">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:name=".di.MyApplication"
         android:allowBackup="true"
@@ -13,8 +15,22 @@
         android:roundIcon="@mipmap/ic_launcher_swimming"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.board.MyBoardActivity"
+        <activity android:name=".ui.board.BoardInfoMapActivity"></activity>
+        <activity android:name=".ui.map.BoardMapSelectActivity" />
+        <activity
+            android:name=".ui.map.BoardMapActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.user.ChangeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.board.MyBoardActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="OPEN_ACTIVITY" />
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.board.BoardSearchActivity"
             android:screenOrientation="portrait" />
@@ -56,10 +72,17 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC-x0hbrLoMnWp607rYLIMzuKQP7QL0PKs" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
 
 </manifest>

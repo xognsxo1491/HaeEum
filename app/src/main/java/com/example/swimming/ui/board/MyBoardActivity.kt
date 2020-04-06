@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.databinding.ActivityMyBoardBinding
-import com.example.swimming.ui.recycler.MyBoardAdapter
+import com.example.swimming.ui.adapter.MyBoardAdapter
 import kotlinx.android.synthetic.main.activity_my_board.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -35,13 +35,13 @@ class MyBoardActivity : AppCompatActivity(), KodeinAware {
 
         when (intent.getStringExtra("Kind")) {
             "Board" -> {
-                text_myBoard_title.text  = getString(R.string.myBoard)
+                mBinding.textMyBoardTitle.text  = getString(R.string.myBoard)
                 viewModel.myBoard("FreeBoard", "FreeBoardInfo")
                 viewModel.myBoard("InfoBoard", "InfoBoardInfo")
             }
 
             "Comments" -> {
-                text_myBoard_title.text  = getString(R.string.myComment)
+                mBinding.textMyBoardTitle.text  = getString(R.string.myComment)
                 viewModel.myComments("FreeBoard", "FreeBoardComments", "FreeBoardInfo")
                 viewModel.myComments( "InfoBoard", "InfoBoardComments", "InfoBoardInfo")
             }

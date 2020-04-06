@@ -3,12 +3,16 @@ package com.example.swimming.di
 import android.app.Application
 import com.example.swimming.data.board.BoardDataSource
 import com.example.swimming.data.board.BoardRepository
+import com.example.swimming.data.map.MapDataSource
+import com.example.swimming.data.map.MapRepositoty
 import com.example.swimming.data.profile.ProfileDataSource
 import com.example.swimming.data.profile.ProfileRepository
 import com.example.swimming.data.user.UserDataSource
 import com.example.swimming.data.user.UserRepository
 import com.example.swimming.ui.board.BoardViewModel
 import com.example.swimming.ui.board.BoardViewModelFactory
+import com.example.swimming.ui.map.MapViewModel
+import com.example.swimming.ui.map.MapViewModelFactory
 import com.example.swimming.ui.profile.ProfileViewModel
 import com.example.swimming.ui.profile.ProfileViewModelFactory
 import com.example.swimming.ui.user.UserViewModel
@@ -40,5 +44,10 @@ class MyApplication : Application(), KodeinAware {
         bind() from singleton { ProfileRepository(instance(), instance()) }
         bind() from provider { ProfileViewModel(instance()) }
         bind() from provider { ProfileViewModelFactory(instance()) }
+
+        bind() from singleton { MapDataSource() }
+        bind() from singleton { MapRepositoty(instance(), instance()) }
+        bind() from provider { MapViewModel(instance()) }
+        bind() from provider { MapViewModelFactory(instance()) }
     }
 }
