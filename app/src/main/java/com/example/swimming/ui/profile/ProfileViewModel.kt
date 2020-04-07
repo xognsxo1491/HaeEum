@@ -78,6 +78,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
         disposables.add(logout)
     }
 
+    // 알림 메세지
     fun checkMessage(owner: LifecycleOwner, path1: String, path2: String) {
         val option = repository.checkMessage(owner, path1, path2)
         var context: Context? = null

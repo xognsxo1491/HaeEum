@@ -28,5 +28,6 @@ data class BoardFormStatus(
 
     val error: Int? = null,
     val loading: Int? = null,
-    val check: Int? = null
+    val check: Int? = null,
+    val delete: String? = null
 )

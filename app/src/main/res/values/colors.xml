@@ -2,6 +2,7 @@
 <resources>
     <color name="colorPrimary">#1B222E</color>
     <color name="colorPrimaryVariant">#232B39</color>
+    <color name="colorPrimaryTrans">#CC1B222E</color>
 
     <color name="colorWhite">#FAFAFA</color>
     <color name="colorWhiteVariant">#E8E8E8</color>
@@ -12,7 +13,16 @@
     <color name="colorBlack">#292929</color>
 
     <color name="colorGradientPink">#ED5A81</color>
-    <color name="colorGradientOrange">#F4786C</color>
-    <color name="colorGradientPurple">#B89FFC</color>
+    <color name="colorGradientPinkTrans">#A6ED5A81</color>
 
+    <color name="colorGradientOrange">#F4786C</color>
+    <color name="colorGradientOrangeTrans">#A6F4786C</color>
+
+    <color name="colorGradientPurple">#B89FFC</color>
+    <color name="colorGradientPurpleTrans">#A6B89FFC</color>
+
+    <color name="colorGradientBlue">#82B1FF</color>
+    <color name="colorGradientBlueTrans">#A682B1FF</color>
+
+    <color name="colorBlue">#282F4B</color>
 </resources>

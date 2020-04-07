@@ -38,12 +38,14 @@ class MyBoardActivity : AppCompatActivity(), KodeinAware {
                 mBinding.textMyBoardTitle.text  = getString(R.string.myBoard)
                 viewModel.myBoard("FreeBoard", "FreeBoardInfo")
                 viewModel.myBoard("InfoBoard", "InfoBoardInfo")
+                viewModel.myBoard("StoreBoard", "StoreBoardInfo")
             }
 
             "Comments" -> {
                 mBinding.textMyBoardTitle.text  = getString(R.string.myComment)
                 viewModel.myComments("FreeBoard", "FreeBoardComments", "FreeBoardInfo")
                 viewModel.myComments( "InfoBoard", "InfoBoardComments", "InfoBoardInfo")
+                viewModel.myComments("StoreBoard", "StoreBoardComments", "StoreBoardInfo")
             }
         }
 

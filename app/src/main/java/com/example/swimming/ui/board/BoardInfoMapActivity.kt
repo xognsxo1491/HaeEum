@@ -2,7 +2,6 @@ package com.example.swimming.ui.board
 
 import android.app.AlertDialog
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.os.SystemClock
@@ -10,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +24,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import kotlinx.android.synthetic.main.activity_board_info.*
 import kotlinx.android.synthetic.main.item_board.*
 import kotlinx.android.synthetic.main.item_contents.*
@@ -31,7 +33,6 @@ import kotlinx.android.synthetic.main.item_contents.view.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
-import java.lang.Exception
 
 class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
     override val kodein by kodein()
@@ -41,6 +42,7 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
     private val key = "AIzaSyC-x0hbrLoMnWp607rYLIMzuKQP7QL0PKs"
     private lateinit var mBuilder: AlertDialog.Builder
     private lateinit var mMap: GoogleMap
+    private lateinit var mLayout: SlidingUpPanelLayout
     private var mLastClickTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,6 +88,8 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         mBinding.includeInfo. text_board_commentCount.text = intent.getStringExtra("comment")
         mBinding.includeInfo. text_board_like.text = intent.getStringExtra("like")
         mBinding.slide.setScrollableView(mBinding.scrollView)
+
+        mLayout = mBinding.slide
 
         val dialog = utilShowDialog(this, "헤엄중..")
         dialog.show()
@@ -203,8 +207,8 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
             if (edit_comments.text.toString().isNotEmpty()) {
 
                 viewModel.uploadComments("StoreBoard", "StoreBoardComments", uuid)
-                viewModel.updateCommentCount("StoreBoard", "StoreBoardInfo", uuid)
-                viewModel.pushMessage("User", "MessageInfo", uuid, "FreeBoard", text_board_title.text.toString(), edit_comments.text.toString())
+                viewModel.updateCommentCountPlus("StoreBoard", "StoreBoardInfo", uuid)
+                viewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), edit_comments.text.toString())
                 mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
                 viewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), toekn!!, getString(R.string.post_fcm), getString(R.string.authorization))
@@ -277,11 +281,31 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
             }
 
             R.id.menu_delete -> {
+                val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
+                val kind = "StoreBoard"
+                val uuid = intent.getStringExtra("uuid")
+                val imgCount = intent.getStringExtra("imgCount")
+
+                viewModel.deleteBoard(kind, kind + "Info", kind + "Comments", uuid!!, imgCount!!)
+                viewModel.deleteBoardLike(kind, kind + "Like", uuid)
+
+                mBuilder = AlertDialog.Builder(this)
+                mBuilder.setMessage("해당 글이 삭제되었습니다.").setCancelable(false)
+                mBuilder.setPositiveButton("확인") {_, _ -> finish()}.show()
                 return true
             }
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onBackPressed() {
+        if (mLayout.panelState == PanelState.EXPANDED || mLayout.panelState == PanelState.ANCHORED) {
+            mLayout.panelState = PanelState.COLLAPSED
+
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onResume() {

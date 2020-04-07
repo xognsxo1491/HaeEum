@@ -26,7 +26,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
-// 리뷰 게시판
+
 class BoardMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()

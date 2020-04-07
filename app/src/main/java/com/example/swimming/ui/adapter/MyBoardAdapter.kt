@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
+import com.example.swimming.ui.board.BoardInfoMapActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
 
@@ -40,23 +42,58 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
         holder.like.text = UtilBase64Cipher.decode(item.like)
 
         when (UtilBase64Cipher.decode(item.kind)) {
-            "FreeBoard" -> holder.kind.text = "자유 게시판"
-            "InfoBoard" -> holder.kind.text = "정보 게시판"
+            "FreeBoard" -> {
+                holder.kind.text = "자유 게시판"
+                holder.onClick(
+                    holder.itemView, context!!,
+                    UtilBase64Cipher.decode(item.kind),
+                    item.uuid,
+                    holder.id.text.toString(),
+                    holder.title.text.toString(),
+                    holder.contents.text.toString(),
+                    UtilBase64Cipher.decode(item.time),
+                    holder.image.text.toString(),
+                    holder.comments.text.toString(),
+                    holder.like.text.toString(),
+                    item.token
+                )
+            }
+            "InfoBoard" -> {
+                holder.kind.text = "정보 게시판"
+                holder.onClick(
+                    holder.itemView, context!!,
+                    UtilBase64Cipher.decode(item.kind),
+                    item.uuid,
+                    holder.id.text.toString(),
+                    holder.title.text.toString(),
+                    holder.contents.text.toString(),
+                    UtilBase64Cipher.decode(item.time),
+                    holder.image.text.toString(),
+                    holder.comments.text.toString(),
+                    holder.like.text.toString(),
+                    item.token
+                )
+            }
+            "StoreBoard" -> {
+                holder.kind.text = "수족관 게시판"
+                holder.onClick2(
+                    holder.itemView, context!!,
+                    UtilBase64Cipher.decode(item.kind),
+                    item.uuid,
+                    holder.id.text.toString(),
+                    holder.title.text.toString(),
+                    holder.contents.text.toString(),
+                    UtilBase64Cipher.decode(item.time),
+                    holder.image.text.toString(),
+                    holder.comments.text.toString(),
+                    holder.like.text.toString(),
+                    item.token,
+                    UtilBase64Cipher.decode( item.store),
+                    item.latitude,
+                    item.longitude
+                )
+            }
         }
-
-        holder.onClick(
-            holder.itemView, context!!,
-            UtilBase64Cipher.decode(item.kind),
-            item.uuid,
-            holder.id.text.toString(),
-            holder.title.text.toString(),
-            holder.contents.text.toString(),
-            UtilBase64Cipher.decode(item.time),
-            holder.image.text.toString(),
-            holder.comments.text.toString(),
-            holder.like.text.toString(),
-            item.token
-        )
 
         holder.check(
             context!!,
@@ -69,7 +106,10 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
             holder.image.text.toString(),
             holder.comments.text.toString(),
             holder.like.text.toString(),
-            item.token
+            item.token,
+            UtilBase64Cipher.decode(item.store),
+            item.latitude,
+            item.longitude
         )
 
         if (holder.image.text.toString() == "0") {
@@ -94,6 +134,7 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
         val kind: TextView = itemView.findViewById(R.id.text_myBoard_kind)
         val layout: LinearLayout = itemView.findViewById(R.id.layout_myList_img)
 
+        // 자유 게시판, 정보 게시판
         fun onClick(itemView: View, context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String) {
             itemView.setOnClickListener {
                 val intent = Intent(context, BoardInfoActivity::class.java)
@@ -111,10 +152,32 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
             }
         }
 
-        fun check(context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String) {
+        // 수족관 게시판
+        fun onClick2(itemView: View, context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String, store: String, latitude: Double, longitude: Double) {
+            itemView.setOnClickListener {
+                val intent = Intent(context, BoardInfoMapActivity::class.java)
+                intent.putExtra("BoardKind", kind)
+                intent.putExtra("uuid", uuid)
+                intent.putExtra("id", id)
+                intent.putExtra("title", title)
+                intent.putExtra("contents", contents)
+                intent.putExtra("time", time)
+                intent.putExtra("imgCount", imgCount)
+                intent.putExtra("comment", commentCount)
+                intent.putExtra("like", like)
+                intent.putExtra("token", token)
+                intent.putExtra("store", store)
+                intent.putExtra("latitude", latitude)
+                intent.putExtra("longitude", longitude)
+                context.startActivity(intent)
+            }
+        }
+
+        fun check(context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String, store: String, latitude: Double, longitude: Double) {
             mIntent = (context as Activity).intent
 
-            if (mIntent!!.getStringExtra("message") == uuid) {
+            // 자유 게시판, 정보 게시판
+            if (mIntent!!.getStringExtra("message") == uuid && (kind == "FreeBoard" || kind == "InfoBoard")) {
                 val intent = Intent(context, BoardInfoActivity::class.java)
                 intent.putExtra("BoardKind", kind)
                 intent.putExtra("uuid", uuid)
@@ -127,6 +190,26 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
                 intent.putExtra("like", like)
                 intent.putExtra("token", token)
                 context.startActivity(intent)
+            }
+
+            // 수족관 게시판
+            else if (mIntent!!.getStringExtra("message") == uuid && kind == "StoreBoard") {
+                val intent = Intent(context, BoardInfoMapActivity::class.java)
+                intent.putExtra("BoardKind", kind)
+                intent.putExtra("uuid", uuid)
+                intent.putExtra("id", id)
+                intent.putExtra("title", title)
+                intent.putExtra("contents", contents)
+                intent.putExtra("time", time)
+                intent.putExtra("imgCount", imgCount)
+                intent.putExtra("comment", commentCount)
+                intent.putExtra("like", like)
+                intent.putExtra("token", token)
+                intent.putExtra("store", store)
+                intent.putExtra("latitude", latitude)
+                intent.putExtra("longitude", longitude)
+                context.startActivity(intent)
+
             }
         }
     }

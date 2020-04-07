@@ -265,11 +265,17 @@ class BoardDataSource {
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                val comments = Comments(id, time, contents)
+                val comments = Comments(uuid2, id, time, contents)
                 reference.child(uuid2).setValue(comments)
                 it.onComplete()
             }
         })
+    }
+
+    // 댓글 삭제
+    fun deleteComments(path1: String, path2: String, path3: String, uuid: String) = Completable.create {
+        val comment = database.reference.child(path1).child(path2).child(path3).child(uuid)
+        comment.removeValue()
     }
 
     // 댓글 불러오기
@@ -306,8 +312,8 @@ class BoardDataSource {
        })
     }
 
-    // 댓글 개수 업데이트
-    fun updateCommentCount(path1: String, path2: String, uuid: String) = Completable.create {
+    // 댓글 개수 업데이트 (플러스)
+    fun updateCommentCountPlus(path1: String, path2: String, uuid: String) = Completable.create {
         val reference = database.reference.child(path1).child(path2).child(uuid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
@@ -321,6 +327,27 @@ class BoardDataSource {
 
                 val map: HashMap<String, Any> = HashMap()
                 map["commentCount"] = UtilBase64Cipher.encode((num + 1).toString())
+
+                reference.updateChildren(map)
+            }
+        })
+    }
+
+    // 댓글 개수 업데이트 (마이너스)
+    fun updateCommentCountMinus(path1: String, path2: String, uuid: String) = Completable.create {
+        val reference = database.reference.child(path1).child(path2).child(uuid)
+        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val board = p0.getValue(Board::class.java)
+                val num = Integer.parseInt(UtilBase64Cipher.decode(board!!.commentCount))
+
+                val map: HashMap<String, Any> = HashMap()
+                map["commentCount"] = UtilBase64Cipher.encode((num - 1).toString())
 
                 reference.updateChildren(map)
             }

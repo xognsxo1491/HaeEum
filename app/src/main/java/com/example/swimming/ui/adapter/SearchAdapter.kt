@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
+import com.example.swimming.ui.board.BoardInfoMapActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
 import kotlin.collections.ArrayList
@@ -38,19 +39,38 @@ class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView
         holder.comments.text = UtilBase64Cipher.decode(item.commentCount)
         holder.like.text = UtilBase64Cipher.decode(item.like)
 
-        holder.onClick(
-            holder.itemView, context!!,
-            UtilBase64Cipher.decode(item.kind),
-            item.uuid,
-            holder.id.text.toString(),
-            holder.title.text.toString(),
-            holder.contents.text.toString(),
-            UtilBase64Cipher.decode(item.time),
-            holder.image.text.toString(),
-            holder.comments.text.toString(),
-            holder.like.text.toString(),
-            item.token
-        )
+        if (item.latitude == 0.0) {
+            holder.onClick(
+                holder.itemView, context!!,
+                UtilBase64Cipher.decode(item.kind),
+                item.uuid,
+                holder.id.text.toString(),
+                holder.title.text.toString(),
+                holder.contents.text.toString(),
+                UtilBase64Cipher.decode(item.time),
+                holder.image.text.toString(),
+                holder.comments.text.toString(),
+                holder.like.text.toString(),
+                item.token
+            )
+        } else {
+            holder.onClick2(
+                holder.itemView, context!!,
+                UtilBase64Cipher.decode(item.kind),
+                item.uuid,
+                holder.id.text.toString(),
+                holder.title.text.toString(),
+                holder.contents.text.toString(),
+                UtilBase64Cipher.decode(item.time),
+                holder.image.text.toString(),
+                holder.comments.text.toString(),
+                holder.like.text.toString(),
+                item.token,
+                UtilBase64Cipher.decode(item.store),
+                item.latitude,
+                item.longitude
+            )
+        }
 
         if (holder.image.text.toString() == "0") {
             holder.layout.visibility = View.GONE
@@ -84,6 +104,26 @@ class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView
                 intent.putExtra("comment", commentCount)
                 intent.putExtra("like", like)
                 intent.putExtra("token", token)
+                context.startActivity(intent)
+            }
+        }
+
+        fun onClick2(itemView: View, context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String, store: String, latitude: Double, longitude: Double) {
+            itemView.setOnClickListener {
+                val intent = Intent(context, BoardInfoMapActivity::class.java)
+                intent.putExtra("BoardKind", kind)
+                intent.putExtra("uuid", uuid)
+                intent.putExtra("id", id)
+                intent.putExtra("title", title)
+                intent.putExtra("contents", contents)
+                intent.putExtra("time", time)
+                intent.putExtra("imgCount", imgCount)
+                intent.putExtra("comment", commentCount)
+                intent.putExtra("like", like)
+                intent.putExtra("token", token)
+                intent.putExtra("store", store)
+                intent.putExtra("latitude", latitude)
+                intent.putExtra("longitude", longitude)
                 context.startActivity(intent)
             }
         }

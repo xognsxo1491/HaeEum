@@ -19,7 +19,7 @@ import com.example.swimming.utils.UtilDateFormat
 import com.example.swimming.utils.UtilKeyboard
 import com.example.swimming.utils.utilShowDialog
 import kotlinx.android.synthetic.main.activity_board_info.*
-import kotlinx.android.synthetic.main.item_board.*
+import kotlinx.android.synthetic.main.item_board.view.*
 import kotlinx.android.synthetic.main.item_contents.*
 import kotlinx.android.synthetic.main.item_contents.view.*
 import org.kodein.di.KodeinAware
@@ -47,8 +47,8 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
         mBinding.viewModel = viewModel
-        viewModel.recyclerView = recycler_Info
-        viewModel.refreshLayout = swipe_info
+        viewModel.recyclerView = mBinding.includeInfo.recycler_Info
+        viewModel.refreshLayout = mBinding.swipeInfo
 
         viewModel.card1 = card_info1
         viewModel.card2 = card_info2
@@ -74,24 +74,15 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         val dialog = utilShowDialog(this, "헤엄중..")
         dialog.show()
 
-        when (kind) {
-            "FreeBoard" -> {
-                mBinding.textInfoTTitle.text = getString(R.string.free_board)
-                viewModel.checkBoard("FreeBoard", "FreeBoardInfo", uuid!!) // 취소 확인
-                viewModel.loadImage("FreeBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
-                viewModel.loadComments(this, "FreeBoard", "FreeBoardComments", "FreeBoardInfo", uuid) // 댓글 불러오기
-                viewModel.checkBoardLike("FreeBoard", "FreeBoardLike", uuid) // 좋아요 구독 상태
-                viewModel.loadBoardLike("FreeBoard", "FreeBoardInfo", uuid) // 좋아요 개수
-            }
+        viewModel.checkBoard(kind!!, kind +"Info", uuid!!) // 취소 확인
+        viewModel.loadImage(kind+"/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
+        viewModel.loadComments(this, kind, kind+"Comments", kind+"Info", uuid) // 댓글 불러오기
+        viewModel.checkBoardLike(kind, kind+"Like", uuid) // 좋아요 구독 상태
+        viewModel.loadBoardLike(kind, kind+"Info", uuid) // 좋아요 개수
 
-            "InfoBoard" -> {
-                mBinding.textInfoTTitle.text = getString(R.string.info_board)
-                viewModel.checkBoard("InfoBoard", "InfoBoardInfo", uuid!!) // 취소 확인
-                viewModel.loadImage("InfoBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
-                viewModel.loadComments(this, "InfoBoard", "InfoBoardComments", "InfoBoardInfo", uuid) // 댓글 불러오기
-                viewModel.checkBoardLike("InfoBoard", "InfoBoardLike", uuid) // 좋아요 구독 상태
-                viewModel.loadBoardLike("InfoBoard", "InfoBoardInfo", uuid) // 좋아요 개수
-            }
+        when (kind) {
+            "FreeBoard" -> mBinding.textInfoTTitle.text = getString(R.string.free_board)
+            "InfoBoard" -> mBinding.textInfoTTitle.text = getString(R.string.info_board)
         }
 
         viewModel.boardFormStatus.observe(this@BoardInfoActivity, Observer {
@@ -118,6 +109,12 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
             if (boardState.error != null) {
                 Toast.makeText(this, boardState.error, Toast.LENGTH_SHORT).show()
+            }
+
+            if (boardState.delete != null) {
+                Toast.makeText(this, getString(R.string.message_delete), Toast.LENGTH_SHORT).show()
+                viewModel.updateCommentCountMinus(kind, kind +"Info", uuid)
+                mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) - 1).toString()
             }
 
             try {
@@ -199,21 +196,10 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             //
 
             if (edit_comments.text.toString().isNotEmpty()) {
-                when (kind) {
-                    "FreeBoard" -> {
-                        viewModel.uploadComments("FreeBoard", "FreeBoardComments", uuid!!)
-                        viewModel.updateCommentCount("FreeBoard", "FreeBoardInfo", uuid)
-                        viewModel.pushMessage("User", "MessageInfo", uuid, "FreeBoard", text_board_title.text.toString(), edit_comments.text.toString())
-                        mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
-                    }
-
-                    "InfoBoard" -> {
-                        viewModel.uploadComments("InfoBoard", "InfoBoardComments", uuid!!)
-                        viewModel.updateCommentCount("InfoBoard", "InfoBoardInfo", uuid)
-                        viewModel.pushMessage("User", "MessageInfo", uuid, "InfoBoard", text_board_title.text.toString(), edit_comments.text.toString())
-                        mBinding.includeInfo.text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
-                    }
-                }
+                viewModel.uploadComments(kind, kind+"Comments", uuid)
+                viewModel.updateCommentCountPlus(kind, kind+"Info", uuid)
+                viewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), edit_comments.text.toString())
+                mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
                 viewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), toekn!!, getString(R.string.post_fcm), getString(R.string.authorization))
                 mBinding.editComments.text = null
@@ -228,34 +214,16 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_24)
                 mBinding.includeInfo.text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) + 1).toString()
 
-                when (kind) {
-                    "FreeBoard" -> {
-                        viewModel.uploadBoardLike("FreeBoard", "FreeBoardLike", uuid!!)
-                        viewModel.updateBoardLikeCountPlus("FreeBoard", "FreeBoardInfo", uuid)
-                    }
-
-                    "InfoBoard" -> {
-                        viewModel.uploadBoardLike("InfoBoard", "InfoBoardLike", uuid!!)
-                        viewModel.updateBoardLikeCountPlus("InfoBoard", "InfoBoardInfo", uuid)
-                    }
-                }
+                viewModel.uploadBoardLike(kind, kind+"Like", uuid)
+                viewModel.updateBoardLikeCountPlus(kind, kind+"Info", uuid)
 
             } else if (mBinding.includeInfo.img_favorite.tag == Integer.valueOf(R.string.like)){
                 mBinding.includeInfo.img_favorite.tag = Integer.valueOf(R.string.unLike)
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_border_24)
                 mBinding.includeInfo. text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) - 1).toString()
 
-                when (kind) {
-                    "FreeBoard" -> {
-                        viewModel.deleteBoardLike("FreeBoard", "FreeBoardLike", uuid!!)
-                        viewModel.updateBoardLikeCountMinus("FreeBoard", "FreeBoardInfo", uuid)
-                    }
-
-                    "InfoBoard" -> {
-                        viewModel.deleteBoardLike("InfoBoard", "InfoBoardLike", uuid!!)
-                        viewModel.updateBoardLikeCountMinus("InfoBoard", "InfoBoardInfo", uuid)
-                    }
-                }
+                viewModel.deleteBoardLike(kind, kind+"Like", uuid)
+                viewModel.updateBoardLikeCountMinus(kind, kind+"Info", uuid)
             }
         }
     }

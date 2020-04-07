@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.provider.Settings
+import android.view.MenuItem
 import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +27,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
+// 수족관 위치 선택
 class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
     override val kodein by kodein()
     private val factory: MapViewModelFactory by instance()
@@ -43,6 +45,11 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_map_select)
         mBinding.viewModel = viewModel
+
+        setSupportActionBar(mBinding.toolbar)
+
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
         var bundle: Bundle? = null
         if (savedInstanceState != null) {
@@ -147,7 +154,7 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
                     val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivity(intent)
                 }
-                .setNegativeButton("취소") {_, _ -> finish()}.show()
+                .setNegativeButton("취소") {_, _ -> }.show()
         } else {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null)
         }
@@ -172,5 +179,14 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
                 }
             }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            finish()
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }

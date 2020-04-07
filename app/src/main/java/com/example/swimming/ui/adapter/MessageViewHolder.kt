@@ -44,6 +44,12 @@ class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 kind.setTextColor(Color.parseColor("#ED5A81"))
                 contents.text = "댓글: ${UtilBase64Cipher.decode(post.contents)}"
             }
+
+            "StoreBoard" -> {
+                kind.text = "수족관 게시판"
+                kind.setTextColor(Color.parseColor("#ED5A81"))
+                contents.text = "댓글: ${UtilBase64Cipher.decode(post.contents)}"
+            }
         }
 
         if (UtilBase64Cipher.decode(post.status) == "true") {
@@ -51,7 +57,6 @@ class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             title.setTextColor(Color.parseColor("#7E8188"))
             contents.setTextColor(Color.parseColor("#7E8188"))
             time.setTextColor(Color.parseColor("#7E8188"))
-
             }
     }
 

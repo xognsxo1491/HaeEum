@@ -9,7 +9,7 @@ import java.util.*
 class BoardRepository(private val dataSource: BoardDataSource, val context: Context) {
 
     private val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
-    private val id = pref.getString("Id", "")
+    val id = pref.getString("Id", "")
     private val token = pref.getString("token", "")
 
     private val time = System.currentTimeMillis().toString()
@@ -39,14 +39,20 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
     fun uploadComments(path1: String, path2: String, child: String, comments: String) =
         dataSource.uploadComments(path1, path2, child,(9999999999999 - System.currentTimeMillis()).toString() + UUID.randomUUID().toString(), UtilBase64Cipher.encode(id!!), UtilBase64Cipher.encode(time), UtilBase64Cipher.encode(comments))
 
+    fun deleteComments(path1: String, path2: String, path3: String, uuid: String) =
+        dataSource.deleteComments(path1, path2, path3, uuid)
+
     fun loadComments(owner: LifecycleOwner, path1: String, path2: String, child: String) =
         dataSource.loadComments(owner, path1, path2, child)
 
     fun loadCommentCount(path1: String, path2: String, uuid: String) =
         dataSource.loadCommentCount(path1, path2, uuid)
 
-    fun updateCommentCount(path1: String, path2: String, uuid: String) =
-        dataSource.updateCommentCount(path1, path2, uuid)
+    fun updateCommentCountPlus(path1: String, path2: String, uuid: String) =
+        dataSource.updateCommentCountPlus(path1, path2, uuid)
+
+    fun updateCommentCountMinus(path1: String, path2: String, uuid: String) =
+        dataSource.updateCommentCountMinus(path1, path2, uuid)
 
     fun uploadBoardLike(path1: String, path2: String, uuid1: String) =
         dataSource.uploadBoardLike(path1, path2, uuid1, UtilBase64Cipher.encode(id!!))

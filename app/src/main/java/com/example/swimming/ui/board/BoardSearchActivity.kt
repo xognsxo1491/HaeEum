@@ -50,6 +50,12 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
                             viewModel.searchKeyword("InfoBoard", "InfoBoardInfo", edit_search.text.toString())
                             UtilKeyboard.hideKeyboard(this)
                         }
+
+                        "StoreBoard" -> {
+                            list.clear()
+                            viewModel.searchKeyword("StoreBoard", "StoreBoardInfo", edit_search.text.toString())
+                            UtilKeyboard.hideKeyboard(this)
+                        }
                     }
                 }
 

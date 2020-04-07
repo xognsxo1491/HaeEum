@@ -10,6 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -283,7 +284,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                _boardForm.value = BoardFormStatus(check = R.string.message_delete)
+                _boardForm.value = BoardFormStatus(check = R.string.message_delete_board)
             }, {})
 
         disposables.add(check)
@@ -472,20 +473,41 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             disposables.add(upload)
     }
 
+    // 댓글 삭제
+    fun deleteComments(path1: String, path2: String, path3: String, uuid: String) {
+        val delete = repository.deleteComments(path1, path2, path3, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(delete)
+    }
+
     // 댓글 불러오기
     fun loadComments(owner: LifecycleOwner, path1: String, path2: String, path3: String, uuid: String) {
         val option = repository.loadComments(owner, path1, path2, uuid)
+        var context: Context? = null
 
         adapterComments = object : FirebaseRecyclerPagingAdapter<Comments, CommentViewHolder>(option) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-                return CommentViewHolder(
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_comments, parent, false)
-                )
+                context = parent.context
+                return CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_comments, parent, false))
             }
 
             override fun onBindViewHolder(p0: CommentViewHolder, p1: Int, p2: Comments) {
                 p0.setItem(p2)
+                p0.onClick(p0.itemView, context!!, p2, repository.id!!)
+                p0.boardForm.observe(owner, Observer {
+                    val state = it ?: return@Observer
+
+                    // 댓글 삭제
+                    if (state.delete != null) {
+                        deleteComments(path1, path2, uuid, p2.uuid)
+                        refresh()
+
+                        _boardForm.value = BoardFormStatus(delete = "delete")
+                    }
+                })
             }
 
             override fun onLoadingStateChanged(state: LoadingState) {
@@ -544,14 +566,24 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
         disposables.add(load)
     }
 
-    // 댓글 개수 업데이트
-    fun updateCommentCount(path1: String, path2: String, uuid: String) {
-            val load = repository.updateCommentCount(path1, path2, uuid)
+    // 댓글 개수 업데이트 (플러스)
+    fun updateCommentCountPlus(path1: String, path2: String, uuid: String) {
+            val load = repository.updateCommentCountPlus(path1, path2, uuid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
 
             disposables.add(load)
+    }
+
+    // 댓글 개수 업데이트 (플러스)
+    fun updateCommentCountMinus(path1: String, path2: String, uuid: String) {
+        val load = repository.updateCommentCountMinus(path1, path2, uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe()
+
+        disposables.add(load)
     }
 
     // 좋아요

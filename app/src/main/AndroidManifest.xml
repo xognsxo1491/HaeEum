@@ -15,8 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_swimming"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.board.BoardInfoMapActivity"></activity>
-        <activity android:name=".ui.map.BoardMapSelectActivity" />
+        <activity
+            android:name=".ui.board.BoardInfoMapActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.map.BoardMapSelectActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.map.BoardMapActivity"
             android:screenOrientation="portrait" />
