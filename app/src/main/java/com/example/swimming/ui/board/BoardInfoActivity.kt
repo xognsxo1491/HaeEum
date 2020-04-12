@@ -32,6 +32,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
     private lateinit var mBinding: ActivityBoardInfoBinding
+    private lateinit var mViewModel: BoardViewModel
 
     private lateinit var mBuilder: AlertDialog.Builder
     private var mLastClickTime: Int = 0
@@ -40,32 +41,32 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         super.onCreate(savedInstanceState)
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_info)
-        val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
+        mViewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
         setSupportActionBar(mBinding.toolbarInfo)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        mBinding.viewModel = viewModel
-        viewModel.recyclerView = mBinding.includeInfo.recycler_Info
-        viewModel.refreshLayout = mBinding.swipeInfo
+        mBinding.viewModel = mViewModel
+        mViewModel.recyclerView = mBinding.includeInfo.recycler_Info
+        mViewModel.refreshLayout = mBinding.swipeInfo
 
-        viewModel.card1 = card_info1
-        viewModel.card2 = card_info2
-        viewModel.card3 = card_info3
-        viewModel.card4 = card_info4
-        viewModel.card5 = card_info5
-        viewModel.imgLike = img_favorite
+        mViewModel.card1 = card_info1
+        mViewModel.card2 = card_info2
+        mViewModel.card3 = card_info3
+        mViewModel.card4 = card_info4
+        mViewModel.card5 = card_info5
+        mViewModel.imgLike = img_favorite
         img_favorite.tag = Integer.valueOf(R.string.unLike)
 
         val kind = intent.getStringExtra("BoardKind")
         val uuid = intent.getStringExtra("uuid")
         val imgCount = intent.getStringExtra("imgCount")
-        val toekn = intent.getStringExtra("token")
+        val token = intent.getStringExtra("token")
 
         mBinding.includeInfo.text_board_id.text = intent.getStringExtra("id")
         mBinding.includeInfo. text_board_title.text = intent.getStringExtra("title")
-        mBinding.includeInfo. text_board_contents.text = intent.getStringExtra("contents")
+        mBinding.includeInfo. text_board_contents.text = intent.getStringExtra("contents")!!.replace(" ", "\u00A0")
         mBinding.includeInfo. text_board_time.text = UtilDateFormat.formatting(intent.getStringExtra("time")!!.toLong())
         mBinding.includeInfo.text_board_imgCount.text = imgCount
         mBinding.includeInfo. text_board_commentCount.text = intent.getStringExtra("comment")
@@ -74,25 +75,25 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         val dialog = utilShowDialog(this, "헤엄중..")
         dialog.show()
 
-        viewModel.checkBoard(kind!!, kind +"Info", uuid!!) // 취소 확인
-        viewModel.loadImage(kind+"/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
-        viewModel.loadComments(this, kind, kind+"Comments", kind+"Info", uuid) // 댓글 불러오기
-        viewModel.checkBoardLike(kind, kind+"Like", uuid) // 좋아요 구독 상태
-        viewModel.loadBoardLike(kind, kind+"Info", uuid) // 좋아요 개수
+        mViewModel.checkBoard(kind!!, kind +"Info", uuid!!) // 취소 확인
+        mViewModel.loadImage(kind+"/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
+        mViewModel.loadComments(this, kind, kind+"Comments", kind+"Info", uuid) // 댓글 불러오기
+        mViewModel.checkBoardLike(kind, kind+"Like", uuid) // 좋아요 구독 상태
+        mViewModel.loadBoardLike(kind, kind+"Info", uuid) // 좋아요 개수
 
         when (kind) {
             "FreeBoard" -> mBinding.textInfoTTitle.text = getString(R.string.free_board)
             "InfoBoard" -> mBinding.textInfoTTitle.text = getString(R.string.info_board)
+            "Dictionary" -> mBinding.textInfoTTitle.text = getString(R.string.dictionary_board)
         }
 
-        viewModel.boardFormStatus.observe(this@BoardInfoActivity, Observer {
+        mViewModel.boardFormStatus.observe(this@BoardInfoActivity, Observer {
             val boardState = it ?: return@Observer
 
             if (boardState.check != null) {
                 mBuilder = AlertDialog.Builder(this)
                 mBuilder.setMessage( boardState.check).setCancelable(false)
                 mBuilder.setPositiveButton("확인") {_, _ -> finish()}.show()
-
             }
 
             if (boardState.setCommentCount != null) {
@@ -113,7 +114,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
             if (boardState.delete != null) {
                 Toast.makeText(this, getString(R.string.message_delete), Toast.LENGTH_SHORT).show()
-                viewModel.updateCommentCountMinus(kind, kind +"Info", uuid)
+                mViewModel.updateCommentCountMinus(kind, kind +"Info", uuid)
                 mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) - 1).toString()
             }
 
@@ -196,34 +197,33 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             //
 
             if (edit_comments.text.toString().isNotEmpty()) {
-                viewModel.uploadComments(kind, kind+"Comments", uuid)
-                viewModel.updateCommentCountPlus(kind, kind+"Info", uuid)
-                viewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), edit_comments.text.toString())
+                mViewModel.uploadComments(kind, kind+"Comments", uuid)
+                mViewModel.updateCommentCountPlus(kind, kind+"Info", uuid)
+                mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), edit_comments.text.toString())
                 mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
-                viewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), toekn!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
                 mBinding.editComments.text = null
                 UtilKeyboard.hideKeyboard(this)
             }
         }
 
         layout_contents_favorite.setOnClickListener {
-
             if (mBinding.includeInfo.img_favorite.tag == Integer.valueOf(R.string.unLike)) {
                 mBinding.includeInfo.img_favorite.tag = Integer.valueOf(R.string.like)
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_24)
                 mBinding.includeInfo.text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) + 1).toString()
 
-                viewModel.uploadBoardLike(kind, kind+"Like", uuid)
-                viewModel.updateBoardLikeCountPlus(kind, kind+"Info", uuid)
+                mViewModel.uploadBoardLike(kind, kind+"Like", uuid)
+                mViewModel.updateBoardLikeCountPlus(kind, kind+"Info", uuid)
 
             } else if (mBinding.includeInfo.img_favorite.tag == Integer.valueOf(R.string.like)){
                 mBinding.includeInfo.img_favorite.tag = Integer.valueOf(R.string.unLike)
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_border_24)
                 mBinding.includeInfo. text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) - 1).toString()
 
-                viewModel.deleteBoardLike(kind, kind+"Like", uuid)
-                viewModel.updateBoardLikeCountMinus(kind, kind+"Info", uuid)
+                mViewModel.deleteBoardLike(kind, kind+"Like", uuid)
+                mViewModel.updateBoardLikeCountMinus(kind, kind+"Info", uuid)
             }
         }
     }
@@ -231,6 +231,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
     override fun onDestroy() {
         super.onDestroy()
         mBinding.unbind()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -245,20 +246,18 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-
             android.R.id.home -> {
                 finish()
                 return true
             }
 
             R.id.menu_delete -> {
-                val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
                 val kind = intent.getStringExtra("BoardKind")
                 val uuid = intent.getStringExtra("uuid")
                 val imgCount = intent.getStringExtra("imgCount")
 
-                viewModel.deleteBoard(kind!!, kind + "Info", kind + "Comments", uuid!!, imgCount!!)
-                viewModel.deleteBoardLike(kind, kind + "Like", uuid)
+                mViewModel.deleteBoard(kind!!, kind + "Info", kind + "Comments", uuid!!, imgCount!!)
+                mViewModel.deleteBoardLike(kind, kind + "Like", uuid)
 
                 mBuilder = AlertDialog.Builder(this)
                 mBuilder.setMessage("해당 글이 삭제되었습니다.").setCancelable(false)

@@ -26,6 +26,11 @@
                 android:id="@+id/nav_myComment"
                 android:icon="@drawable/round_comment_24"
                 android:title="@string/myComment" />
+
+            <item
+                android:id="@+id/nav_myLike"
+                android:icon="@drawable/round_favorite_24"
+                android:title="@string/myLike" />
         </menu>
     </item>
 </menu>

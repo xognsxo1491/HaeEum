@@ -2,6 +2,9 @@ package com.example.swimming.data.board
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
 import com.example.swimming.data.profile.Message
@@ -13,6 +16,8 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -80,30 +85,10 @@ class BoardDataSource {
                 storage.reference.child(path1).child(uuid).child("1").delete()
             }
 
-            "2" -> {
-                storage.reference.child(path1).child(uuid).child("1").delete()
-                storage.reference.child(path1).child(uuid).child("2").delete()
-            }
-
-            "3" -> {
-                storage.reference.child(path1).child(uuid).child("1").delete()
-                storage.reference.child(path1).child(uuid).child("2").delete()
-                storage.reference.child(path1).child(uuid).child("3").delete()
-            }
-
-            "4" -> {
-                storage.reference.child(path1).child(uuid).child("1").delete()
-                storage.reference.child(path1).child(uuid).child("2").delete()
-                storage.reference.child(path1).child(uuid).child("3").delete()
-                storage.reference.child(path1).child(uuid).child("4").delete()
-            }
-
-            "5" -> {
-                storage.reference.child(path1).child(uuid).child("1").delete()
-                storage.reference.child(path1).child(uuid).child("2").delete()
-                storage.reference.child(path1).child(uuid).child("3").delete()
-                storage.reference.child(path1).child(uuid).child("4").delete()
-                storage.reference.child(path1).child(uuid).child("5").delete()
+            else -> {
+                for (i in 1..Integer.parseInt(count)) {
+                    storage.reference.child(path1).child(uuid).child(i.toString()).delete()
+                }
             }
         }
     }
@@ -141,43 +126,61 @@ class BoardDataSource {
     }
 
     // 이미지 업로드
-    fun uploadImage(path: String, uuid: String, count: String, data: Intent?) = Completable.create {
-
+    fun uploadImage(path: String, uuid: String, count: String, data: Intent?, context: Context) = Completable.create {
         try {
             when (count) {
                 "1" -> {
-                    storage.reference.child(path).child("$uuid/1").putFile(data!!.data!!)
+                    val resize = resize(context, data!!.data!!)
+                    val outputStream = ByteArrayOutputStream()
+                    resize.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                    val byte = outputStream.toByteArray()
+
+                    storage.reference.child(path).child("$uuid/1").putBytes(byte)
                 }
 
-                "2" -> {
-                    storage.reference.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    storage.reference.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                }
+                else -> {
+                    for (i in 1..Integer.parseInt(count)) {
+                        val resize = resize(context, data!!.clipData!!.getItemAt(i - 1).uri)
+                        val outputStream = ByteArrayOutputStream()
+                        resize.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                        val byte = outputStream.toByteArray()
 
-                "3" -> {
-                    storage.reference.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    storage.reference.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    storage.reference.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
-                }
-
-                "4" -> {
-                    storage.reference.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    storage.reference.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    storage.reference.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
-                    storage.reference.child(path).child("$uuid/4").putFile(data.clipData!!.getItemAt(3).uri)
-                }
-
-                "5" -> {
-                    storage.reference.child(path).child("$uuid/1").putFile(data!!.clipData!!.getItemAt(0).uri)
-                    storage.reference.child(path).child("$uuid/2").putFile(data.clipData!!.getItemAt(1).uri)
-                    storage.reference.child(path).child("$uuid/3").putFile(data.clipData!!.getItemAt(2).uri)
-                    storage.reference.child(path).child("$uuid/4").putFile(data.clipData!!.getItemAt(3).uri)
-                    storage.reference.child(path).child("$uuid/5").putFile(data.clipData!!.getItemAt(4).uri)
+                        storage.reference.child(path).child("$uuid/$i").putBytes(byte)
+                    }
                 }
             }
         } catch (e: Exception) {
             it.onError(e)
         }
+    }
+
+    // 이미지 리사이즈
+    private fun resize(context: Context, uri: Uri): Bitmap {
+        lateinit var resizedBitmap: Bitmap
+
+        val options = BitmapFactory.Options()
+        try {
+            BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri), null, options)
+
+            var width = options.outWidth
+            var height = options.outHeight
+            var sampleSize = 1
+
+            while (true) {
+                if (width / 2 < 500 || height / 2 < 500)
+                    break
+                width /= 2
+                height /= 2
+                sampleSize *= 2
+           }
+
+            options.inSampleSize = sampleSize
+            val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri), null, options)
+            resizedBitmap = bitmap!!
+        } catch (e: FileNotFoundException) {
+
+        }
+        return resizedBitmap
     }
 
     // 이미지 불러오기
@@ -548,6 +551,42 @@ class BoardDataSource {
                             it.onNext(board!!)
                         }
                     })
+            }
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+        })
+    }
+
+    // 좋아요 누른 글
+    fun myLike(path1: String, path2: String, path3: String, id: String) = Observable.create<Board> {
+        database.reference.child(path1).child(path2).addChildEventListener(object : ChildEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+
+            }
+
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+               if (p0.hasChild(id)) {
+                   database.reference.child(path1).child(path3).child(p0.key!!).addListenerForSingleValueEvent(object : ValueEventListener {
+                       override fun onCancelled(p0: DatabaseError) {
+                           it.onError(p0.toException())
+                       }
+
+                       override fun onDataChange(p0: DataSnapshot) {
+                           val board = p0.getValue(Board::class.java)
+                           it.onNext(board!!)
+                       }
+                   })
+               }
             }
             override fun onChildRemoved(p0: DataSnapshot) {
 

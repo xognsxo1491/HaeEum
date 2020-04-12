@@ -11,7 +11,7 @@
                 android:gradientRadius="90"
                 />
 
-            <corners android:radius="25dp"/>
+            <corners android:radius="24dp"/>
         </shape>
     </item>
 </selector>

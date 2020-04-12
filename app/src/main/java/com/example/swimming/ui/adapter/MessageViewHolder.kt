@@ -50,6 +50,12 @@ class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 kind.setTextColor(Color.parseColor("#ED5A81"))
                 contents.text = "댓글: ${UtilBase64Cipher.decode(post.contents)}"
             }
+
+            "Dictionary" -> {
+                kind.text = "물고기 백과사전"
+                kind.setTextColor(Color.parseColor("#ED5A81"))
+                contents.text = "댓글: ${UtilBase64Cipher.decode(post.contents)}"
+            }
         }
 
         if (UtilBase64Cipher.decode(post.status) == "true") {

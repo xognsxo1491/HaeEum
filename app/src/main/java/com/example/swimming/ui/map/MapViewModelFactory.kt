@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.data.map.MapDataSource
-import com.example.swimming.data.map.MapRepositoty
+import com.example.swimming.data.map.MapRepository
 
 @Suppress("UNCHECKED_CAST")
 class MapViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
@@ -12,7 +12,7 @@ class MapViewModelFactory(private val context: Context) : ViewModelProvider.Fact
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MapViewModel::class.java)) {
             return MapViewModel(
-                repository = MapRepositoty(MapDataSource(), context = context)
+                repository = MapRepository(MapDataSource(), context = context)
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

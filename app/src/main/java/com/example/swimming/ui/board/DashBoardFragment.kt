@@ -8,15 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.databinding.FragmentDashBoardBinding
-import com.example.swimming.ui.map.BoardMapSelectActivity
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.kodein
+import org.kodein.di.generic.instance
 
 // 게시판 프레그먼트
-class DashBoardFragment : Fragment() {
+class DashBoardFragment : Fragment(), KodeinAware {
+    override val kodein by kodein()
+    private val factory: BoardViewModelFactory by instance()
     private lateinit var mBinding: FragmentDashBoardBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = FragmentDashBoardBinding.inflate(inflater, container, false)
-        val viewModel = ViewModelProvider(this, BoardViewModelFactory(context!!)).get(BoardViewModel::class.java)
+        val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
         mBinding.viewModel = viewModel
         mBinding.cardDashFree.setOnClickListener {
@@ -34,6 +38,12 @@ class DashBoardFragment : Fragment() {
         mBinding.cardDashReview.setOnClickListener {
             val intent = Intent(context, BoardActivity::class.java)
             intent.putExtra("BoardKind", "StoreBoard")
+            startActivity(intent)
+        }
+
+        mBinding.cardDashDictionary.setOnClickListener {
+            val intent = Intent(context, BoardActivity::class.java)
+            intent.putExtra("BoardKind", "Dictionary")
             startActivity(intent)
         }
 

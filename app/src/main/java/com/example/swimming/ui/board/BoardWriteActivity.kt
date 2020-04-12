@@ -24,7 +24,7 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
     private lateinit var mBinding: ActivityBoardWriteBinding
-    lateinit var viewModel: BoardViewModel
+    lateinit var mViewModel: BoardViewModel
 
     private val code = 1000
 
@@ -32,31 +32,35 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         super.onCreate(savedInstanceState)
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_write)
-        viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
+        mViewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
         setSupportActionBar(mBinding.toolbarBoard)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_close_24)
 
-        mBinding.viewModel = viewModel
-        viewModel.result = this
+        mBinding.viewModel = mViewModel
+        mViewModel.result = this
 
-        viewModel.linearLayout = layout_write
+        mViewModel.linearLayout = layout_write
 
-        viewModel.img1 = img_board_1
-        viewModel.img2 = img_board_2
-        viewModel.img3 = img_board_3
-        viewModel.img4 = img_board_4
-        viewModel.img5 = img_board_5
+        mViewModel.img1 = img_board_1
+        mViewModel.img2 = img_board_2
+        mViewModel.img3 = img_board_3
+        mViewModel.img4 = img_board_4
+        mViewModel.img5 = img_board_5
 
-        viewModel.card1 = card_write_1
-        viewModel.card2 = card_write_2
-        viewModel.card3 = card_write_3
-        viewModel.card4 = card_write_4
-        viewModel.card5 = card_write_5
+        mViewModel.card1 = card_write_1
+        mViewModel.card2 = card_write_2
+        mViewModel.card3 = card_write_3
+        mViewModel.card4 = card_write_4
+        mViewModel.card5 = card_write_5
 
-        viewModel.boardFormStatus.observe(this@BoardWriteActivity, Observer {
+        when (intent.getStringExtra("BoardKind")) {
+            "Dictionary" -> mBinding.editBoardTitle.hint = "물고기 명"
+        }
+
+        mViewModel.boardFormStatus.observe(this@BoardWriteActivity, Observer {
             val state = it ?: return@Observer
 
             if (state.titleError != null) {
@@ -86,8 +90,8 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == code && resultCode == Activity.RESULT_OK) {
-            viewModel.data = data
-            viewModel.setImage()
+            mViewModel.data = data
+            mViewModel.setImage()
         }
     }
 
@@ -111,17 +115,22 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
 
             when (intent.getStringExtra("BoardKind")) {
                 "FreeBoard" -> {
-                    viewModel.writeBoard("FreeBoard", "FreeBoardInfo")
+                    mViewModel.writeBoard("FreeBoard", "FreeBoardInfo")
                     return true
                 }
 
                 "InfoBoard" -> {
-                    viewModel.writeBoard("InfoBoard", "InfoBoardInfo")
+                    mViewModel.writeBoard("InfoBoard", "InfoBoardInfo")
                     return true
                 }
 
                 "StoreBoard" -> {
-                    viewModel.writeBoard2("StoreBoard", "StoreBoardInfo", intent.getStringExtra("storeName")!!, intent.getDoubleExtra("latitude", 0.0), intent.getDoubleExtra("longitude", 0.0))
+                    mViewModel.writeBoard2("StoreBoard", "StoreBoardInfo", intent.getStringExtra("storeName")!!, intent.getDoubleExtra("latitude", 0.0), intent.getDoubleExtra("longitude", 0.0))
+                    return true
+                }
+
+                "Dictionary" -> {
+                    mViewModel.writeBoard("Dictionary", "DictionaryInfo")
                     return true
                 }
             }
@@ -149,6 +158,13 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
             "StoreBoard" -> {
                 val intent = Intent(this,BoardActivity::class.java)
                 intent.putExtra("BoardKind", "StoreBoard")
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+            }
+
+            "Dictionary" -> {
+                val intent = Intent(this,BoardActivity::class.java)
+                intent.putExtra("BoardKind", "Dictionary")
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(intent)
             }

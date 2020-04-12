@@ -19,6 +19,7 @@ import com.example.swimming.data.profile.ProfileRepository
 import com.example.swimming.ui.adapter.MessageViewHolder
 import com.example.swimming.ui.result.ProfileActionResult
 import com.example.swimming.ui.result.Result
+import com.example.swimming.utils.UtilBase64Cipher
 import com.google.firebase.database.DatabaseError
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter
 import com.shreyaspatil.firebase.recyclerpagination.LoadingState
@@ -40,6 +41,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
     var data: Intent? = null
     var result: Result? = null
 
+    // 토큰
     fun checkToken() {
         val check = repository.checkToken()
             .subscribeOn(Schedulers.io())
@@ -55,8 +57,9 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ t: String? ->
-                _profileForm.value = ProfileFormStatus(id = t!!.split(" ")[0])
-                _profileForm.value = ProfileFormStatus(email = t.split(" ")[1])
+                _profileForm.value = ProfileFormStatus(
+                    id = t!!.split(" ")[0],
+                    email = t.split(" ")[1])
                 val a = "asdasd"
                 a.replace("a", "")
 
@@ -145,6 +148,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
         refreshLayout!!.setOnRefreshListener { adapter.refresh() }
     }
 
+    // 알림 메시지 상태 수정
     fun updateMessageStatus(path1: String, path2: String, uuid: String) {
         val update = repository.updateMessageStatus(path1, path2, uuid)
             .subscribeOn(Schedulers.io())
@@ -154,6 +158,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
         disposables.add(update)
     }
 
+    // 알림 메세지 삭제
     fun deleteMessage(path1: String, path2: String, uuid: String) {
         val delete = repository.deleteMessage(path1, path2, uuid)
             .subscribeOn(Schedulers.io())
@@ -161,6 +166,60 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
             .subscribe()
 
         disposables.add(delete)
+    }
+
+    fun showDictionary1(uuid: String) {
+        val show = repository.showDictionary(uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _profileForm.value = ProfileFormStatus(
+                    title1 = UtilBase64Cipher.decode(it.title),
+                    content1 = UtilBase64Cipher.decode(it.contents),
+                    board1 = it)
+            }, {})
+
+        disposables.add(show)
+    }
+
+    fun showDictionary2(uuid: String) {
+        val show = repository.showDictionary(uuid)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _profileForm.value = ProfileFormStatus(
+                    title2 = UtilBase64Cipher.decode(it.title),
+                    content2 = UtilBase64Cipher.decode(it.contents),
+                    board2 = it)
+            }, {})
+
+        disposables.add(show)
+    }
+
+    fun showDictionaryImage1(path: String) {
+        val show = repository.showDictionaryImage(path)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _profileForm.value = ProfileFormStatus(
+                    image1 = it
+                )
+            }, {})
+
+        disposables.add(show)
+    }
+
+    fun showDictionaryImage2(path: String) {
+        val show = repository.showDictionaryImage(path)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _profileForm.value = ProfileFormStatus(
+                    image2 = it
+                )
+            }, {})
+
+        disposables.add(show)
     }
 
     override fun onCleared() {

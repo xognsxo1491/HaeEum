@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.swimming.data.board.BoardDataSource
 import com.example.swimming.data.board.BoardRepository
 import com.example.swimming.data.map.MapDataSource
-import com.example.swimming.data.map.MapRepositoty
+import com.example.swimming.data.map.MapRepository
 import com.example.swimming.data.profile.ProfileDataSource
 import com.example.swimming.data.profile.ProfileRepository
 import com.example.swimming.data.user.UserDataSource
@@ -46,7 +46,7 @@ class MyApplication : Application(), KodeinAware {
         bind() from provider { ProfileViewModelFactory(instance()) }
 
         bind() from singleton { MapDataSource() }
-        bind() from singleton { MapRepositoty(instance(), instance()) }
+        bind() from singleton { MapRepository(instance(), instance()) }
         bind() from provider { MapViewModel(instance()) }
         bind() from provider { MapViewModelFactory(instance()) }
     }

@@ -3,7 +3,6 @@ package com.example.swimming.ui.profile
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
@@ -25,7 +24,6 @@ import com.example.swimming.ui.result.ProfileActionResult
 import com.example.swimming.ui.user.ChangeActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.include_main.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -35,21 +33,21 @@ import org.kodein.di.generic.instance
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, KodeinAware, ProfileActionResult {
     override val kodein by kodein()
     private val factory: ProfileViewModelFactory by instance()
-
-    private var progress: ProgressBar? = null
-
     private lateinit var mBinding: ActivityMainBinding
+
+    private lateinit var progress: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         val viewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java)
         val notification = intent.getStringExtra("message")
 
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         mBinding.viewModel = viewModel
+
         viewModel.profileActionResult = this
-        viewModel.progressBar = nav_main_view.getHeaderView(0).findViewById(R.id.progress_nav)
+        viewModel.progressBar = mBinding.navMainView.getHeaderView(0).findViewById(R.id.progress_nav)
         viewModel.setProfile()
         viewModel.checkToken()
 
@@ -60,14 +58,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             loadFragment(HomeFragment())
 
         setSupportActionBar(toolbar_main)
-
         mBinding.navMainView.setNavigationItemSelectedListener(this)
 
         // 하단 네비게이션 클릭 리스너
         nav_main.setOnNavigationItemSelectedListener {p0 ->
             when (p0.itemId) {
                 R.id.navigation_home -> {
-                    val homeFragment = HomeFragment()
+                    val homeFragment =
+                        HomeFragment()
                     supportFragmentManager.beginTransaction().replace(R.id.frame_main, homeFragment).commit()
                 }
                 R.id.navigation_dashboard -> {
@@ -101,19 +99,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 email.text = UtilBase64Cipher.decode(userState.email)
             }
         })
-
-        viewModel.profileFormStatus.observe(this@MainActivity, Observer {
-            val userState = it ?: return@Observer
-
-            if (userState.onError != null) {
-                Toast.makeText(this, userState.onError, Toast.LENGTH_SHORT).show()
-            }
-        })
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mBinding.unbind()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        applicationContext.cacheDir.deleteRecursively()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -125,8 +120,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     @SuppressLint("RtlHardcoded")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_profile) {
-
             val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
+
             if (!drawer.isDrawerOpen(Gravity.RIGHT)) {
                 drawer.openDrawer(Gravity.RIGHT)
 
@@ -170,13 +165,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 intent.putExtra("Kind", "Comments")
                 startActivity(intent)
             }
+
+            R.id.nav_myLike -> {
+                val intent = Intent(this, MyBoardActivity::class.java)
+                intent.putExtra("Kind", "Like")
+                startActivity(intent)
+            }
         }
         return true
     }
 
     // 프래그먼트 초기화면 설정
     private fun loadFragment(fragment: Fragment) {
-
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.frame_main, fragment)
         transaction.addToBackStack(null)
@@ -186,7 +186,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // 백버튼 클릭 시
     @SuppressLint("RtlHardcoded")
     override fun onBackPressed() {
-
         val drawer = findViewById<DrawerLayout>(R.id.drawer_layout)
         if (drawer.isDrawerOpen(Gravity.RIGHT)) {
             drawer.closeDrawer(Gravity.RIGHT)
@@ -203,6 +202,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onLoad() {
-        progress!!.visibility = View.INVISIBLE
+        progress.visibility = View.INVISIBLE
     }
 }

@@ -12,6 +12,7 @@ import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.databinding.ActivityBoardSearchBinding
 import com.example.swimming.ui.adapter.SearchAdapter
+import com.example.swimming.ui.adapter.SearchDictionaryAdapter
 import com.example.swimming.utils.UtilKeyboard
 import kotlinx.android.synthetic.main.activity_board_search.*
 import org.kodein.di.KodeinAware
@@ -56,6 +57,12 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
                             viewModel.searchKeyword("StoreBoard", "StoreBoardInfo", edit_search.text.toString())
                             UtilKeyboard.hideKeyboard(this)
                         }
+
+                        "Dictionary" -> {
+                            list.clear()
+                            viewModel.searchKeyword("Dictionary", "DictionaryInfo", edit_search.text.toString())
+                            UtilKeyboard.hideKeyboard(this)
+                        }
                     }
                 }
 
@@ -77,10 +84,14 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
 
             if (boardState.board != null) {
                 list.add(boardState.board)
+                list.sortBy { board -> board.uuid }
             }
 
-            viewModel.recyclerView!!.adapter =
-                SearchAdapter(list)
+            if (intent.getStringExtra("BoardKind") == "Dictionary")
+                viewModel.recyclerView!!.adapter = SearchDictionaryAdapter(list)
+
+            else
+                viewModel.recyclerView!!.adapter = SearchAdapter(list)
         })
     }
 

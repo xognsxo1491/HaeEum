@@ -20,7 +20,7 @@ class BoardActivity : AppCompatActivity(), KodeinAware {
     private val factory: BoardViewModelFactory by instance()
     private lateinit var mBinding: ActivityBoardBinding
 
-    private var mBoardKind: String? = null
+    private lateinit var mBoardKind: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +37,7 @@ class BoardActivity : AppCompatActivity(), KodeinAware {
         viewModel.recyclerView = mBinding.recyclerBoard
         viewModel.refreshLayout = mBinding.swipeFree
 
-        mBoardKind = intent.getStringExtra("BoardKind")
-
+        mBoardKind = intent.getStringExtra("BoardKind")!!
             when (mBoardKind) {
                 "FreeBoard" -> {
                     mBinding.textBoardTTitle.text = getString(R.string.free_board)
@@ -53,6 +52,11 @@ class BoardActivity : AppCompatActivity(), KodeinAware {
                 "StoreBoard" -> {
                     mBinding.textBoardTTitle.text = getString(R.string.store_board)
                     viewModel.loadBoardList(this, "StoreBoard", "StoreBoardInfo")
+                }
+
+                "Dictionary" -> {
+                    mBinding.textBoardTTitle.text = getString(R.string.dictionary_board)
+                    viewModel.loadBoardList2(this, "Dictionary", "DictionaryInfo")
                 }
         }
 

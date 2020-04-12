@@ -24,7 +24,7 @@ class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun setItem(post: Comments) {
         id.text = UtilBase64Cipher.decode(post.id)
         time.text = (UtilTimeFormat.formatting((UtilBase64Cipher.decode(post.time).toLong())))
-        contents.text = UtilBase64Cipher.decode(post.contents)
+        contents.text = UtilBase64Cipher.decode(post.contents).replace(" ", "\u00A0")
     }
 
     fun onClick(view: View, context: Context, post: Comments, id: String) {

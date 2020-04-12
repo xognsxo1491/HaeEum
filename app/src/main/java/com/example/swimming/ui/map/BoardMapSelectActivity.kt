@@ -38,6 +38,7 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
     private lateinit var mLocationRequest: LocationRequest
     private lateinit var mLocationCallback: LocationCallback
     private lateinit var mMap: GoogleMap
+    private lateinit var mOption: MarkerOptions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,15 +68,15 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
     override fun onMapReady(p0: GoogleMap?) {
         mMap = p0!!
         val manager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val option = MarkerOptions()
+        mOption = MarkerOptions()
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             val seoul = LatLng(37.52487, 126.92723)
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 18f))
             mMap.setOnMapClickListener {
-                option.position(LatLng(it.latitude, it.longitude))
-                mMap.addMarker(option)
+                mOption.position(LatLng(it.latitude, it.longitude))
+                mMap.addMarker(mOption)
                 mBinding.textRegion.text = "수족관 위치의 마커를 클릭해주세요."
             }
 
@@ -86,8 +87,8 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
                     .setView(edit)
                     .setPositiveButton("확인"){_, _ ->
                         val intent = Intent(this, BoardWriteActivity::class.java)
-                        intent.putExtra("latitude", option.position.latitude)
-                        intent.putExtra("longitude", option.position.longitude)
+                        intent.putExtra("latitude", mOption.position.latitude)
+                        intent.putExtra("longitude", mOption.position.longitude)
                         intent.putExtra("BoardKind","StoreBoard")
                         intent.putExtra("storeName", edit.text.toString())
                         startActivity(intent)
@@ -176,6 +177,30 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
 
                     val now = LatLng(p0.lastLocation.latitude, p0.lastLocation.longitude)
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(now, 13f))
+                    mMap.setOnMapClickListener {
+                        mOption.position(LatLng(it.latitude, it.longitude))
+                        mMap.addMarker(mOption)
+                        mBinding.textRegion.text = "수족관 위치의 마커를 클릭해주세요."
+                    }
+
+                    mMap.setOnMarkerClickListener{
+                        val dialog = AlertDialog.Builder(this@BoardMapSelectActivity)
+                        val edit = EditText(this@BoardMapSelectActivity)
+                        runOnUiThread {
+                            dialog.setMessage("수족관 이름을 입력해주세요.")
+                                .setView(edit)
+                                .setPositiveButton("확인"){_, _ ->
+                                    val intent = Intent(this@BoardMapSelectActivity, BoardWriteActivity::class.java)
+                                    intent.putExtra("latitude", mOption.position.latitude)
+                                    intent.putExtra("longitude", mOption.position.longitude)
+                                    intent.putExtra("BoardKind","StoreBoard")
+                                    intent.putExtra("storeName", edit.text.toString())
+                                    startActivity(intent)
+
+                                }.setNegativeButton("취소"){_,_ -> }.show()
+                        }
+                        true
+                    }
                 }
             }
         }

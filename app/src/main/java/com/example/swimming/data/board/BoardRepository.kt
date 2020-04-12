@@ -31,7 +31,7 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
         dataSource.loadBoardList(owner, path1, path2)
 
     fun uploadImage(path: String, count: String, data: Intent?) =
-        dataSource.uploadImage(path, uuid, count, data)
+        dataSource.uploadImage(path, uuid, count, data, context)
 
     fun loadImage(path: String, count: String) =
         dataSource.loadImage(path, count)
@@ -80,6 +80,9 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
 
     fun myComments(path1: String, path2: String, path3: String) =
         dataSource.myComments(path1, path2, path3, UtilBase64Cipher.encode(id!!))
+
+    fun myLike(path1: String, path2: String, path3: String) =
+        dataSource.myLike(path1, path2, path3, UtilBase64Cipher.encode(id!!))
 
     fun pushToken(title: String, contents: String, token: String, fcm: String, key: String) =
         dataSource.pushToken(title, contents, token, fcm, key)

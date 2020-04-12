@@ -39,6 +39,7 @@ class MyBoardActivity : AppCompatActivity(), KodeinAware {
                 viewModel.myBoard("FreeBoard", "FreeBoardInfo")
                 viewModel.myBoard("InfoBoard", "InfoBoardInfo")
                 viewModel.myBoard("StoreBoard", "StoreBoardInfo")
+                viewModel.myBoard("Dictionary", "DictionaryInfo")
             }
 
             "Comments" -> {
@@ -46,6 +47,15 @@ class MyBoardActivity : AppCompatActivity(), KodeinAware {
                 viewModel.myComments("FreeBoard", "FreeBoardComments", "FreeBoardInfo")
                 viewModel.myComments( "InfoBoard", "InfoBoardComments", "InfoBoardInfo")
                 viewModel.myComments("StoreBoard", "StoreBoardComments", "StoreBoardInfo")
+                viewModel.myComments("Dictionary",  "DictionaryComments", "DictionaryInfo")
+            }
+
+            "Like" -> {
+                mBinding.textMyBoardTitle.text = getString(R.string.myLike)
+                viewModel.myLike("FreeBoard", "FreeBoardLike", "FreeBoardInfo")
+                viewModel.myLike("InfoBoard", "InfoBoardLike", "InfoBoardInfo")
+                viewModel.myLike("StoreBoard", "StoreBoardLike", "StoreBoardInfo")
+                viewModel.myLike("Dictionary", "DictionaryLike", "DictionaryInfo")
             }
         }
 
@@ -55,6 +65,7 @@ class MyBoardActivity : AppCompatActivity(), KodeinAware {
 
             if (state.board != null) {
                 list.add(state.board)
+                list.sortBy { board -> board.uuid }
             }
 
             viewModel.recyclerView!!.adapter = MyBoardAdapter(list)

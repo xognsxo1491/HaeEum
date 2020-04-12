@@ -35,7 +35,7 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
 
         holder.id.text = UtilBase64Cipher.decode(item.id)
         holder.title.text = UtilBase64Cipher.decode(item.title)
-        holder.contents.text = UtilBase64Cipher.decode(item.contents)
+        holder.contents.text = UtilBase64Cipher.decode(item.contents).replace(" ", "\u00A0")
         holder.time.text = UtilTimeFormat.formatting(UtilBase64Cipher.decode((item.time)).toLong())
         holder.image.text = UtilBase64Cipher.decode(item.imgCount)
         holder.comments.text = UtilBase64Cipher.decode(item.commentCount)
@@ -58,6 +58,7 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
                     item.token
                 )
             }
+
             "InfoBoard" -> {
                 holder.kind.text = "정보 게시판"
                 holder.onClick(
@@ -74,6 +75,24 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
                     item.token
                 )
             }
+
+            "Dictionary" -> {
+                holder.kind.text = "물고기 백과사전"
+                holder.onClick(
+                    holder.itemView, context!!,
+                    UtilBase64Cipher.decode(item.kind),
+                    item.uuid,
+                    holder.id.text.toString(),
+                    holder.title.text.toString(),
+                    holder.contents.text.toString(),
+                    UtilBase64Cipher.decode(item.time),
+                    holder.image.text.toString(),
+                    holder.comments.text.toString(),
+                    holder.like.text.toString(),
+                    item.token
+                )
+            }
+
             "StoreBoard" -> {
                 holder.kind.text = "수족관 게시판"
                 holder.onClick2(
@@ -177,7 +196,7 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
             mIntent = (context as Activity).intent
 
             // 자유 게시판, 정보 게시판
-            if (mIntent!!.getStringExtra("message") == uuid && (kind == "FreeBoard" || kind == "InfoBoard")) {
+            if (mIntent!!.getStringExtra("message") == uuid && (kind == "FreeBoard" || kind == "InfoBoard" || kind == "Dictionary")) {
                 val intent = Intent(context, BoardInfoActivity::class.java)
                 intent.putExtra("BoardKind", kind)
                 intent.putExtra("uuid", uuid)

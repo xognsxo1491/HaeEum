@@ -38,6 +38,7 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
     private lateinit var mBinding: ActivityBoardInfoMapBinding
+    private lateinit var mViewModel: BoardViewModel
 
     private val key = "AIzaSyC-x0hbrLoMnWp607rYLIMzuKQP7QL0PKs"
     private lateinit var mBuilder: AlertDialog.Builder
@@ -49,13 +50,13 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         super.onCreate(savedInstanceState)
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_info_map)
-        val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
+        mViewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
         setSupportActionBar(mBinding.toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        mBinding.viewModel = viewModel
+        mBinding.viewModel = mViewModel
 
         var bundle: Bundle? = null
         if (savedInstanceState != null) {
@@ -65,15 +66,15 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         mBinding.mapView.onCreate(bundle)
         mBinding.mapView.getMapAsync(this)
 
-        viewModel.recyclerView = recycler_Info
-        viewModel.refreshLayout = swipe_info
+        mViewModel.recyclerView = recycler_Info
+        mViewModel.refreshLayout = swipe_info
 
-        viewModel.card1 = card_info1
-        viewModel.card2 = card_info2
-        viewModel.card3 = card_info3
-        viewModel.card4 = card_info4
-        viewModel.card5 = card_info5
-        viewModel.imgLike = img_favorite
+        mViewModel.card1 = card_info1
+        mViewModel.card2 = card_info2
+        mViewModel.card3 = card_info3
+        mViewModel.card4 = card_info4
+        mViewModel.card5 = card_info5
+        mViewModel.imgLike = img_favorite
         img_favorite.tag = Integer.valueOf(R.string.unLike)
 
         val uuid = intent.getStringExtra("uuid")
@@ -94,13 +95,13 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         val dialog = utilShowDialog(this, "헤엄중..")
         dialog.show()
 
-        viewModel.checkBoard("StoreBoard", "StoreBoardInfo", uuid!!) // 취소 확인
-        viewModel.loadImage("StoreBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
-        viewModel.loadComments(this, "StoreBoard", "StoreBoardComments", "StoreBoardInfo", uuid) // 댓글 불러오기
-        viewModel.checkBoardLike("StoreBoard", "StoreBoardLike", uuid) // 좋아요 구독 상태
-        viewModel.loadBoardLike("StoreBoard", "StoreBoardInfo", uuid) // 좋아요 개수
+        mViewModel.checkBoard("StoreBoard", "StoreBoardInfo", uuid!!) // 취소 확인
+        mViewModel.loadImage("StoreBoard/${intent.getStringExtra("uuid")}", imgCount!!) // 이미지 불러오기
+        mViewModel.loadComments(this, "StoreBoard", "StoreBoardComments", "StoreBoardInfo", uuid) // 댓글 불러오기
+        mViewModel.checkBoardLike("StoreBoard", "StoreBoardLike", uuid) // 좋아요 구독 상태
+        mViewModel.loadBoardLike("StoreBoard", "StoreBoardInfo", uuid) // 좋아요 개수
 
-        viewModel.boardFormStatus.observe(this@BoardInfoMapActivity, Observer {
+        mViewModel.boardFormStatus.observe(this@BoardInfoMapActivity, Observer {
             val boardState = it ?: return@Observer
 
             if (boardState.check != null) {
@@ -206,12 +207,12 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
 
             if (edit_comments.text.toString().isNotEmpty()) {
 
-                viewModel.uploadComments("StoreBoard", "StoreBoardComments", uuid)
-                viewModel.updateCommentCountPlus("StoreBoard", "StoreBoardInfo", uuid)
-                viewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), edit_comments.text.toString())
+                mViewModel.uploadComments("StoreBoard", "StoreBoardComments", uuid)
+                mViewModel.updateCommentCountPlus("StoreBoard", "StoreBoardInfo", uuid)
+                mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), edit_comments.text.toString())
                 mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
-                viewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), toekn!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), toekn!!, getString(R.string.post_fcm), getString(R.string.authorization))
                 mBinding.editComments.text = null
                 UtilKeyboard.hideKeyboard(this)
             }
@@ -224,16 +225,16 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_24)
                 mBinding.includeInfo.text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) + 1).toString()
 
-                viewModel.uploadBoardLike("StoreBoard", "StoreBoardLike", uuid)
-                viewModel.updateBoardLikeCountPlus("StoreBoard", "StoreBoardInfo", uuid)
+                mViewModel.uploadBoardLike("StoreBoard", "StoreBoardLike", uuid)
+                mViewModel.updateBoardLikeCountPlus("StoreBoard", "StoreBoardInfo", uuid)
 
             } else if (mBinding.includeInfo.img_favorite.tag == Integer.valueOf(R.string.like)){
                 mBinding.includeInfo.img_favorite.tag = Integer.valueOf(R.string.unLike)
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_border_24)
                 mBinding.includeInfo. text_board_like.text = (Integer.parseInt(text_board_like.text.toString()) - 1).toString()
 
-                viewModel.deleteBoardLike("StoreBoard", "StoreBoardLike", uuid)
-                viewModel.updateBoardLikeCountMinus("StoreBoard", "StoreBoardInfo", uuid)
+                mViewModel.deleteBoardLike("StoreBoard", "StoreBoardLike", uuid)
+                mViewModel.updateBoardLikeCountMinus("StoreBoard", "StoreBoardInfo", uuid)
 
             }
         }
@@ -281,13 +282,12 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
             }
 
             R.id.menu_delete -> {
-                val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
                 val kind = "StoreBoard"
                 val uuid = intent.getStringExtra("uuid")
                 val imgCount = intent.getStringExtra("imgCount")
 
-                viewModel.deleteBoard(kind, kind + "Info", kind + "Comments", uuid!!, imgCount!!)
-                viewModel.deleteBoardLike(kind, kind + "Like", uuid)
+                mViewModel.deleteBoard(kind, kind + "Info", kind + "Comments", uuid!!, imgCount!!)
+                mViewModel.deleteBoardLike(kind, kind + "Like", uuid)
 
                 mBuilder = AlertDialog.Builder(this)
                 mBuilder.setMessage("해당 글이 삭제되었습니다.").setCancelable(false)
