@@ -7,21 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
-import com.example.swimming.ui.map.BoardMapActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import java.util.*
 import kotlin.collections.ArrayList
 
-// 검색
+// 우리 동네 수족관 좋아요 리사이클러뷰 어댑터
 class LikeAdapter internal constructor (list: ArrayList<Board>, map: GoogleMap) : RecyclerView.Adapter<LikeAdapter.ViewHolder>() {
     private var mData: ArrayList<Board> = list
     private var map: GoogleMap? = map
@@ -29,19 +25,17 @@ class LikeAdapter internal constructor (list: ArrayList<Board>, map: GoogleMap) 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
+
         val inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.item_list_like, parent, false)
-
         return ViewHolder(view)
     }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item: Board = mData[position]
-
         val geoCoder = Geocoder(context, Locale.KOREA)
         val address = geoCoder.getFromLocation(item.latitude, item.longitude, 10)
-
         val add = address[0].getAddressLine(0)
 
         holder.title.text = UtilBase64Cipher.decode(item.store)

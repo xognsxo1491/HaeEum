@@ -29,7 +29,6 @@ class BoardActivity : AppCompatActivity(), KodeinAware {
         val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
 
         setSupportActionBar(mBinding.toolbarFree)
-
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 

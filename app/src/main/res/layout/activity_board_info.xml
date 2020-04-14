@@ -119,8 +119,8 @@
                     android:hint="@string/comments"
                     android:importantForAutofill="no"
                     android:inputType="textMultiLine"
-                    android:text="@={viewModel.comments}"
-                    android:privateImeOptions="defaultInputmode=korean" />
+                    android:privateImeOptions="defaultInputmode=korean"
+                    android:text="@={viewModel.comments}" />
 
                 <ImageView
                     android:id="@+id/img_comments"

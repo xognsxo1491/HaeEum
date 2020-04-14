@@ -2,7 +2,6 @@ package com.example.swimming.ui.adapter
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -10,17 +9,15 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
-import com.example.swimming.ui.board.BoardInfoMapActivity
 import com.example.swimming.utils.UtilBase64Cipher
-import com.example.swimming.utils.UtilTimeFormat
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 
+// 물고기 백과사전 리스트뷰 어댑터
 class DictionaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
     private var id: TextView = itemView.findViewById(R.id.text_board_id)
     private var title: TextView = itemView.findViewById(R.id.text_board_title)
     private var contents: TextView = itemView.findViewById(R.id.text_board_contents)
@@ -44,8 +41,13 @@ class DictionaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             cardView.visibility = View.GONE
 
         } else {
+            // 물고기 백과사전 리스트뷰 썸네일
             FirebaseStorage.getInstance().getReference("Dictionary/$uuid/1").downloadUrl.addOnSuccessListener {
-                Glide.with(context).load(it).thumbnail(0.1f).into(thumbnail)
+                Glide.with(context).load(it)
+                    .thumbnail(0.1f)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(thumbnail)
             }
         }
     }

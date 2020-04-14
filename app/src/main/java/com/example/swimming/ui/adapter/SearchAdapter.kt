@@ -16,16 +16,16 @@ import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
 import kotlin.collections.ArrayList
 
-// 검색
+// 검색 리사이클러뷰 어댑터
 class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
     private var mData: ArrayList<Board> = list
     private var context: Context? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
+
         val inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.item_list, parent, false)
-
         return ViewHolder(view)
     }
 
@@ -92,6 +92,7 @@ class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView
         val like: TextView = itemView.findViewById(R.id.text_board_like)
         val layout: LinearLayout = itemView.findViewById(R.id.layout_list_img)
 
+        // 일반 게시글 클릭
         fun onClick(itemView: View, context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String) {
             itemView.setOnClickListener {
                 val intent = Intent(context, BoardInfoActivity::class.java)
@@ -109,6 +110,7 @@ class SearchAdapter internal constructor (list: ArrayList<Board>) : RecyclerView
             }
         }
 
+        // 수족관 게시글 클릭
         fun onClick2(itemView: View, context: Context, kind: String, uuid: String, id: String, title: String, contents: String, time: String, imgCount: String, commentCount: String, like: String, token: String, store: String, latitude: Double, longitude: Double) {
             itemView.setOnClickListener {
                 val intent = Intent(context, BoardInfoMapActivity::class.java)

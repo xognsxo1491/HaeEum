@@ -20,6 +20,7 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/layout_message"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -61,17 +62,6 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/text_notification_title"
-                    style="@style/TextTheme_White"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-                <TextView
                     android:id="@+id/text_notification_contents"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -79,8 +69,14 @@
                     android:layout_marginBottom="8dp"
                     android:ellipsize="end"
                     android:maxLines="2"
-                    android:textColor="@color/colorWhiteVariant"
+                    android:textColor="@color/colorGrayVariant"
                     android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/text_notification_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
 
             </LinearLayout>
 

@@ -18,6 +18,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
+// 로그인
 class LoginActivity : AppCompatActivity(), Result, KodeinAware {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()
@@ -47,13 +48,9 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
         }
 
         mBinding.btnLoginLogin.setOnClickListener {
-
             // 중복터치 방지
-            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
-                return@setOnClickListener
-            }
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) { return@setOnClickListener }
             mLastClickTime = SystemClock.elapsedRealtime().toInt()
-            //
 
             viewModel.login()
         }
@@ -61,14 +58,17 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
         viewModel.registerFormStatus.observe(this@LoginActivity, Observer {
             val registerState = it ?: return@Observer
 
+            // 이름
             if (registerState.idError != null) {
                 mBinding.editLoginId.error = getString(registerState.idError)
             }
 
+            // 비밀번호
             if (registerState.passwordError != null) {
                 mBinding.editLoginPassword.error = getString(registerState.passwordError)
             }
 
+            // 프로그레스바 표시
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
                     mBinding.progressLogin.visibility = View.VISIBLE
@@ -77,6 +77,15 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
                     mBinding.progressLogin.visibility = View.INVISIBLE
             }
         })
+    }
+
+    // 백버튼 클릭 시
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        moveTaskToBack(true)
+        finishAffinity()
+        android.os.Process.killProcess(android.os.Process.myPid())
     }
 
     override fun onDestroy() {

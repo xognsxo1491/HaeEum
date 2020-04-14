@@ -7,6 +7,7 @@ data class ProfileFormStatus(
     val id: String? = null, // 프로필 아이디
     val email: String? = null, // 프로필 이메일
     val token: String? = null,
+    val uuid: String? = null,
     val onLoading: Int? = null, // 프로그레스 로딩중 표시
     val onError: Int? = null,
 
@@ -20,8 +21,5 @@ data class ProfileFormStatus(
     val content2: String? = null,
 
     val image1: Uri? = null,
-    val image2: Uri? = null,
-
-    val onClick: String? = null,
-    var onDelete: String? = null
+    val image2: Uri? = null
 )

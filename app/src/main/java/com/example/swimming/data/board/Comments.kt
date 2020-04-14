@@ -2,8 +2,8 @@ package com.example.swimming.data.board
 
 // 댓글 정보
 data class Comments(
-    var uuid: String = "",
-    var id: String= "",
-    var time: String = "",
-    var contents: String =""
+    var uuid: String = "", // UUID
+    var id: String= "", // 아이디
+    var time: String = "", // 시간
+    var contents: String ="" // 내용
 )

@@ -2,17 +2,13 @@ package com.example.swimming.data.map
 
 import com.example.swimming.data.board.Board
 import com.google.firebase.database.*
-import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Observable
 import io.reactivex.Single
 
+// 지도 관련 데이터 소스
 class MapDataSource {
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance()
-    }
-
-    private val storage: FirebaseStorage by lazy {
-        FirebaseStorage.getInstance()
     }
 
     // 수족관 위치 불러오기
@@ -24,20 +20,20 @@ class MapDataSource {
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+                // TO do
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                // TO do
+            }
 
+            override fun onChildRemoved(p0: DataSnapshot) {
+                // TO do
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val board = p0.getValue(Board::class.java)
                 it.onNext(board!!)
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-
             }
         })
     }
@@ -66,11 +62,15 @@ class MapDataSource {
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+                // TO do
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                // TO do
+            }
 
+            override fun onChildRemoved(p0: DataSnapshot) {
+                // TO do
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -86,9 +86,6 @@ class MapDataSource {
                         }
                     })
                 }
-            }
-            override fun onChildRemoved(p0: DataSnapshot) {
-
             }
         })
     }

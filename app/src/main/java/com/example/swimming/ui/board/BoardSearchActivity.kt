@@ -19,6 +19,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
+// 게시글 검색창
 class BoardSearchActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
@@ -28,11 +29,10 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
         super.onCreate(savedInstanceState)
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_board_search)
-
         val viewModel = ViewModelProvider(this, factory).get(BoardViewModel::class.java)
-        val list = ArrayList<Board>()
-
         viewModel.recyclerView = recycler_Search
+
+        val list = ArrayList<Board>()
 
         mBinding.editSearch.requestFocus()
         mBinding.editSearch.setOnEditorActionListener { _, actionId, event ->
@@ -75,9 +75,8 @@ class BoardSearchActivity : AppCompatActivity(), KodeinAware {
             }
         }
 
-        mBinding.layoutSearch.setOnClickListener {
-            finish()
-        }
+        // 뒤로 가기
+        mBinding.layoutSearch.setOnClickListener { finish() }
 
         viewModel.boardFormStatus.observe(this@BoardSearchActivity, Observer {
             val boardState = it ?: return@Observer

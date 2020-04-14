@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardInfoBinding
 import com.example.swimming.utils.UtilDateFormat
@@ -57,6 +58,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         mViewModel.card4 = card_info4
         mViewModel.card5 = card_info5
         mViewModel.imgLike = img_favorite
+        mViewModel.textview = text_board_commentCount
         img_favorite.tag = Integer.valueOf(R.string.unLike)
 
         val kind = intent.getStringExtra("BoardKind")
@@ -90,38 +92,45 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         mViewModel.boardFormStatus.observe(this@BoardInfoActivity, Observer {
             val boardState = it ?: return@Observer
 
+            // 삭제 알림
             if (boardState.check != null) {
                 mBuilder = AlertDialog.Builder(this)
                 mBuilder.setMessage( boardState.check).setCancelable(false)
                 mBuilder.setPositiveButton("확인") {_, _ -> finish()}.show()
             }
 
+            // 댓글 개수
             if (boardState.setCommentCount != null) {
                 mBinding.includeInfo.text_board_commentCount.text = boardState.setCommentCount
             }
 
+            // 좋아요 개수
             if (boardState.setLikeCount != null) {
                 mBinding.includeInfo.text_board_like.text = boardState.setLikeCount
             }
 
+            // 좋아요 누름 알림 메시지
             if (boardState.messageLike != null) {
                 Toast.makeText(this, boardState.messageLike, Toast.LENGTH_SHORT).show()
             }
 
+            // 에러 발생
             if (boardState.error != null) {
                 Toast.makeText(this, boardState.error, Toast.LENGTH_SHORT).show()
             }
 
+            // 삭제시
             if (boardState.delete != null) {
                 Toast.makeText(this, getString(R.string.message_delete), Toast.LENGTH_SHORT).show()
-                mViewModel.updateCommentCountMinus(kind, kind +"Info", uuid)
                 mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) - 1).toString()
             }
 
+            // 이미지 있을 시
             try {
                 if (boardState.image0 != null) {
                     img_info0.visibility = View.VISIBLE
-                    Glide.with(this).load(boardState.image0).into(mBinding.includeInfo.img_info0).waitForLayout()
+                    Glide.with(this).load(boardState.image0)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(mBinding.includeInfo.img_info0).waitForLayout()
 
                     if (imgCount == "1") {
                         dialog.dismiss()
@@ -130,12 +139,14 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
                 if (boardState.image1 != null) {
                     card_info1.visibility = View.VISIBLE
-                    Glide.with(this).load(boardState.image1).into(mBinding.includeInfo.img_info1).waitForLayout()
+                    Glide.with(this).load(boardState.image1)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(mBinding.includeInfo.img_info1).waitForLayout()
                 }
 
                 if (boardState.image2 != null) {
                     card_info2.visibility = View.VISIBLE
-                    Glide.with(this).load(boardState.image2).into(mBinding.includeInfo.img_info2).waitForLayout()
+                    Glide.with(this).load(boardState.image2)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(mBinding.includeInfo.img_info2).waitForLayout()
 
                     if (imgCount == "2") {
                         dialog.dismiss()
@@ -144,7 +155,8 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
                 if (boardState.image3 != null) {
                     card_info3.visibility = View.VISIBLE
-                    Glide.with(this).load(boardState.image3).into(mBinding.includeInfo.img_info3).waitForLayout()
+                    Glide.with(this).load(boardState.image3)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(mBinding.includeInfo.img_info3).waitForLayout()
 
                     if (imgCount == "3") {
                         dialog.dismiss()
@@ -153,7 +165,8 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
                 if (boardState.image4 != null) {
                     card_info4.visibility = View.VISIBLE
-                    Glide.with(this).load(boardState.image4).into(mBinding.includeInfo.img_info4).waitForLayout()
+                    Glide.with(this).load(boardState.image4)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(mBinding.includeInfo.img_info4).waitForLayout()
 
                     if (imgCount == "4") {
                         dialog.dismiss()
@@ -162,7 +175,8 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
                 if (boardState.image5 != null) {
                     card_info5.visibility = View.VISIBLE
-                    Glide.with(this).load(boardState.image5).into(mBinding.includeInfo.img_info5).waitForLayout()
+                    Glide.with(this).load(boardState.image5)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true).into(mBinding.includeInfo.img_info5).waitForLayout()
 
                     if (imgCount == "5") {
                         dialog.dismiss()
@@ -172,6 +186,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
             }
 
+            // 이미지 없을 시
             if (boardState.setImgCount != null) {
                 if (boardState.setImgCount == "0") {
                     mBinding.includeInfo.layout_board_img.visibility = View.GONE
@@ -190,13 +205,11 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         mBinding.imgComments.setOnClickListener {
 
             // 중복터치 방지
-            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
-                return@setOnClickListener
-            }
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) { return@setOnClickListener }
             mLastClickTime = SystemClock.elapsedRealtime().toInt()
-            //
 
             if (edit_comments.text.toString().isNotEmpty()) {
+                UtilKeyboard.hideKeyboard(this)
                 mViewModel.uploadComments(kind, kind+"Comments", uuid)
                 mViewModel.updateCommentCountPlus(kind, kind+"Info", uuid)
                 mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), edit_comments.text.toString())
@@ -204,10 +217,10 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
 
                 mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
                 mBinding.editComments.text = null
-                UtilKeyboard.hideKeyboard(this)
             }
         }
 
+        // 좋아요
         layout_contents_favorite.setOnClickListener {
             if (mBinding.includeInfo.img_favorite.tag == Integer.valueOf(R.string.unLike)) {
                 mBinding.includeInfo.img_favorite.tag = Integer.valueOf(R.string.like)

@@ -1,6 +1,5 @@
 package com.example.swimming.ui.user
 
-
 import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,11 +13,11 @@ import com.example.swimming.R
 
 import com.example.swimming.databinding.FragmentChangePasswordBinding
 import com.example.swimming.ui.result.Result
-import kotlinx.android.synthetic.main.fragment_change_password.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
 
+// 비밀번호 변경
 class ChangePasswordFragment : Fragment(), KodeinAware, Result {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()
@@ -43,26 +42,32 @@ class ChangePasswordFragment : Fragment(), KodeinAware, Result {
         viewModel.registerFormStatus.observe(viewLifecycleOwner, Observer {
             val registerState = it ?: return@Observer
 
+            // 현재 비밀번호
            if (registerState.passwordNowError != null) {
                mBinding.editChangePwNow.error = getString(registerState.passwordNowError)
            }
 
+            // 새로운 비밀번호
             if (registerState.passwordError != null) {
                 mBinding.editChangePwNew.error = getString(registerState.passwordError)
             }
 
+            // 새로운 비밀번호 확인
             if (registerState.passwordCheckError != null) {
                 mBinding.editChangePwNewCheck.error = getString(registerState.passwordCheckError)
             }
 
+            // 성공
             if (registerState.success != null) {
                 onSuccess()
             }
 
+            // 에러 발생
             if (registerState.error != null) {
                 onError()
             }
 
+            // 프로그레스 표시
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
                     mBinding.progressChange.visibility = View.VISIBLE
@@ -85,7 +90,7 @@ class ChangePasswordFragment : Fragment(), KodeinAware, Result {
     }
 
     override fun onFailed() {
-        TODO("Not yet implemented")
+        // To do
     }
 
     override fun onError() {

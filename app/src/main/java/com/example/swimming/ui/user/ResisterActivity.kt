@@ -22,6 +22,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
+// 회원가입
 class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()
@@ -33,6 +34,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // 이메일 전송을 위한 쓰레드 정책
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
@@ -56,30 +58,37 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
         viewModel.registerFormStatus.observe(this@ResisterActivity, Observer {
             val registerState = it ?: return@Observer
 
+            // 이름
             if (registerState.nameError != null) {
                 mBinding.editRegisterName.error = getString(registerState.nameError)
             }
 
+            // 아이디
             if (registerState.idError != null) {
                 mBinding.editRegisterId.error = getString(registerState.idError)
             }
 
+            // 비밀번호
             if (registerState.passwordError != null) {
                 mBinding.editRegisterPassword.error = getString(registerState.passwordError)
             }
 
+            // 비밀번호 확인
             if (registerState.passwordCheckError != null) {
                 mBinding.editRegisterPasswordCheck.error = getString(registerState.passwordCheckError)
             }
 
+            // 이메일
             if (registerState.emailError != null) {
                 mBinding.editRegisterEmail.error = getString(registerState.emailError)
             }
 
+            // 인증 코드
             if (registerState.codeError != null) {
                 mBinding.editRegisterCode.error = getString(registerState.codeError)
             }
 
+            // 프로그레스바 표시
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
                     mBinding.progressRegister.visibility = View.VISIBLE
@@ -89,7 +98,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
             }
         })
 
-        //// 키보드 숨기기 액션
+        // 키보드 숨기기 액션
         mBinding.editRegisterEmail.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
                 UtilKeyboard.hideKeyboard(this)
@@ -100,16 +109,12 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
 
         mBinding.btnRegisterVerification.setOnClickListener {
             // 중복터치 방지
-            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
-                return@setOnClickListener
-            }
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) { return@setOnClickListener }
             mLastClickTime = SystemClock.elapsedRealtime().toInt()
-            //
 
             viewModel.sendEmail()
             UtilKeyboard.hideKeyboard(this)
         }
-        ////
     }
 
     override fun onDestroy() {
@@ -125,6 +130,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
         return super.onOptionsItemSelected(item)
     }
 
+    // 가입 성공
     override fun onSuccessRegister() {
         progress_register.visibility = View.INVISIBLE
 
@@ -133,16 +139,27 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
         mBuilder.setPositiveButton("확인") {_, _ -> finish()}.show()
     }
 
+    // 에러 발생
     override fun onError() {
         Toast.makeText(this, R.string.message_error, Toast.LENGTH_SHORT).show()
     }
 
+    // 아이디 중복
     override fun onDuplicateId() {
         Toast.makeText(this, R.string.message_register_duplicate_id, Toast.LENGTH_SHORT).show()
         mBinding.editRegisterId.error = getString(R.string.message_register_duplicate_id)
         progress_register.visibility = View.INVISIBLE
     }
 
+    // 이메일 중복
+    override fun onDuplicateEmail() {
+        runOnUiThread {
+            Toast.makeText(this, R.string.message_register_duplicate_email, Toast.LENGTH_SHORT).show()
+            mBinding.progressRegister.visibility = View.INVISIBLE
+        }
+    }
+
+    //  이메일 전송
     override fun onSuccessSend() {
         runOnUiThread {
             mBinding.editRegisterEmail.isEnabled = false
@@ -155,13 +172,7 @@ class ResisterActivity : AppCompatActivity(), UserActionResult, KodeinAware {
         }
     }
 
-    override fun onDuplicateEmail() {
-        runOnUiThread {
-            Toast.makeText(this, R.string.message_register_duplicate_email, Toast.LENGTH_SHORT).show()
-            mBinding.progressRegister.visibility = View.INVISIBLE
-        }
-    }
-
+    // 실패
     override fun onFailed() {
         Toast.makeText(this, R.string.message_register_failed, Toast.LENGTH_SHORT).show()
         mBinding.progressRegister.visibility = View.INVISIBLE

@@ -3,6 +3,7 @@ package com.example.swimming.utils
 import java.text.SimpleDateFormat
 import java.util.*
 
+// 시간 병경
 object UtilDateFormat {
     fun formatting(long: Long) : String {
 

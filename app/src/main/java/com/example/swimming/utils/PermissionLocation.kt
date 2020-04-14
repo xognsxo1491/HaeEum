@@ -16,9 +16,8 @@ import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 
+// 퍼미션 설정
 object PermissionLocation {
-
-    // 퍼미션 설정
     fun requestMapPermissions(activity: Activity) {
         val fine = ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
         val coarse =  ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION)

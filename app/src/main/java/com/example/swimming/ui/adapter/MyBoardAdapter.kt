@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
@@ -17,16 +16,16 @@ import com.example.swimming.ui.board.BoardInfoMapActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
 
-
+// 나의 게시글 리사이클러뷰 어댑터
 class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerView.Adapter<MyBoardAdapter.ViewHolder>() {
     private var mData: ArrayList<Board> = list
     private var context: Context? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
+
         val inflater = context!!.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view = inflater.inflate(R.layout.item_mylist, parent, false)
-
         return ViewHolder(view)
     }
 

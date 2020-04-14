@@ -19,6 +19,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
 
+// 아이디 찾기
 class FindIdFragment : Fragment(), Result, KodeinAware {
     override val kodein by kodein()
 
@@ -35,20 +36,24 @@ class FindIdFragment : Fragment(), Result, KodeinAware {
         viewModel.name = mBinding.editFindIdName
         viewModel.email1 = mBinding.editFindIdEmail
 
+        // 이메일 전송 위한 쓰레드
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
         viewModel.registerFormStatus.observe(viewLifecycleOwner, Observer {
             val registerState = it ?: return@Observer
 
+            // 이름
             if (registerState.nameError != null) {
                 mBinding.editFindIdName.error = getString(registerState.nameError)
             }
 
+            // 이메일
             if (registerState.emailError != null) {
                 mBinding.editFindIdEmail.error = getString(registerState.emailError)
             }
 
+            // 프로그레스바 표시
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
                     mBinding.progressFindId.visibility = View.VISIBLE

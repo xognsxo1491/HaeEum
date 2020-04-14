@@ -13,8 +13,8 @@ import com.example.swimming.ui.board.BoardInfoMapActivity
 import com.example.swimming.utils.UtilBase64Cipher
 import com.example.swimming.utils.UtilTimeFormat
 
+// 게시판 리사이클러뷰 어댑터
 class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
     private var id: TextView = itemView.findViewById(R.id.text_board_id)
     private var title: TextView = itemView.findViewById(R.id.text_board_title)
     private var contents: TextView = itemView.findViewById(R.id.text_board_contents)
@@ -38,6 +38,7 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
+    // 일반 게시판
     fun onClick(view: View, context: Context, post: Board, kind: String) {
         view.setOnClickListener {
             val intent = Intent(context, BoardInfoActivity::class.java)
@@ -56,6 +57,7 @@ class BoardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
+    // 수족관 게시판
     fun onClick2(view: View, context: Context, post: Board, kind: String) {
         view.setOnClickListener {
             val intent = Intent(context, BoardInfoMapActivity::class.java)

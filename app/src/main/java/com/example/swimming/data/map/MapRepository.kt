@@ -3,6 +3,7 @@ package com.example.swimming.data.map
 import android.content.Context
 import com.example.swimming.utils.UtilBase64Cipher
 
+// 지도 관련 저장소
 class MapRepository(private val dataSource: MapDataSource, val context: Context) {
     private val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
     private val id = pref.getString("Id", "")

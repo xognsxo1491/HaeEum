@@ -2,10 +2,10 @@ package com.example.swimming.ui.board
 
 import com.example.swimming.data.board.Board
 
-// 게시글 관련 폼
+// 게시글 관련 폼 (유동성)
 data class BoardFormStatus(
-    val titleError: Int? = null, // 제목 공백 체크
-    val contentsError: Int? = null, // 내용 공백 체크
+    val titleError: Int? = null,
+    val contentsError: Int? = null,
     val board: Board? = null,
 
     val setId: String? = null,

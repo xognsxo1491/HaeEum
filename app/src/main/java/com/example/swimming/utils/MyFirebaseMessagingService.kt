@@ -13,6 +13,7 @@ import com.example.swimming.ui.profile.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+// FCM
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     var title: String? = null
     var contents: String? = null

@@ -63,20 +63,26 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         mViewModel.boardFormStatus.observe(this@BoardWriteActivity, Observer {
             val state = it ?: return@Observer
 
+            // 제목 오류
             if (state.titleError != null) {
                 mBinding.editBoardTitle.error = getString(state.titleError)
             }
 
+            // 내용 오류
             if (state.contentsError != null) {
                 mBinding.editBoardContents.error = getString(state.contentsError)
             }
 
+            // 로딩중
             if (state.loading != null) {
                 utilShowDialog(this, getString(state.loading)).show()
             }
         })
 
+        // 갤러리 FAB 클릭 시
         mBinding.fabBoardGallery.setOnClickListener {
+            Toast.makeText(this, "사진은 최대 5장까지 선택 가능합니다.", Toast.LENGTH_SHORT).show()
+
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "image/*"
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
@@ -112,7 +118,6 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
         }
 
         if (item.itemId == R.id.menu_write) {
-
             when (intent.getStringExtra("BoardKind")) {
                 "FreeBoard" -> {
                     mViewModel.writeBoard("FreeBoard", "FreeBoardInfo")
@@ -135,7 +140,6 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
                 }
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 

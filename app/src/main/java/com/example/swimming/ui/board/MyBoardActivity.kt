@@ -15,6 +15,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
+// 나의 게시글
 class MyBoardActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
@@ -67,7 +68,6 @@ class MyBoardActivity : AppCompatActivity(), KodeinAware {
                 list.add(state.board)
                 list.sortBy { board -> board.uuid }
             }
-
             viewModel.recyclerView!!.adapter = MyBoardAdapter(list)
         })
     }
@@ -79,7 +79,6 @@ class MyBoardActivity : AppCompatActivity(), KodeinAware {
                 return true
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 

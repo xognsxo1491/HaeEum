@@ -8,12 +8,12 @@ import com.example.swimming.R
 import com.example.swimming.ui.result.UserActionResult
 import com.example.swimming.data.user.UserRepository
 import com.example.swimming.ui.result.Result
-import com.example.swimming.utils.UtilBase64Cipher
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.regex.Pattern
 
+// 유저 정보 뷰모델
 class UserViewModel(private val repository: UserRepository) : ViewModel() {
     private val mRandom = System.currentTimeMillis()
 

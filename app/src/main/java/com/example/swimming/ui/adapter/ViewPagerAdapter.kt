@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
 
-// TabLayout Adapter
+// 바텀 프레그먼트 뷰페이저 어댑터
 class ViewPagerAdapter (fragment: FragmentManager): FragmentStatePagerAdapter(fragment) {
     private val mFragmentList = ArrayList<Fragment>()
     private val mFragmentTitleList = ArrayList<String>()

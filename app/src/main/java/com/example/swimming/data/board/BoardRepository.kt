@@ -6,11 +6,11 @@ import androidx.lifecycle.LifecycleOwner
 import com.example.swimming.utils.UtilBase64Cipher
 import java.util.*
 
+// 게시글 관련 저장소
 class BoardRepository(private val dataSource: BoardDataSource, val context: Context) {
-
     private val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
-    val id = pref.getString("Id", "")
     private val token = pref.getString("token", "")
+    val id = pref.getString("Id", "")
 
     private val time = System.currentTimeMillis().toString()
     private val uuid = (9999999999999 - System.currentTimeMillis()).toString() + UUID.randomUUID().toString()

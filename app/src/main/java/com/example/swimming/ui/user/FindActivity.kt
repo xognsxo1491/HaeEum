@@ -13,6 +13,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
+// 개인정보 찾기
 class FindActivity : AppCompatActivity(), KodeinAware {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()

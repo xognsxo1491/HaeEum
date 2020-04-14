@@ -108,8 +108,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:backgroundTint="@color/colorWhiteVariant"
-                        android:inputType="textEmailAddress"
-                        android:importantForAutofill="no" />
+                        android:importantForAutofill="no"
+                        android:inputType="textEmailAddress" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -135,8 +135,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:backgroundTint="@color/colorWhiteVariant"
-                        android:inputType="textPassword"
-                        android:importantForAutofill="no" />
+                        android:importantForAutofill="no"
+                        android:inputType="textPassword" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView
@@ -162,8 +162,8 @@
                         android:layout_height="35dp"
                         android:backgroundTint="@color/colorWhiteVariant"
                         android:hint="@string/none"
-                        android:inputType="textPassword"
                         android:importantForAutofill="no"
+                        android:inputType="textPassword"
                         tools:ignore="LabelFor" />
 
                 </androidx.cardview.widget.CardView>
@@ -200,9 +200,9 @@
                             android:layout_height="35dp"
                             android:backgroundTint="@color/colorWhiteVariant"
                             android:hint="@string/none"
+                            android:importantForAutofill="no"
                             android:inputType="textEmailAddress"
                             android:labelFor="@+id/edit_register_email"
-                            android:importantForAutofill="no"
                             tools:ignore="LabelFor" />
                     </androidx.cardview.widget.CardView>
 
@@ -240,9 +240,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:backgroundTint="@color/colorWhiteVariant"
+                        android:importantForAutofill="no"
                         android:inputType="number"
-                        android:labelFor="@+id/edit_register_code"
-                        android:importantForAutofill="no" />
+                        android:labelFor="@+id/edit_register_code" />
 
                 </androidx.cardview.widget.CardView>
 

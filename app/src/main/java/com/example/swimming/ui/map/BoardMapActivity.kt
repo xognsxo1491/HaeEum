@@ -37,6 +37,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
+// 우리 동네 수족관
 class BoardMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
     override val kodein by kodein()
     private val factory: MapViewModelFactory by instance()

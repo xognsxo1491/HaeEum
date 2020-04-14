@@ -1,13 +1,11 @@
 package com.example.swimming.data.profile
 
 import android.content.Context
-import android.content.Intent
-import android.widget.LinearLayout
 import androidx.lifecycle.LifecycleOwner
 import com.example.swimming.utils.UtilBase64Cipher
 
+// 프로필 관련 저장소
 class ProfileRepository(private val dataSource: ProfileDataSource, val context: Context) {
-
     private val pref = context.getSharedPreferences("Login", Context.MODE_PRIVATE)
     private val id = pref.getString("Id", "")
     private val editor = pref.edit()

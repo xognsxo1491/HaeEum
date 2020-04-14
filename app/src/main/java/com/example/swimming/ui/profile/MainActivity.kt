@@ -29,7 +29,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
-// Singleton
+// 메인 화면
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, KodeinAware, ProfileActionResult {
     override val kodein by kodein()
     private val factory: ProfileViewModelFactory by instance()

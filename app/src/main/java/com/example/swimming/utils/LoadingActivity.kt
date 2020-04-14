@@ -10,6 +10,7 @@ import com.example.swimming.R
 import com.example.swimming.ui.profile.MainActivity
 import com.example.swimming.ui.user.LoginActivity
 
+// 로딩 화면
 class LoadingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

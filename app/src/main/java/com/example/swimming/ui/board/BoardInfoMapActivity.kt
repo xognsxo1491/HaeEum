@@ -34,6 +34,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
+// 수족관 게시글 내용
 class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
     override val kodein by kodein()
     private val factory: BoardViewModelFactory by instance()
@@ -79,7 +80,7 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
 
         val uuid = intent.getStringExtra("uuid")
         val imgCount = intent.getStringExtra("imgCount")
-        val toekn = intent.getStringExtra("token")
+        val token = intent.getStringExtra("token")
 
         mBinding.includeInfo.text_board_id.text = intent.getStringExtra("id")
         mBinding.includeInfo. text_board_title.text = intent.getStringExtra("title")
@@ -104,29 +105,34 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         mViewModel.boardFormStatus.observe(this@BoardInfoMapActivity, Observer {
             val boardState = it ?: return@Observer
 
+            // 삭제 알림
             if (boardState.check != null) {
                 mBuilder = AlertDialog.Builder(this)
                 mBuilder.setMessage( boardState.check).setCancelable(false)
                 mBuilder.setPositiveButton("확인") {_, _ -> finish()}.show()
-
             }
 
+            // 댓글 개수 표시
             if (boardState.setCommentCount != null) {
                 mBinding.includeInfo.text_board_commentCount.text = boardState.setCommentCount
             }
 
+            // 좋아요 개수 표시
             if (boardState.setLikeCount != null) {
                 mBinding.includeInfo.text_board_like.text = boardState.setLikeCount
             }
 
+            // 좋아요 누름 알림
             if (boardState.messageLike != null) {
                 Toast.makeText(this, boardState.messageLike, Toast.LENGTH_SHORT).show()
             }
 
+            // 에러 발생 시
             if (boardState.error != null) {
                 Toast.makeText(this, boardState.error, Toast.LENGTH_SHORT).show()
             }
 
+            // 이미지 있을 시
             try {
                 if (boardState.image0 != null) {
                     img_info0.visibility = View.VISIBLE
@@ -177,10 +183,9 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
                         dialog.dismiss()
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: Exception) { }
 
-            }
-
+            // 이미지 없을 시
             if (boardState.setImgCount != null) {
                 if (boardState.setImgCount == "0") {
                     mBinding.includeInfo.layout_board_img.visibility = View.GONE
@@ -199,27 +204,23 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         mBinding.imgComments.setOnClickListener {
 
             // 중복터치 방지
-            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
-                return@setOnClickListener
-            }
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) { return@setOnClickListener }
             mLastClickTime = SystemClock.elapsedRealtime().toInt()
-            //
 
             if (edit_comments.text.toString().isNotEmpty()) {
-
                 mViewModel.uploadComments("StoreBoard", "StoreBoardComments", uuid)
                 mViewModel.updateCommentCountPlus("StoreBoard", "StoreBoardInfo", uuid)
                 mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), edit_comments.text.toString())
                 mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
-                mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), toekn!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
                 mBinding.editComments.text = null
                 UtilKeyboard.hideKeyboard(this)
             }
         }
 
+        // 좋아요
         layout_contents_favorite.setOnClickListener {
-
             if (mBinding.includeInfo.img_favorite.tag == Integer.valueOf(R.string.unLike)) {
                 mBinding.includeInfo.img_favorite.tag = Integer.valueOf(R.string.like)
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_24)
@@ -240,6 +241,7 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         }
     }
 
+    // 지도 Ready
     override fun onMapReady(p0: GoogleMap?) {
         mMap = p0!!
         val option = MarkerOptions()

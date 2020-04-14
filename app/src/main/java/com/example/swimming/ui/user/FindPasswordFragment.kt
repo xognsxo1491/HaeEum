@@ -35,24 +35,29 @@ class FindPasswordFragment : Fragment(), Result, KodeinAware{
         viewModel.id = mBinding.editFindPwId
         viewModel.email1 = mBinding.editFindPwEmail
 
+        // 이메일 전송 위한 쓰레드
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
         viewModel.registerFormStatus.observe(viewLifecycleOwner, Observer {
             val registerState = it ?: return@Observer
 
+            // 이름
             if (registerState.nameError != null) {
                 mBinding.editFindPwName.error = getString(registerState.nameError)
             }
 
+            // 아이디
             if (registerState.idError != null) {
                 mBinding.editFindPwId.error = getString(registerState.idError)
             }
 
+            // 이메일
             if (registerState.emailError != null) {
                 mBinding.editFindPwEmail.error = getString(registerState.emailError)
             }
 
+            // 프로그레스바 표시
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
                     mBinding.progressFindPassword.visibility = View.VISIBLE

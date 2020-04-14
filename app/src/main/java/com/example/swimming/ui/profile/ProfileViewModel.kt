@@ -2,21 +2,19 @@ package com.example.swimming.ui.profile
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.swimming.R
 import com.example.swimming.data.profile.Message
 import com.example.swimming.data.profile.ProfileRepository
 import com.example.swimming.ui.adapter.MessageViewHolder
+import com.example.swimming.ui.board.MyBoardActivity
 import com.example.swimming.ui.result.ProfileActionResult
 import com.example.swimming.ui.result.Result
 import com.example.swimming.utils.UtilBase64Cipher
@@ -26,7 +24,9 @@ import com.shreyaspatil.firebase.recyclerpagination.LoadingState
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.list_message.view.*
 
+// 프로필 뷰모델
 class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() {
     private val disposables = CompositeDisposable()
 
@@ -96,20 +96,24 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
 
             override fun onBindViewHolder(p0: MessageViewHolder, p1: Int, p2: Message) {
                 p0.setItem(p2)
-                p0.onClick(p0.itemView, context!!)
-                p0.profileForm.observe(owner, Observer {
-                    val state = it ?: return@Observer
 
-                    if (state.onClick != null) {
-                        updateMessageStatus(path1, path2, p2.key)
-                    }
+                if (UtilBase64Cipher.decode(p2.status) == "true") {
+                    p0.itemView.text_notification_kind.setTextColor(Color.parseColor("#7E8188"))
+                }
 
-                    if (state.onDelete != null) {
-                        deleteMessage(path1, path2, p2.key)
-                        state.onDelete = null
-                        refresh()
-                    }
-                })
+                p0.itemView.layout_message.setOnClickListener {
+                    updateMessageStatus(path1, path2, p2.key)
+
+                    val intent = Intent(context, MyBoardActivity::class.java)
+                    intent.putExtra("Kind", "Board")
+                    intent.putExtra("message", p2.uuid)
+                    context!!.startActivity(intent)
+                }
+
+                p0.itemView.layout_message_delete.setOnClickListener {
+                    deleteMessage(path1, path2, p2.key)
+                    refresh()
+                }
             }
 
             override fun onLoadingStateChanged(state: LoadingState) {
@@ -168,6 +172,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
         disposables.add(delete)
     }
 
+    // 이달의 물고기1
     fun showDictionary1(uuid: String) {
         val show = repository.showDictionary(uuid)
             .subscribeOn(Schedulers.io())
@@ -182,6 +187,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
         disposables.add(show)
     }
 
+    // 이달의 물고기2
     fun showDictionary2(uuid: String) {
         val show = repository.showDictionary(uuid)
             .subscribeOn(Schedulers.io())
@@ -196,6 +202,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
         disposables.add(show)
     }
 
+    // 이달의 물고기1 이미지
     fun showDictionaryImage1(path: String) {
         val show = repository.showDictionaryImage(path)
             .subscribeOn(Schedulers.io())
@@ -209,6 +216,7 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
         disposables.add(show)
     }
 
+    // 이달의 물고기2 이미지
     fun showDictionaryImage2(path: String) {
         val show = repository.showDictionaryImage(path)
             .subscribeOn(Schedulers.io())

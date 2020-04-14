@@ -1,6 +1,5 @@
 package com.example.swimming.ui.user
 
-
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.StrictMode
@@ -21,6 +20,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
 
+// 이메일 변경
 class ChangeEmailFragment : Fragment(), KodeinAware, Result {
     override val kodein by kodein()
     private val factory: UserViewModelFactory by instance()
@@ -33,6 +33,7 @@ class ChangeEmailFragment : Fragment(), KodeinAware, Result {
         mBinding = FragmentChangeEmailBinding.inflate(inflater, container, false)
         val viewModel = ViewModelProvider(this, factory).get(UserViewModel::class.java)
 
+        // 이메일 전송 위한 쓰레드
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
 
@@ -48,11 +49,8 @@ class ChangeEmailFragment : Fragment(), KodeinAware, Result {
 
         mBinding.btnChangeEmail.setOnClickListener {
             // 중복터치 방지
-            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) {
-                return@setOnClickListener
-            }
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) { return@setOnClickListener }
             mLastClickTime = SystemClock.elapsedRealtime().toInt()
-            //
 
             viewModel.changeEmail()
         }
@@ -60,36 +58,43 @@ class ChangeEmailFragment : Fragment(), KodeinAware, Result {
         viewModel.registerFormStatus.observe(viewLifecycleOwner, Observer {
             val registerState = it ?: return@Observer
 
+            // 현재 이메일
+            if (registerState.emailNowError != null) {
+                onFailed()
+                mBinding.editChangeEmailNow.error = getString(registerState.emailNowError)
+            }
+
+            // 새로운 이메일
+            if (registerState.emailError != null) {
+                onFailed()
+                mBinding.editChangeEmailNew.error = getString(registerState.emailError)
+            }
+
+            // 인증 코드
+            if (registerState.codeError != null) {
+                onFailed()
+                mBinding.editChangeCode.error = getString(registerState.codeError)
+            }
+
+            // 이메일 전송
+            if (registerState.send != null) {
+                onSuccess()
+                mBinding.progressChangeEmail.visibility = View.INVISIBLE
+            }
+
+            // 성공
             if (registerState.success != null) {
                 mBuilder = AlertDialog.Builder(context)
                 mBuilder.setMessage("이메일을 변경하였습니다.").setCancelable(false)
                 mBuilder.setPositiveButton("확인") {_, _ -> activity!!.finishAffinity()}.show()
             }
 
-            if (registerState.codeError != null) {
-                onFailed()
-                mBinding.editChangeCode.error = getString(registerState.codeError)
-            }
-
-            if (registerState.send != null) {
-                onSuccess()
-                mBinding.progressChangeEmail.visibility = View.INVISIBLE
-            }
-
-            if (registerState.emailNowError != null) {
-                onFailed()
-                mBinding.editChangeEmailNow.error = getString(registerState.emailNowError)
-            }
-
-            if (registerState.emailError != null) {
-                onFailed()
-                mBinding.editChangeEmailNew.error = getString(registerState.emailError)
-            }
-
+            // 에러 발생
             if (registerState.error != null) {
                 onError()
             }
 
+            // 프로그레스바 표시
             if (registerState.isProgressValid != null) {
                 if (registerState.isProgressValid == true) {
                     mBinding.progressChangeEmail.visibility = View.VISIBLE

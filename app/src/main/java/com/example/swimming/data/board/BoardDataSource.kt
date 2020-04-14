@@ -21,8 +21,8 @@ import java.io.FileNotFoundException
 import java.net.HttpURLConnection
 import java.net.URL
 
+// 게시글 관련 데이터 소스
 class BoardDataSource {
-
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance()
     }
@@ -31,7 +31,7 @@ class BoardDataSource {
         FirebaseStorage.getInstance()
     }
 
-    // 게시글 작성
+    // 일반 게시글 작성
     fun writeBoard(token: String, title: String, contents: String, context: Context, time: String, uuid: String, imgCount: String, commentCount: String, like: String, path1: String, path2: String) = Completable.create {
         val reference = database.reference.child(path1).child(path2)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -51,8 +51,7 @@ class BoardDataSource {
         })
     }
 
-    // 게시글 작성 (수조관 게시판)
-    // 게시글 작성
+    // 수족관 게시글 작성
     fun writeBoard2(token: String, title: String, contents: String, context: Context, time: String, uuid: String, imgCount: String, commentCount: String, like: String, path1: String, path2: String, store: String, latitude: Double, longitude: Double) = Completable.create {
         val reference = database.reference.child(path1).child(path2)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -111,7 +110,6 @@ class BoardDataSource {
     // 게시글 불러오기
     fun loadBoardList(owner: LifecycleOwner, path1: String, path2: String) : DatabasePagingOptions<Board> {
         val reference = database.reference.child(path1).child(path2)
-
         val config = PagedList.Config.Builder()
             .setInitialLoadSizeHint(40) // 초기 개수
             .setEnablePlaceholders(false)
@@ -154,11 +152,11 @@ class BoardDataSource {
         }
     }
 
-    // 이미지 리사이즈
+    // 이미지 리사이징
     private fun resize(context: Context, uri: Uri): Bitmap {
         lateinit var resizedBitmap: Bitmap
-
         val options = BitmapFactory.Options()
+
         try {
             BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri), null, options)
 
@@ -177,9 +175,8 @@ class BoardDataSource {
             options.inSampleSize = sampleSize
             val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri), null, options)
             resizedBitmap = bitmap!!
-        } catch (e: FileNotFoundException) {
 
-        }
+        } catch (e: FileNotFoundException) { }
         return resizedBitmap
     }
 
@@ -284,7 +281,6 @@ class BoardDataSource {
     // 댓글 불러오기
     fun loadComments(owner: LifecycleOwner, path1: String, path2: String, uuid: String) : DatabasePagingOptions<Comments> {
         val reference = database.reference.child(path1).child(path2).child(uuid)
-
         val config = PagedList.Config.Builder()
             .setInitialLoadSizeHint(20) // 초기 개수
             .setEnablePlaceholders(false)
@@ -468,11 +464,15 @@ class BoardDataSource {
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+                // To do
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                // To do
+            }
 
+            override fun onChildRemoved(p0: DataSnapshot) {
+                // To do
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -481,10 +481,6 @@ class BoardDataSource {
                 if (UtilBase64Cipher.decode(board!!.title).contains(keyword) || UtilBase64Cipher.decode(board.contents).contains(keyword)) {
                     it.onNext(board)
                 }
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-
             }
         })
     }
@@ -498,11 +494,15 @@ class BoardDataSource {
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+                // To do
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                // To do
+            }
 
+            override fun onChildRemoved(p0: DataSnapshot) {
+                // To do
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -511,10 +511,6 @@ class BoardDataSource {
                 if (UtilBase64Cipher.decode(board!!.id) == id) {
                     it.onNext(board)
                 }
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-
             }
         })
     }
@@ -528,11 +524,15 @@ class BoardDataSource {
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+                // To do
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                // To do
+            }
 
+            override fun onChildRemoved(p0: DataSnapshot) {
+                // To do
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -552,9 +552,6 @@ class BoardDataSource {
                         }
                     })
             }
-            override fun onChildRemoved(p0: DataSnapshot) {
-
-            }
         })
     }
 
@@ -567,11 +564,15 @@ class BoardDataSource {
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("Not yet implemented")
+                // To do
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                // To do
+            }
 
+            override fun onChildRemoved(p0: DataSnapshot) {
+                // To do
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -587,9 +588,6 @@ class BoardDataSource {
                        }
                    })
                }
-            }
-            override fun onChildRemoved(p0: DataSnapshot) {
-
             }
         })
     }

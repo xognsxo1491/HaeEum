@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+// 지도 관련 뷰모델
 class MapViewModel(val repository: MapRepository) : ViewModel() {
     private val disposables = CompositeDisposable()
 

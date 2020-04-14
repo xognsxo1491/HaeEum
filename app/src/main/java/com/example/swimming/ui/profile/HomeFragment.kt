@@ -23,8 +23,8 @@ class HomeFragment : Fragment(), KodeinAware {
     private val factory: ProfileViewModelFactory by instance()
     private lateinit var mBinding: FragmentHomeBinding
 
-    private val uuid1 = "8413482065239a7e0fb86-f1f5-4343-80e5-8b9d3844864c"
-    private val uuid2 = "84134116407260c7877c5-0168-4cc5-a228-3a7f3cfabdd5"
+    private val uuid1 = "8413482065239a7e0fb86-f1f5-4343-80e5-8b9d3844864c" // 이달의 물고기1
+    private val uuid2 = "84134116407260c7877c5-0168-4cc5-a228-3a7f3cfabdd5" // 이달의 물고기2
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -68,32 +68,39 @@ class HomeFragment : Fragment(), KodeinAware {
         viewModel.profileFormStatus.observe(viewLifecycleOwner, Observer {
             val status = it ?: return@Observer
 
+            // 이달의 물고기1 이름
             if (status.title1 != null) {
                 mBinding.textFishName1.text = status.title1
                 mBinding.progressBar1.visibility = View.GONE
             }
 
+            // 이달의 물고기2 이름
             if (status.title2 != null) {
                 mBinding.textFishName2.text = status.title2
                 mBinding.progressBar2.visibility = View.GONE
             }
 
+            // 이달의 물고기1 내용
             if (status.content1 != null) {
                 mBinding.textFishContent1.text = status.content1
             }
 
+            // 이달의 물고기2 내용
             if (status.content2 != null) {
                 mBinding.textFishContent2.text = status.content2
             }
 
+            // 이달의 물고기1 이미지
             if (status.image1 != null) {
                 Glide.with(context!!).load(status.image1).into(mBinding.imgFishName1)
             }
 
+            // 이달의 물고기2 이미지
             if (status.image2 != null) {
                 Glide.with(context!!).load(status.image2).into(mBinding.imgFishName2)
             }
 
+            // 이달의 물고기1
             if (status.board1 != null) {
                 mBinding.layoutFish1.setOnClickListener {
                     val intent = Intent(context, BoardInfoActivity::class.java)
@@ -106,12 +113,13 @@ class HomeFragment : Fragment(), KodeinAware {
                     intent.putExtra("imgCount", UtilBase64Cipher.decode(status.board1.imgCount))
                     intent.putExtra("comment", UtilBase64Cipher.decode(status.board1.commentCount))
                     intent.putExtra("like", UtilBase64Cipher.decode(status.board1.like))
-                    intent.putExtra("token", status.token)
+                    intent.putExtra("token", status.board1.token)
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context!!.startActivity(intent)
                 }
             }
 
+            // 이달의 물고기2
             if (status.board2 != null) {
                 mBinding.layoutFish2.setOnClickListener {
                     val intent = Intent(context, BoardInfoActivity::class.java)
@@ -124,7 +132,7 @@ class HomeFragment : Fragment(), KodeinAware {
                     intent.putExtra("imgCount", UtilBase64Cipher.decode(status.board2.imgCount))
                     intent.putExtra("comment", UtilBase64Cipher.decode(status.board2.commentCount))
                     intent.putExtra("like", UtilBase64Cipher.decode(status.board2.like))
-                    intent.putExtra("token", status.token)
+                    intent.putExtra("token", status.board2.token)
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context!!.startActivity(intent)
                 }

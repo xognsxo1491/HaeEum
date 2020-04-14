@@ -25,8 +25,8 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.provider
 import org.kodein.di.generic.singleton
 
+// 의존성 주입
 class MyApplication : Application(), KodeinAware {
-
     override val kodein = Kodein.lazy {
         import(androidXModule(this@MyApplication))
 

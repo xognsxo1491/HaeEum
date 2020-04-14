@@ -2,7 +2,6 @@ package com.example.swimming.data.profile
 
 import android.content.SharedPreferences
 import android.net.Uri
-import android.widget.LinearLayout
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
 import com.example.swimming.data.board.Board
@@ -20,6 +19,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 
+// 프로필 관련 데이터 소스
 class ProfileDataSource {
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance()
@@ -74,7 +74,6 @@ class ProfileDataSource {
     // 알림 체크
     fun checkMessage(owner: LifecycleOwner, path1: String, path2: String, id: String) : DatabasePagingOptions<Message> {
         val reference = database.reference.child(path1).child(path2).child(id)
-
         val config = PagedList.Config.Builder()
             .setInitialLoadSizeHint(20) // 초기 개수
             .setEnablePlaceholders(false)
@@ -88,7 +87,7 @@ class ProfileDataSource {
             .build()
     }
 
-    // 알림 읽음 표시
+    // 알림 메세지 읽음 표시
     fun updateMessageStatus(path1: String, path2: String, id: String, uuid: String) = Completable.create {
         val reference = database.reference.child(path1).child(path2).child(id).child(uuid)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -106,12 +105,12 @@ class ProfileDataSource {
         })
     }
 
-    // 메세지 지우기
+    // 알림 메세지 지우기
     fun deleteMessage(path1: String, path2: String, id: String, uuid: String) = Completable.create {
         database.reference.child(path1).child(path2).child(id).child(uuid).removeValue()
     }
 
-    // 이달의 물고기
+    // 메인 화면 이달의 물고기 정보 불러오기
     fun showDictionary(uuid: String) = Single.create<Board> {
         database.reference.child("Dictionary").child("DictionaryInfo").child(uuid).addListenerForSingleValueEvent(object : ValueEventListener {
 
@@ -126,7 +125,7 @@ class ProfileDataSource {
         })
     }
 
-    // 이달의 물고기 이미지
+    // 이달의 물고기 이미지 불러오기
     fun showDictionaryImage(path: String) = Single.create<Uri> { emitter ->
         storage.reference.child("Dictionary").child("$path/1").downloadUrl.addOnSuccessListener {
             emitter.onSuccess(it)

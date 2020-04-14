@@ -8,8 +8,8 @@ import com.google.firebase.database.*
 import io.reactivex.Completable
 import io.reactivex.Single
 
+// 유저 정보 관련 데이터 소스
 class UserDataSource {
-
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance()
     }
@@ -96,11 +96,15 @@ class UserDataSource {
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                // To do
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                // To do
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+                // To do
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -123,10 +127,6 @@ class UserDataSource {
                 } else
                     it.onError(Throwable("onErrorFind"))
             }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
         })
     }
 
@@ -139,11 +139,15 @@ class UserDataSource {
             }
 
             override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                // To do
             }
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                // To do
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+                // To do
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -167,10 +171,6 @@ class UserDataSource {
                         it.onError(Throwable("onErrorFind"))
                 } else
                     it.onError(Throwable("onErrorFind"))
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         })
     }
