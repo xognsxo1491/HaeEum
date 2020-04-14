@@ -19,11 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.databinding.ActivityBoardMapBinding
-import com.example.swimming.ui.adapter.LikeAdapter
+import com.example.swimming.adapter.LikeAdapter
 import com.example.swimming.ui.board.BoardInfoMapActivity
-import com.example.swimming.utils.PermissionLocation
-import com.example.swimming.utils.UtilBase64Cipher
-import com.example.swimming.utils.UtilTimeFormat
+import com.example.swimming.etc.permission.LocationPermission
+import com.example.swimming.etc.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilTimeFormat
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -178,7 +178,7 @@ class BoardMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
         mBinding.mapView.onStart()
 
         if (Build.VERSION.SDK_INT >= 23)
-            PermissionLocation.requestMapPermissions(this)
+            LocationPermission.requestMapPermissions(this)
     }
 
     override fun onStop() {

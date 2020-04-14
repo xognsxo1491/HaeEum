@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.databinding.ActivityMyBoardBinding
-import com.example.swimming.ui.adapter.MyBoardAdapter
+import com.example.swimming.adapter.MyBoardAdapter
 import kotlinx.android.synthetic.main.activity_my_board.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein

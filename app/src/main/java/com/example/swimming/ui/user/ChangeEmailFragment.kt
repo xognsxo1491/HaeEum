@@ -15,7 +15,7 @@ import com.example.swimming.R
 
 import com.example.swimming.databinding.FragmentChangeEmailBinding
 import com.example.swimming.ui.result.Result
-import com.example.swimming.utils.UtilKeyboard
+import com.example.swimming.etc.utils.UtilKeyboard
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance

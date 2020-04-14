@@ -1,7 +1,7 @@
 package com.example.swimming.data.map
 
 import android.content.Context
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 
 // 지도 관련 저장소
 class MapRepository(private val dataSource: MapDataSource, val context: Context) {

@@ -8,7 +8,7 @@ import android.net.Uri
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
 import com.example.swimming.data.profile.Message
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions
@@ -256,7 +256,7 @@ class BoardDataSource {
     }
 
     // 댓글 작성
-    fun uploadComments(path1: String, path2: String, uuid1: String, uuid2: String, id: String, time: String, contents: String) = Completable.create {
+    fun uploadComments(path1: String, path2: String, uuid1: String, uuid2: String, id: String, time: String, contents: String, kind: String) = Completable.create {
         val reference = database.reference.child(path1).child(path2).child(uuid1)
         reference.addListenerForSingleValueEvent(object : ValueEventListener {
 
@@ -265,7 +265,7 @@ class BoardDataSource {
             }
 
             override fun onDataChange(p0: DataSnapshot) {
-                val comments = Comments(uuid2, id, time, contents)
+                val comments = Comments(uuid2, id, time, contents, kind)
                 reference.child(uuid2).setValue(comments)
                 it.onComplete()
             }

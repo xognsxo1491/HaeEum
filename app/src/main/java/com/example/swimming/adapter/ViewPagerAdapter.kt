@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.example.swimming.ui.adapter
+package com.example.swimming.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager

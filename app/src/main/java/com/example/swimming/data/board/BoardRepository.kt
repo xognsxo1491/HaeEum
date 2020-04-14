@@ -3,7 +3,7 @@ package com.example.swimming.data.board
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.LifecycleOwner
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import java.util.*
 
 // 게시글 관련 저장소
@@ -37,7 +37,11 @@ class BoardRepository(private val dataSource: BoardDataSource, val context: Cont
         dataSource.loadImage(path, count)
 
     fun uploadComments(path1: String, path2: String, child: String, comments: String) =
-        dataSource.uploadComments(path1, path2, child,(9999999999999 - System.currentTimeMillis()).toString() + UUID.randomUUID().toString(), UtilBase64Cipher.encode(id!!), UtilBase64Cipher.encode(time), UtilBase64Cipher.encode(comments))
+        dataSource.uploadComments(path1, path2, child,System.currentTimeMillis().toString() + UUID.randomUUID().toString(),
+            UtilBase64Cipher.encode(id!!), UtilBase64Cipher.encode(time), UtilBase64Cipher.encode(comments), "")
+
+    fun uploadCommentsComments(path1: String, path2: String, child: String, key: String, comments: String) =
+        dataSource.uploadComments(path1, path2, child, key, UtilBase64Cipher.encode(id!!), UtilBase64Cipher.encode(time), UtilBase64Cipher.encode(comments), UtilBase64Cipher.encode("true"))
 
     fun deleteComments(path1: String, path2: String, path3: String, uuid: String) =
         dataSource.deleteComments(path1, path2, path3, uuid)

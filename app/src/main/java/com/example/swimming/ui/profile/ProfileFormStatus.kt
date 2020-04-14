@@ -13,13 +13,5 @@ data class ProfileFormStatus(
 
     val board1: Board? = null,
     val board2: Board? = null,
-
-    val title1: String? = null,
-    val title2: String? = null,
-
-    val content1: String? = null,
-    val content2: String? = null,
-
-    val image1: Uri? = null,
-    val image2: Uri? = null
+    val board3: Board? = null
 )

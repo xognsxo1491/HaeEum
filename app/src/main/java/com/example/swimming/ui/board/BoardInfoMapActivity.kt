@@ -16,9 +16,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardInfoMapBinding
-import com.example.swimming.utils.UtilDateFormat
-import com.example.swimming.utils.UtilKeyboard
-import com.example.swimming.utils.utilShowDialog
+import com.example.swimming.etc.utils.UtilDateFormat
+import com.example.swimming.etc.utils.UtilKeyboard
+import com.example.swimming.etc.utils.utilShowDialog
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.item_contents.view.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
+import java.util.*
 
 // 수족관 게시글 내용
 class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
@@ -70,25 +71,26 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         mViewModel.recyclerView = recycler_Info
         mViewModel.refreshLayout = swipe_info
 
-        mViewModel.card1 = card_info1
-        mViewModel.card2 = card_info2
-        mViewModel.card3 = card_info3
-        mViewModel.card4 = card_info4
-        mViewModel.card5 = card_info5
-        mViewModel.imgLike = img_favorite
-        img_favorite.tag = Integer.valueOf(R.string.unLike)
-
+        val id = intent.getStringExtra("id")
         val uuid = intent.getStringExtra("uuid")
         val imgCount = intent.getStringExtra("imgCount")
         val token = intent.getStringExtra("token")
 
-        mBinding.includeInfo.text_board_id.text = intent.getStringExtra("id")
-        mBinding.includeInfo. text_board_title.text = intent.getStringExtra("title")
-        mBinding.includeInfo. text_board_contents.text = intent.getStringExtra("contents")
-        mBinding.includeInfo. text_board_time.text = UtilDateFormat.formatting(intent.getStringExtra("time")!!.toLong())
+        mViewModel.card1 = mBinding.includeInfo.card_info1
+        mViewModel.card2 = mBinding.includeInfo.card_info2
+        mViewModel.card3 = mBinding.includeInfo.card_info3
+        mViewModel.card4 = mBinding.includeInfo.card_info4
+        mViewModel.card5 = mBinding.includeInfo.card_info5
+        mViewModel.imgLike = mBinding.includeInfo.img_favorite
+        img_favorite.tag = Integer.valueOf(R.string.unLike)
+
+        mBinding.includeInfo.text_board_id.text = id
+        mBinding.includeInfo.text_board_title.text = intent.getStringExtra("title")
+        mBinding.includeInfo.text_board_contents.text = intent.getStringExtra("contents")
+        mBinding.includeInfo.text_board_time.text = UtilDateFormat.formatting(intent.getStringExtra("time")!!.toLong())
         mBinding.includeInfo.text_board_imgCount.text = imgCount
-        mBinding.includeInfo. text_board_commentCount.text = intent.getStringExtra("comment")
-        mBinding.includeInfo. text_board_like.text = intent.getStringExtra("like")
+        mBinding.includeInfo.text_board_commentCount.text = intent.getStringExtra("comment")
+        mBinding.includeInfo.text_board_like.text = intent.getStringExtra("like")
         mBinding.slide.setScrollableView(mBinding.scrollView)
 
         mLayout = mBinding.slide
@@ -208,14 +210,43 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
             mLastClickTime = SystemClock.elapsedRealtime().toInt()
 
             if (edit_comments.text.toString().isNotEmpty()) {
+                UtilKeyboard.hideKeyboard(this)
+
                 mViewModel.uploadComments("StoreBoard", "StoreBoardComments", uuid)
                 mViewModel.updateCommentCountPlus("StoreBoard", "StoreBoardInfo", uuid)
-                mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), edit_comments.text.toString())
                 mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
-                mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                if (mBinding.includeInfo.text_board_id.text.toString() != id) {
+                    mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), edit_comments.text.toString())
+                    mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                }
+
                 mBinding.editComments.text = null
+            }
+        }
+
+        // 대댓글 작성
+        mBinding.imgCommentsComments.setOnClickListener {
+
+            // 중복터치 방지
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) { return@setOnClickListener }
+            mLastClickTime = SystemClock.elapsedRealtime().toInt()
+
+            if (mBinding.editCommentsComments.text.toString().isNotEmpty()) {
                 UtilKeyboard.hideKeyboard(this)
+
+                mViewModel.uploadCommentsComments("StoreBoard", "StoreBoardComments", uuid, mViewModel.commentComment!! + System.currentTimeMillis().toString() + UUID.randomUUID(),"${mBinding.textCommentId.text} ${mBinding.editCommentsComments.text}")
+                mViewModel.updateCommentCountPlus("StoreBoard", "StoreBoardInfo", uuid)
+                mBinding.includeInfo.text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
+
+                if (mBinding.includeInfo.text_board_id.text.toString() != id) {
+                    mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), mBinding.editComments.text.toString())
+                    mViewModel.pushToken(getString(R.string.message_comments_comments), "대댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                }
+
+                mBinding.editCommentsComments.text = null
+                mBinding.cardInfoCommentsComments.visibility = View.GONE
+                mBinding.cardInfoComments.visibility = View.VISIBLE
             }
         }
 
@@ -269,7 +300,7 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         val pref = getSharedPreferences("Login", Context.MODE_PRIVATE)
         val id = pref.getString("Id", "")
 
-        if (id == text_board_id.text.toString())
+        if (id == text_board_id.text.toString() || id == "Admin1")
             menuInflater.inflate(R.menu.menu_delete, menu)
 
         return true

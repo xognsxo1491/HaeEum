@@ -8,12 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.bumptech.glide.Glide
 import com.example.swimming.databinding.FragmentHomeBinding
 import com.example.swimming.ui.board.BoardActivity
 import com.example.swimming.ui.board.BoardInfoActivity
 import com.example.swimming.ui.map.BoardMapActivity
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.kodein
 import org.kodein.di.generic.instance
@@ -23,8 +22,9 @@ class HomeFragment : Fragment(), KodeinAware {
     private val factory: ProfileViewModelFactory by instance()
     private lateinit var mBinding: FragmentHomeBinding
 
-    private val uuid1 = "8413482065239a7e0fb86-f1f5-4343-80e5-8b9d3844864c" // 이달의 물고기1
-    private val uuid2 = "84134116407260c7877c5-0168-4cc5-a228-3a7f3cfabdd5" // 이달의 물고기2
+    private val uuid1 = "8413151709426f0a7bb95-d850-4c92-b32d-0180c6219101" // 이달의 물고기1
+    private val uuid2 = "8413153431221354b8cf6-e8d5-400f-8ed6-a39f02a3c84a" // 이달의 물고기2
+    private val uuid3 = "8413150781656eae41706-c424-423f-a929-d4f30ba52bf5" // 이달의 물고기3
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -33,8 +33,7 @@ class HomeFragment : Fragment(), KodeinAware {
 
         viewModel.showDictionary1(uuid1)
         viewModel.showDictionary2(uuid2)
-        viewModel.showDictionaryImage1(uuid1)
-        viewModel.showDictionaryImage2(uuid2)
+        viewModel.showDictionary3(uuid3)
 
         mBinding.cardFree.setOnClickListener {
             val intent = Intent(context, BoardActivity::class.java)
@@ -67,38 +66,6 @@ class HomeFragment : Fragment(), KodeinAware {
 
         viewModel.profileFormStatus.observe(viewLifecycleOwner, Observer {
             val status = it ?: return@Observer
-
-            // 이달의 물고기1 이름
-            if (status.title1 != null) {
-                mBinding.textFishName1.text = status.title1
-                mBinding.progressBar1.visibility = View.GONE
-            }
-
-            // 이달의 물고기2 이름
-            if (status.title2 != null) {
-                mBinding.textFishName2.text = status.title2
-                mBinding.progressBar2.visibility = View.GONE
-            }
-
-            // 이달의 물고기1 내용
-            if (status.content1 != null) {
-                mBinding.textFishContent1.text = status.content1
-            }
-
-            // 이달의 물고기2 내용
-            if (status.content2 != null) {
-                mBinding.textFishContent2.text = status.content2
-            }
-
-            // 이달의 물고기1 이미지
-            if (status.image1 != null) {
-                Glide.with(context!!).load(status.image1).into(mBinding.imgFishName1)
-            }
-
-            // 이달의 물고기2 이미지
-            if (status.image2 != null) {
-                Glide.with(context!!).load(status.image2).into(mBinding.imgFishName2)
-            }
 
             // 이달의 물고기1
             if (status.board1 != null) {
@@ -133,6 +100,25 @@ class HomeFragment : Fragment(), KodeinAware {
                     intent.putExtra("comment", UtilBase64Cipher.decode(status.board2.commentCount))
                     intent.putExtra("like", UtilBase64Cipher.decode(status.board2.like))
                     intent.putExtra("token", status.board2.token)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    context!!.startActivity(intent)
+                }
+            }
+
+            // 이달의 물고기3
+            if (status.board3 != null) {
+                mBinding.layoutFish3.setOnClickListener {
+                    val intent = Intent(context, BoardInfoActivity::class.java)
+                    intent.putExtra("BoardKind", "Dictionary")
+                    intent.putExtra("uuid", uuid3)
+                    intent.putExtra("id", UtilBase64Cipher.decode(status.board3.id))
+                    intent.putExtra("title", UtilBase64Cipher.decode(status.board3.title))
+                    intent.putExtra("contents", UtilBase64Cipher.decode(status.board3.contents))
+                    intent.putExtra("time", UtilBase64Cipher.decode(status.board3.time))
+                    intent.putExtra("imgCount", UtilBase64Cipher.decode(status.board3.imgCount))
+                    intent.putExtra("comment", UtilBase64Cipher.decode(status.board3.commentCount))
+                    intent.putExtra("like", UtilBase64Cipher.decode(status.board3.like))
+                    intent.putExtra("token", status.board3.token)
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK).flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     context!!.startActivity(intent)
                 }

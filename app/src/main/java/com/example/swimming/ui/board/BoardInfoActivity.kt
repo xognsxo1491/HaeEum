@@ -16,9 +16,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardInfoBinding
-import com.example.swimming.utils.UtilDateFormat
-import com.example.swimming.utils.UtilKeyboard
-import com.example.swimming.utils.utilShowDialog
+import com.example.swimming.etc.utils.UtilDateFormat
+import com.example.swimming.etc.utils.UtilKeyboard
+import com.example.swimming.etc.utils.utilShowDialog
 import kotlinx.android.synthetic.main.activity_board_info.*
 import kotlinx.android.synthetic.main.item_board.view.*
 import kotlinx.android.synthetic.main.item_contents.*
@@ -27,6 +27,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 import java.lang.Exception
+import java.util.*
 
 // 게시글 내용
 class BoardInfoActivity : AppCompatActivity(), KodeinAware {
@@ -48,25 +49,30 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
-        mBinding.viewModel = mViewModel
-        mViewModel.recyclerView = mBinding.includeInfo.recycler_Info
-        mViewModel.refreshLayout = mBinding.swipeInfo
-
-        mViewModel.card1 = card_info1
-        mViewModel.card2 = card_info2
-        mViewModel.card3 = card_info3
-        mViewModel.card4 = card_info4
-        mViewModel.card5 = card_info5
-        mViewModel.imgLike = img_favorite
-        mViewModel.textview = text_board_commentCount
-        img_favorite.tag = Integer.valueOf(R.string.unLike)
-
+        val id = intent.getStringExtra("id")
         val kind = intent.getStringExtra("BoardKind")
         val uuid = intent.getStringExtra("uuid")
         val imgCount = intent.getStringExtra("imgCount")
         val token = intent.getStringExtra("token")
 
-        mBinding.includeInfo.text_board_id.text = intent.getStringExtra("id")
+        mBinding.viewModel = mViewModel
+        mViewModel.recyclerView = mBinding.includeInfo.recycler_Info
+        mViewModel.refreshLayout = mBinding.swipeInfo
+
+        mViewModel.card1 = mBinding.includeInfo.card_info1
+        mViewModel.card2 = mBinding.includeInfo.card_info2
+        mViewModel.card3 = mBinding.includeInfo.card_info3
+        mViewModel.card4 = mBinding.includeInfo.card_info4
+        mViewModel.card5 = mBinding.includeInfo.card_info5
+        mViewModel.imgLike = mBinding.includeInfo.img_favorite
+        mViewModel.textView = mBinding.includeInfo.text_board_commentCount
+        img_favorite.tag = Integer.valueOf(R.string.unLike)
+
+        mViewModel.cardComment = mBinding.cardInfoComments
+        mViewModel.cardCommentComment = mBinding.cardInfoCommentsComments
+        mViewModel.textCommentComment = mBinding.textCommentId
+
+        mBinding.includeInfo.text_board_id.text = id
         mBinding.includeInfo. text_board_title.text = intent.getStringExtra("title")
         mBinding.includeInfo. text_board_contents.text = intent.getStringExtra("contents")!!.replace(" ", "\u00A0")
         mBinding.includeInfo. text_board_time.text = UtilDateFormat.formatting(intent.getStringExtra("time")!!.toLong())
@@ -208,20 +214,49 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
             if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) { return@setOnClickListener }
             mLastClickTime = SystemClock.elapsedRealtime().toInt()
 
-            if (edit_comments.text.toString().isNotEmpty()) {
+            if (mBinding.editComments.text.toString().isNotEmpty()) {
                 UtilKeyboard.hideKeyboard(this)
+
                 mViewModel.uploadComments(kind, kind+"Comments", uuid)
                 mViewModel.updateCommentCountPlus(kind, kind+"Info", uuid)
-                mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), edit_comments.text.toString())
-                mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
+                mBinding.includeInfo.text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
-                mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                if (mBinding.includeInfo.text_board_id.text.toString() != id) {
+                    mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), mBinding.editComments.text.toString())
+                    mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                }
+
                 mBinding.editComments.text = null
             }
         }
 
+        // 대댓글 작성
+        mBinding.imgCommentsComments.setOnClickListener {
+
+            // 중복터치 방지
+            if (SystemClock.elapsedRealtime() - mLastClickTime < 2000) { return@setOnClickListener }
+            mLastClickTime = SystemClock.elapsedRealtime().toInt()
+
+            if (mBinding.editCommentsComments.text.toString().isNotEmpty()) {
+                UtilKeyboard.hideKeyboard(this)
+
+                mViewModel.uploadCommentsComments(kind, kind+"Comments", uuid, mViewModel.commentComment!! + System.currentTimeMillis().toString() + UUID.randomUUID(),"${mBinding.textCommentId.text} ${mBinding.editCommentsComments.text}")
+                mViewModel.updateCommentCountPlus(kind, kind+"Info", uuid)
+                mBinding.includeInfo.text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
+
+                if (mBinding.includeInfo.text_board_id.text.toString() != id) {
+                    mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), mBinding.editComments.text.toString())
+                    mViewModel.pushToken(getString(R.string.message_comments_comments), "대댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                }
+
+                mBinding.editCommentsComments.text = null
+                mBinding.cardInfoCommentsComments.visibility = View.GONE
+                mBinding.cardInfoComments.visibility = View.VISIBLE
+            }
+        }
+
         // 좋아요
-        layout_contents_favorite.setOnClickListener {
+        mBinding.includeInfo.layout_contents_favorite.setOnClickListener {
             if (mBinding.includeInfo.img_favorite.tag == Integer.valueOf(R.string.unLike)) {
                 mBinding.includeInfo.img_favorite.tag = Integer.valueOf(R.string.like)
                 mBinding.includeInfo.img_favorite.setImageResource(R.drawable.round_favorite_24)
@@ -241,6 +276,16 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         }
     }
 
+    override fun onBackPressed() {
+        if (mBinding.cardInfoCommentsComments.visibility == View.VISIBLE) {
+            mBinding.cardInfoCommentsComments.visibility = View.GONE
+            mBinding.cardInfoComments.visibility = View.VISIBLE
+
+        } else {
+            finish()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mBinding.unbind()
@@ -251,7 +296,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         val pref = getSharedPreferences("Login", Context.MODE_PRIVATE)
         val id = pref.getString("Id", "")
 
-        if (id == text_board_id.text.toString())
+        if (id == text_board_id.text.toString() || id == "Admin1")
             menuInflater.inflate(R.menu.menu_delete, menu)
 
         return true
@@ -264,6 +309,7 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                 return true
             }
 
+            // 삭제
             R.id.menu_delete -> {
                 val kind = intent.getStringExtra("BoardKind")
                 val uuid = intent.getStringExtra("uuid")

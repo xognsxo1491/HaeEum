@@ -1,4 +1,4 @@
-package com.example.swimming.utils
+package com.example.swimming.etc.utils
 
 // 시간 변환
 object UtilTimeFormat {

@@ -1,4 +1,4 @@
-package com.example.swimming.ui.adapter
+package com.example.swimming.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -15,7 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.google.firebase.storage.FirebaseStorage
 import kotlin.collections.ArrayList
 

@@ -1,7 +1,7 @@
 package com.example.swimming.data.user
 
 import android.content.Context
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 
 // 유저 정보 관련 저장소
 class UserRepository(private val dataSource: UserDataSource, val context: Context) {

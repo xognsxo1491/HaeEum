@@ -1,4 +1,4 @@
-package com.example.swimming.ui.adapter
+package com.example.swimming.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng

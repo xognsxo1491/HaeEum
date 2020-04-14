@@ -1,5 +1,6 @@
 package com.example.swimming.ui.board
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -19,10 +20,10 @@ import com.example.swimming.data.board.Board
 import com.example.swimming.data.board.BoardRepository
 import com.example.swimming.data.board.Comments
 import com.example.swimming.ui.result.Result
-import com.example.swimming.ui.adapter.BoardViewHolder
-import com.example.swimming.ui.adapter.CommentViewHolder
-import com.example.swimming.ui.adapter.DictionaryViewHolder
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.adapter.BoardViewHolder
+import com.example.swimming.adapter.CommentViewHolder
+import com.example.swimming.adapter.DictionaryViewHolder
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.google.firebase.database.DatabaseError
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter
 import com.shreyaspatil.firebase.recyclerpagination.LoadingState
@@ -53,6 +54,7 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
     var linearLayout : LinearLayout? = null
     var data: Intent? = null
 
+    // 게시글 이미지
     var img1 : ImageView? = null
     var img2 : ImageView? = null
     var img3 : ImageView? = null
@@ -60,13 +62,20 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
     var img5 : ImageView? = null
     var imgLike : ImageView? = null
 
+    // 게시글 이미지 카드뷰
     var card1 : CardView? = null
     var card2 : CardView? = null
     var card3 : CardView? = null
     var card4 : CardView? = null
     var card5 : CardView? = null
 
-    var textview: TextView? = null
+    // 대댓글 관련
+    var cardComment: CardView? = null
+    var cardCommentComment: CardView? = null
+    var textCommentComment: TextView? = null
+    var commentComment: String? = null
+
+    var textView: TextView? = null
 
     // 게시글 작성하기
     fun writeBoard(path1: String, path2: String) {
@@ -391,6 +400,16 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
             disposables.add(upload)
     }
 
+    // 대댓글 작성
+    fun uploadCommentsComments(path1: String, path2: String, uuid: String, key: String, comments: String) {
+        val upload = repository.uploadCommentsComments(path1, path2, uuid, key, comments)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { adapterComments!!.refresh() }
+
+        disposables.add(upload)
+    }
+
     // 댓글 삭제
     fun deleteComments(path1: String, path2: String, path3: String, uuid: String) {
         val delete = repository.deleteComments(path1, path2, path3, uuid)
@@ -412,11 +431,12 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
                 return CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_comments, parent, false))
             }
 
+            @SuppressLint("SetTextI18n")
             override fun onBindViewHolder(p0: CommentViewHolder, p1: Int, p2: Comments) {
                 p0.setItem(p2)
                 p0.itemView.setOnClickListener {
-                    if (repository.id == UtilBase64Cipher.decode(p2.id)) {
-                        val items = arrayOf("삭제하기")
+                    if (repository.id == UtilBase64Cipher.decode(p2.id) || repository.id == String.format("Admin1")) {
+                        val items = arrayOf("삭제하기", "대댓글 작성")
                         val alert = AlertDialog.Builder(context)
                             alert.setItems(items) { _, w ->
                             when (items[w]) {
@@ -424,7 +444,27 @@ class BoardViewModel(val repository: BoardRepository) : ViewModel() {
                                     deleteComments(path1, path2, uuid, p2.uuid)
                                     updateCommentCountMinus(path1, path3, uuid)
                                     refresh()
-                                    textview!!.text = (Integer.parseInt(textview!!.text.toString()) - 1).toString()
+                                    textView!!.text = (Integer.parseInt(textView!!.text.toString()) - 1).toString()
+                                }
+                                "대댓글 작성" -> {
+                                    cardComment!!.visibility = View.INVISIBLE
+                                    cardCommentComment!!.visibility = View.VISIBLE
+                                    textCommentComment!!.text = "@${UtilBase64Cipher.decode(p2.id)}"
+                                    commentComment = p2.uuid
+                                }
+                            }
+                        }.show()
+
+                    } else {
+                        val items = arrayOf("대댓글 작성")
+                        val alert = AlertDialog.Builder(context)
+                        alert.setItems(items) { _, w ->
+                            when (items[w]) {
+                                "대댓글 작성" -> {
+                                    cardComment!!.visibility = View.INVISIBLE
+                                    cardCommentComment!!.visibility = View.VISIBLE
+                                    textCommentComment!!.text = "@${UtilBase64Cipher.decode(p2.id)}"
+                                    commentComment = p2.uuid
                                 }
                             }
                         }.show()

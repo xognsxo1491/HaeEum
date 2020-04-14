@@ -11,9 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.databinding.ActivityBoardSearchBinding
-import com.example.swimming.ui.adapter.SearchAdapter
-import com.example.swimming.ui.adapter.SearchDictionaryAdapter
-import com.example.swimming.utils.UtilKeyboard
+import com.example.swimming.adapter.SearchAdapter
+import com.example.swimming.adapter.SearchDictionaryAdapter
+import com.example.swimming.etc.utils.UtilKeyboard
 import kotlinx.android.synthetic.main.activity_board_search.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein

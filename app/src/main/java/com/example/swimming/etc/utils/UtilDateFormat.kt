@@ -1,4 +1,4 @@
-package com.example.swimming.utils
+package com.example.swimming.etc.utils
 
 import java.text.SimpleDateFormat
 import java.util.*

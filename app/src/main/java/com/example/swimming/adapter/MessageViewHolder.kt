@@ -1,4 +1,4 @@
-package com.example.swimming.ui.adapter
+package com.example.swimming.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.swimming.R
 import com.example.swimming.data.profile.Message
-import com.example.swimming.utils.UtilBase64Cipher
-import com.example.swimming.utils.UtilTimeFormat
+import com.example.swimming.etc.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilTimeFormat
 
 // 알림 메시지 리사이클러뷰 어댑터
 class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

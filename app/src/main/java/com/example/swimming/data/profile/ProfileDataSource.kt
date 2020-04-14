@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
 import com.example.swimming.data.board.Board
 import com.example.swimming.data.user.User
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -123,12 +123,5 @@ class ProfileDataSource {
                 it.onSuccess(board!!)
             }
         })
-    }
-
-    // 이달의 물고기 이미지 불러오기
-    fun showDictionaryImage(path: String) = Single.create<Uri> { emitter ->
-        storage.reference.child("Dictionary").child("$path/1").downloadUrl.addOnSuccessListener {
-            emitter.onSuccess(it)
-        }
     }
 }

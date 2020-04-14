@@ -1,4 +1,4 @@
-package com.example.swimming.ui.adapter
+package com.example.swimming.adapter
 
 import android.app.Activity
 import android.content.Context
@@ -13,8 +13,8 @@ import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
 import com.example.swimming.ui.board.BoardInfoMapActivity
-import com.example.swimming.utils.UtilBase64Cipher
-import com.example.swimming.utils.UtilTimeFormat
+import com.example.swimming.etc.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilTimeFormat
 
 // 나의 게시글 리사이클러뷰 어댑터
 class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerView.Adapter<MyBoardAdapter.ViewHolder>() {
@@ -227,7 +227,6 @@ class MyBoardAdapter internal constructor (list: ArrayList<Board>) : RecyclerVie
                 intent.putExtra("latitude", latitude)
                 intent.putExtra("longitude", longitude)
                 context.startActivity(intent)
-
             }
         }
     }

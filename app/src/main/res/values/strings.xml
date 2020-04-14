@@ -65,6 +65,7 @@
 
     // FCM 알림
     <string name="message_comments">작성한 게시글에 댓글이 달렸습니다.</string>
+    <string name="message_comments_comments">작성한 게시글에 대댓글이 달렸습니다.</string>
 
     // 게시글 Fragment
     <string name="free_board">자유 게시판</string>
@@ -120,5 +121,18 @@
     <string name="myLike">좋아요 누른 게시글</string>
     <string name="board_delete">지우기</string>
     <string name="message_logout">로그아웃 되었습니다.</string>
+
+    // 이달의 물고기
+    <string name="fish1_name">퍼큘라 크라운(Percula Clown)</string>
+    <string name="fish1_contents">주황흰동가리(Amphiprion percula)는 농어목 자리돔과 흰동가리아과에 속하는 바닷물고기의 일종으로, 관상어로 사육되는 대표적인 물고기이다. 영명인 퍼큘라 크라운(percula clown)이라고 이르기도 한다.
+        애니메이션 영화인 니모를 찾아서의 흰동가리 부자의 모델이 되었던 종이다. 팔라우 등 오세아니아의 해역에서 발견된다.</string>
+
+    <string name="fish2_name">블루탱 (Blue Tang)</string>
+    <string name="fish2_contents">농어목 양쥐돔과에 속하는 바다 어류의 일종. 남양쥐돔속의 유일한 단일종이다. 시중에서 흔히 블루탱이라는 명칭으로 유통되는 유명한 물고기다.
+        서구권 나라에서는 흔히 \'Blue tang\'이라고 부르지만 \'Regal tang\'이나 \'Palette surgeonfish\', \'Royal blue tang\' 등 수많은 명칭이 존재한다.</string>
+
+    <string name="fish3_name">구피 (Guppy)</string>
+    <string name="fish3_contents">구피(guppy)는 포에킬리아과에 속하며 학명은 Poecilia Reticulata 이다. 몸길이는 수컷이 3 cm, 암컷이 4 cm 가량으로 송사리와 비슷하나 몸이 더 가늘고 길며 빨강·노랑·파랑·검정 등의 여러 빛깔의 무늬가 섞여 있다.
+        금붕어와 함께 세계에서 가장 인기 있는 애완용 물고기로 깃털 같은 꼬리와 지느러미가 아름답다. 모기의 유충인 장구벌레를 잡아 먹으며 베네수엘라와 인근 섬 지역의 따뜻한 하천이 원산지이다.</string>
 
 </resources>

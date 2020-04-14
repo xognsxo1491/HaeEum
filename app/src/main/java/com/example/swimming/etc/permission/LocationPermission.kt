@@ -1,23 +1,18 @@
-package com.example.swimming.utils
+package com.example.swimming.etc.permission
 
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.*
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.LatLng
 
 // 퍼미션 설정
-object PermissionLocation {
+object LocationPermission {
     fun requestMapPermissions(activity: Activity) {
         val fine = ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION)
         val coarse =  ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION)

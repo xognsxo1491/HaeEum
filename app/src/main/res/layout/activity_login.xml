@@ -110,7 +110,7 @@
                         android:backgroundTint="@color/colorWhiteVariant"
                         android:hint="@string/password"
                         android:importantForAutofill="no"
-                        android:inputType="textPassword"
+                        android:inputType="text|textPassword"
                         android:textColorHint="@color/colorGray" />
                 </LinearLayout>
 

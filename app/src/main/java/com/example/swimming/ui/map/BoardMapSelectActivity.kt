@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardMapSelectBinding
 import com.example.swimming.ui.board.BoardWriteActivity
-import com.example.swimming.utils.PermissionLocation
+import com.example.swimming.etc.permission.LocationPermission
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -48,7 +48,6 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
         mBinding.viewModel = viewModel
 
         setSupportActionBar(mBinding.toolbar)
-
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
 
@@ -56,8 +55,8 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
         if (savedInstanceState != null) {
             bundle = savedInstanceState.getBundle(key)
         }
-        getLocationUpdate()
 
+        getLocationUpdate()
         mBinding.mapView.onCreate(bundle)
         mBinding.mapView.getMapAsync(this)
         mBinding.imageButton.setOnClickListener {
@@ -67,35 +66,32 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
 
     override fun onMapReady(p0: GoogleMap?) {
         mMap = p0!!
-        val manager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         mOption = MarkerOptions()
 
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            val seoul = LatLng(37.52487, 126.92723)
+        val seoul = LatLng(37.52487, 126.92723)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 15f))
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 18f))
-            mMap.setOnMapClickListener {
-                mOption.position(LatLng(it.latitude, it.longitude))
-                mMap.addMarker(mOption)
-                mBinding.textRegion.text = "수족관 위치의 마커를 클릭해주세요."
-            }
+        mMap.setOnMapClickListener {
+            mOption.position(LatLng(it.latitude, it.longitude))
+            mMap.addMarker(mOption)
+            mBinding.textRegion.text = "수족관 위치의 마커를 클릭해주세요."
+        }
 
-            mMap.setOnMarkerClickListener{
-                val dialog = AlertDialog.Builder(this)
-                val edit = EditText(this)
-                dialog.setMessage("수족관 이름을 입력해주세요.")
-                    .setView(edit)
-                    .setPositiveButton("확인"){_, _ ->
-                        val intent = Intent(this, BoardWriteActivity::class.java)
-                        intent.putExtra("latitude", mOption.position.latitude)
-                        intent.putExtra("longitude", mOption.position.longitude)
-                        intent.putExtra("BoardKind","StoreBoard")
-                        intent.putExtra("storeName", edit.text.toString())
-                        startActivity(intent)
+        mMap.setOnMarkerClickListener{
+            val dialog = AlertDialog.Builder(this)
+            val edit = EditText(this)
+            dialog.setMessage("수족관 이름을 입력해주세요.")
+                .setView(edit)
+                .setPositiveButton("확인"){_, _ ->
+                    val intent = Intent(this, BoardWriteActivity::class.java)
+                    intent.putExtra("latitude", mOption.position.latitude)
+                    intent.putExtra("longitude", mOption.position.longitude)
+                    intent.putExtra("BoardKind","StoreBoard")
+                    intent.putExtra("storeName", edit.text.toString())
+                    startActivity(intent)
 
                 }.setNegativeButton("취소"){_,_ -> }.show()
-                true
-            }
+            true
         }
     }
 
@@ -120,7 +116,7 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
         mBinding.mapView.onStart()
 
         if (Build.VERSION.SDK_INT >= 23)
-            PermissionLocation.requestMapPermissions(this)
+            LocationPermission.requestMapPermissions(this)
     }
 
     override fun onStop() {

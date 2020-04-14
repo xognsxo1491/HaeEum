@@ -13,7 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityBoardWriteBinding
 import com.example.swimming.ui.result.Result
-import com.example.swimming.utils.utilShowDialog
+import com.example.swimming.etc.utils.utilShowDialog
 import kotlinx.android.synthetic.main.activity_board_write.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
@@ -75,7 +75,10 @@ class BoardWriteActivity : AppCompatActivity(), Result, KodeinAware {
 
             // 로딩중
             if (state.loading != null) {
-                utilShowDialog(this, getString(state.loading)).show()
+                utilShowDialog(
+                    this,
+                    getString(state.loading)
+                ).show()
             }
         })
 

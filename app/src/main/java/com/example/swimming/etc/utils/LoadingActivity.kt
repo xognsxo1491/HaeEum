@@ -1,4 +1,4 @@
-package com.example.swimming.utils
+package com.example.swimming.etc.utils
 
 import android.content.Context
 import android.content.Intent
@@ -35,6 +35,6 @@ class LoadingActivity : AppCompatActivity() {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
             }
-        }, 1000)
+        }, 500)
     }
 }

@@ -15,43 +15,54 @@
         android:roundIcon="@mipmap/ic_launcher_swimming"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity
             android:name=".ui.board.BoardInfoMapActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.map.BoardMapSelectActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.map.BoardMapActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.user.ChangeActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.board.MyBoardActivity"
             android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="OPEN_ACTIVITY" />
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.board.BoardSearchActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.board.BoardInfoActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.board.BoardWriteActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.board.BoardActivity"
             android:screenOrientation="portrait" />
+
         <activity
-            android:name=".utils.LoadingActivity"
+            android:name=".etc.utils.LoadingActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,21 +71,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".ui.profile.MainActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.user.FindActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.user.ResisterActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".ui.user.LoginActivity"
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".utils.MyFirebaseMessagingService"
+            android:name=".etc.utils.UtilFCM"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

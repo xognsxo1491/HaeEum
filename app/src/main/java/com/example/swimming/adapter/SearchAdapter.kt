@@ -1,4 +1,4 @@
-package com.example.swimming.ui.adapter
+package com.example.swimming.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -12,8 +12,8 @@ import com.example.swimming.R
 import com.example.swimming.data.board.Board
 import com.example.swimming.ui.board.BoardInfoActivity
 import com.example.swimming.ui.board.BoardInfoMapActivity
-import com.example.swimming.utils.UtilBase64Cipher
-import com.example.swimming.utils.UtilTimeFormat
+import com.example.swimming.etc.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilTimeFormat
 import kotlin.collections.ArrayList
 
 // 검색 리사이클러뷰 어댑터

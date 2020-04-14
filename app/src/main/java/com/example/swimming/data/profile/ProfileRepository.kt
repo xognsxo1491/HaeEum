@@ -2,7 +2,7 @@ package com.example.swimming.data.profile
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 
 // 프로필 관련 저장소
 class ProfileRepository(private val dataSource: ProfileDataSource, val context: Context) {
@@ -30,7 +30,4 @@ class ProfileRepository(private val dataSource: ProfileDataSource, val context: 
 
     fun showDictionary(uuid: String) =
         dataSource.showDictionary(uuid)
-
-    fun showDictionaryImage(path: String) =
-        dataSource.showDictionaryImage(path)
 }

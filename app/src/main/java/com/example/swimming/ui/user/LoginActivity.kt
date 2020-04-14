@@ -81,8 +81,6 @@ class LoginActivity : AppCompatActivity(), Result, KodeinAware {
 
     // 백버튼 클릭 시
     override fun onBackPressed() {
-        super.onBackPressed()
-
         moveTaskToBack(true)
         finishAffinity()
         android.os.Process.killProcess(android.os.Process.myPid())

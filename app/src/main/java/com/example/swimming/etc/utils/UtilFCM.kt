@@ -1,4 +1,4 @@
-package com.example.swimming.utils
+package com.example.swimming.etc.utils
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -14,9 +14,9 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 // FCM
-class MyFirebaseMessagingService : FirebaseMessagingService() {
-    var title: String? = null
-    var contents: String? = null
+class UtilFCM : FirebaseMessagingService() {
+    private var title: String? = null
+    private var contents: String? = null
 
     override fun onMessageReceived(p0: RemoteMessage) {
         super.onMessageReceived(p0)

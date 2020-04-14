@@ -22,7 +22,7 @@ import com.example.swimming.databinding.ActivityMainBinding
 import com.example.swimming.ui.board.*
 import com.example.swimming.ui.result.ProfileActionResult
 import com.example.swimming.ui.user.ChangeActivity
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.include_main.*
 import org.kodein.di.KodeinAware

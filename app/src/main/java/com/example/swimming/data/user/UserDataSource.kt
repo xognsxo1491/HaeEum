@@ -1,8 +1,8 @@
 package com.example.swimming.data.user
 
 import android.content.SharedPreferences
-import com.example.swimming.utils.UtilSendEmail
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilSendEmail
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import io.reactivex.Completable
@@ -88,7 +88,8 @@ class UserDataSource {
 
     // 아이디 찾기
     fun findId(name: String, email: String) = Completable.create {
-        val query = database.reference.child("User").child("UserInfo").orderByChild(UtilBase64Cipher.encode("email"))
+        val query = database.reference.child("User").child("UserInfo").orderByChild(
+            UtilBase64Cipher.encode("email"))
         query.addChildEventListener(object : ChildEventListener {
 
             override fun onCancelled(p0: DatabaseError) {
@@ -114,7 +115,8 @@ class UserDataSource {
 
                     if (name == user.name) {
                         try {
-                            UtilSendEmail().sendMail("헤엄 아이디 발송 메일입니다.", "아이디는 다음과 같습니다.\n 아이디: " +
+                            UtilSendEmail()
+                                .sendMail("헤엄 아이디 발송 메일입니다.", "아이디는 다음과 같습니다.\n 아이디: " +
                                     UtilBase64Cipher.decode(p0.key.toString()), UtilBase64Cipher.decode(email))
                             it.onComplete()
 
@@ -132,7 +134,8 @@ class UserDataSource {
 
     // 비밀번호 찾기
     fun findPassword(name: String, id: String, email: String) = Completable.create {
-        val query = database.reference.child("User").child("UserInfo").orderByChild(UtilBase64Cipher.encode("email"))
+        val query = database.reference.child("User").child("UserInfo").orderByChild(
+            UtilBase64Cipher.encode("email"))
         query.addChildEventListener(object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError) {
                 it.onError(p0.toException())
@@ -158,7 +161,8 @@ class UserDataSource {
                     if (name == user.name && id == user.id) {
 
                         try {
-                            UtilSendEmail().sendMail("헤엄 비밀번호 찾기 발송 메일입니다.", "비밀번호는 다음과 같습니다.\n 비밀번호: " +
+                            UtilSendEmail()
+                                .sendMail("헤엄 비밀번호 찾기 발송 메일입니다.", "비밀번호는 다음과 같습니다.\n 비밀번호: " +
                                         UtilBase64Cipher.decode(user.password.toString()), UtilBase64Cipher.decode(email))
                             it.onComplete()
 
@@ -246,7 +250,8 @@ class UserDataSource {
 
                 } else if (email1 == user.email && UtilBase64Cipher.encode(email2) != user.email) {
                     try {
-                        UtilSendEmail().sendMail("헤엄 인증코드 발송 메일입니다.", "인증번호는 다음과 같습니다.\n 인증번호: $code", email2)
+                        UtilSendEmail()
+                            .sendMail("헤엄 인증코드 발송 메일입니다.", "인증번호는 다음과 같습니다.\n 인증번호: $code", email2)
                         it.onSuccess("success")
 
                     } catch (e: Exception) {

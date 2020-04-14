@@ -13,11 +13,11 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.swimming.R
 import com.example.swimming.data.profile.Message
 import com.example.swimming.data.profile.ProfileRepository
-import com.example.swimming.ui.adapter.MessageViewHolder
+import com.example.swimming.adapter.MessageViewHolder
 import com.example.swimming.ui.board.MyBoardActivity
 import com.example.swimming.ui.result.ProfileActionResult
 import com.example.swimming.ui.result.Result
-import com.example.swimming.utils.UtilBase64Cipher
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.google.firebase.database.DatabaseError
 import com.shreyaspatil.firebase.recyclerpagination.FirebaseRecyclerPagingAdapter
 import com.shreyaspatil.firebase.recyclerpagination.LoadingState
@@ -179,8 +179,6 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 _profileForm.value = ProfileFormStatus(
-                    title1 = UtilBase64Cipher.decode(it.title),
-                    content1 = UtilBase64Cipher.decode(it.contents),
                     board1 = it)
             }, {})
 
@@ -194,37 +192,20 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 _profileForm.value = ProfileFormStatus(
-                    title2 = UtilBase64Cipher.decode(it.title),
-                    content2 = UtilBase64Cipher.decode(it.contents),
                     board2 = it)
             }, {})
 
         disposables.add(show)
     }
 
-    // 이달의 물고기1 이미지
-    fun showDictionaryImage1(path: String) {
-        val show = repository.showDictionaryImage(path)
+    // 이달의 물고기3
+    fun showDictionary3(uuid: String) {
+        val show = repository.showDictionary(uuid)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 _profileForm.value = ProfileFormStatus(
-                    image1 = it
-                )
-            }, {})
-
-        disposables.add(show)
-    }
-
-    // 이달의 물고기2 이미지
-    fun showDictionaryImage2(path: String) {
-        val show = repository.showDictionaryImage(path)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                _profileForm.value = ProfileFormStatus(
-                    image2 = it
-                )
+                    board3 = it)
             }, {})
 
         disposables.add(show)

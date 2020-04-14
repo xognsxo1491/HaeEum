@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.swimming.R
 import com.example.swimming.databinding.ActivityChangeBinding
-import com.example.swimming.ui.adapter.ViewPagerAdapter
+import com.example.swimming.adapter.ViewPagerAdapter
 import kotlinx.android.synthetic.main.activity_change.*
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
