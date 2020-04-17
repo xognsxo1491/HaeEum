@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.swimming.ui.user.UserViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.user.WithDrawActivity">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentScrim="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:toolbarId="@+id/toolbar_register">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_withdraw"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/withdraw"
+                    android:textColor="@color/colorWhiteVariant" />
+
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+            <TextView
+                style="@style/TextTheme_Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/password" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardBackgroundColor="@color/colorWhiteVariant"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp">
+
+                <EditText
+                    android:id="@+id/edit_withdraw"
+                    style="@style/EditTheme_Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:backgroundTint="@color/colorWhiteVariant"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    tools:ignore="Autofill,LabelFor" />
+            </androidx.cardview.widget.CardView>
+
+            <ProgressBar
+                android:id="@+id/progress_withdraw"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:indeterminateTint="@color/colorPrimary"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/btn_withdraw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:text="@string/done"
+                android:textColor="@color/colorWhiteVariant" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

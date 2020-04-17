@@ -65,7 +65,7 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
                 android:gravity="end"
-                android:textColor="@color/colorGrayVariant"
+                android:textColor="@color/colorGray"
                 android:textSize="10sp"
                 tools:ignore="SmallSp" />
 

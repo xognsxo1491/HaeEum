@@ -27,7 +27,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.kodein
 import org.kodein.di.generic.instance
 
-// 수족관 위치 선택
+//수족관 위치 선택
 class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
     override val kodein by kodein()
     private val factory: MapViewModelFactory by instance()
@@ -69,7 +69,7 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
         mOption = MarkerOptions()
 
         val seoul = LatLng(37.52487, 126.92723)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 15f))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 13f))
 
         mMap.setOnMapClickListener {
             mOption.position(LatLng(it.latitude, it.longitude))
@@ -116,7 +116,7 @@ class BoardMapSelectActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallb
         mBinding.mapView.onStart()
 
         if (Build.VERSION.SDK_INT >= 23)
-            LocationPermission.requestMapPermissions(this)
+            LocationPermission.requestPermission(this, this)
     }
 
     override fun onStop() {

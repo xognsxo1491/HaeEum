@@ -3,6 +3,7 @@
     // 기본 정보
     <string name="app_name">헤엄</string>
     <string name="none"> </string>
+    <string name="done">확인</string>
     <string name="authorization">AAAAK0p2Znc:APA91bFfNLF5VZODxRqr8q41rahjhn9UZUWzSg0w9EaYaXU5jihaN48m8_h-sHPT3JD5ScwFkhqNg9mNfFTa1loqHZt9H4RyDayofrxFQ8tXQUiq5dFYdHxhqFQ_MsG2jCn_0CJTYvr7</string>
     <string name="post_fcm">https://fcm.googleapis.com/fcm/send</string>
 
@@ -89,7 +90,6 @@
     // 게시글
     <string name="board_write">게시글 작성하기</string>
     <string name="board_title">제목</string>
-    <string name="board_contents">내용</string>
     <string name="board_success">글쓰기를 완료하였습니다.</string>
     <string name="write">작성</string>
     <string name="anonymous">익명</string>
@@ -105,6 +105,8 @@
     <string name="like">좋아요를 눌렀습니다</string>
     <string name="unLike">좋아요를 취소하였습니다</string>
     <string name="message_select_map">지도를 클릭하시면 마커가 생성됩니다.</string>
+    <string name="message_board">게시글 작성 시 다음과 같은 사항에 주의해주세요.\n\n1. 욕설, 비하, 음란물, 개인정보가 포함된 게시글 작성 금지\n2. 선거, 정치 관련 게시글 작성 금지\n3.기타 약관 및 현행법에 어긋나는 행위 금지
+    \n\n해당 규칙을 어길 시 게시글은 삭제될 수 있습니다.</string>
 
     <string name="search">이 곳에 검색어를 입력하세요.</string>
     <string name="search_store">이 곳에 수족관명을 입력하세요.</string>
@@ -114,13 +116,20 @@
     <string name="none_like">좋아요를 누른 리뷰가 존재하지 않습니다. </string>
 
     // Profile
+    <string name="withdraw">회원 탈퇴</string>
     <string name="logout">로그아웃</string>
     <string name="activity">활동</string>
     <string name="myBoard">내가 쓴 게시글</string>
     <string name="myComment">댓글 단 게시글</string>
     <string name="myLike">좋아요 누른 게시글</string>
     <string name="board_delete">지우기</string>
+    <string name="setting">설정</string>
+    <string name="setting_alarm">알림 설정</string>
+    <string name="alarm_comments">댓글 알림</string>
     <string name="message_logout">로그아웃 되었습니다.</string>
+    <string name="push_message">푸쉬 메시지</string>
+    <string name="alarm_tab">알림 탭</string>
+    <string name="message_withdraw">회원탈퇴가 완료되었습니다.</string>
 
     // 이달의 물고기
     <string name="fish1_name">퍼큘라 크라운(Percula Clown)</string>

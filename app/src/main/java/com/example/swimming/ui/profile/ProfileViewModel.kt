@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -35,6 +36,8 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
 
     var recyclerView: RecyclerView? = null
     var refreshLayout: SwipeRefreshLayout? = null
+    var switch: SwitchCompat? = null
+    var switch2: SwitchCompat? = null
 
     var profileActionResult: ProfileActionResult? = null
     var progressBar: ProgressBar? = null
@@ -60,8 +63,6 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
                 _profileForm.value = ProfileFormStatus(
                     id = t!!.split(" ")[0],
                     email = t.split(" ")[1])
-                val a = "asdasd"
-                a.replace("a", "")
 
                 progressBar!!.visibility = View.INVISIBLE
             }, {
@@ -209,6 +210,28 @@ class ProfileViewModel(private val repository: ProfileRepository) : ViewModel() 
             }, {})
 
         disposables.add(show)
+    }
+
+    // 알림 푸쉬 체크
+    fun checkAlarm() {
+        repository.checkAlarm(switch!!)
+    }
+
+    // 알림 탭 체크
+    fun checkTab() {
+        repository.checkTab(switch2!!)
+    }
+
+    // 알림 설정 불러오기
+    fun loadStatusAlarm() {
+        val status = repository.loadStatusAlarm()
+        switch!!.isChecked = status
+    }
+
+    // 알림 설정 불러오기
+    fun loadStatusTab() {
+        val status = repository.loadStatusTab()
+        switch2!!.isChecked = status
     }
 
     override fun onCleared() {

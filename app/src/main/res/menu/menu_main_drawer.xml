@@ -13,6 +13,11 @@
             android:id="@+id/nav_change"
             android:icon="@drawable/round_https_24"
             android:title="@string/change_profile" />
+
+        <item
+            android:id="@+id/nav_withdraw"
+            android:title="@string/withdraw"
+            android:icon="@drawable/round_close_24" />
     </group>
 
     <item android:title="@string/activity">
@@ -31,6 +36,15 @@
                 android:id="@+id/nav_myLike"
                 android:icon="@drawable/round_favorite_24"
                 android:title="@string/myLike" />
+        </menu>
+    </item>
+
+    <item android:title="@string/setting">
+        <menu>
+            <item
+                android:title="@string/setting_alarm"
+                android:id="@+id/nav_alarm"
+                android:icon="@drawable/round_settings_24" />
         </menu>
     </item>
 </menu>

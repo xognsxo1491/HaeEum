@@ -1,7 +1,6 @@
 package com.example.swimming.data.profile
 
 import android.content.SharedPreferences
-import android.net.Uri
 import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedList
 import com.example.swimming.data.board.Board
@@ -13,7 +12,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.storage.FirebaseStorage
 import com.shreyaspatil.firebase.recyclerpagination.DatabasePagingOptions
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -23,10 +21,6 @@ import io.reactivex.Single
 class ProfileDataSource {
     private val database: FirebaseDatabase by lazy {
         FirebaseDatabase.getInstance()
-    }
-
-    private val storage: FirebaseStorage by lazy {
-        FirebaseStorage.getInstance()
     }
 
     private val auth: FirebaseAuth by lazy {
@@ -46,7 +40,10 @@ class ProfileDataSource {
     }
 
     // 프로필 설정
-    fun setProfile(id: String) = Observable.create<String> {
+    fun setProfile(id: String, email: String, password: String) = Observable.create<String> {
+        auth.signInWithEmailAndPassword(email, password).addOnSuccessListener { p0 ->
+            auth.updateCurrentUser(p0.user!!)
+        }
         database.reference.child("User").child("UserInfo").child(UtilBase64Cipher.encode(id))
             .addListenerForSingleValueEvent(object :
                 ValueEventListener {
@@ -56,9 +53,9 @@ class ProfileDataSource {
 
                 override fun onDataChange(p0: DataSnapshot) {
                     val user = p0.getValue(User::class.java)
-                    val email = user!!.email
+                    val uEmail = user!!.email
 
-                    it.onNext("$id $email")
+                    it.onNext("$id $uEmail")
                     it.onComplete()
                 }
             })

@@ -1,6 +1,5 @@
 package com.example.swimming.ui.profile
 
-import android.net.Uri
 import com.example.swimming.data.board.Board
 
 data class ProfileFormStatus(

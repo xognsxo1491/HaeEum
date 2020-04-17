@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.example.swimming.R
 import com.example.swimming.ui.result.UserActionResult
 import com.example.swimming.data.user.UserRepository
+import com.example.swimming.etc.utils.UtilBase64Cipher
 import com.example.swimming.ui.result.Result
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -136,6 +137,15 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         disposables.add(sendEmail)
     }
 
+    private fun sendEmailForWithdraw(email: String) {
+        val send = repository.sendEmailForWithdraw(mRandom.toString(), email)
+            .subscribeOn(Schedulers.io())
+            .subscribeOn(Schedulers.newThread())
+            .subscribe()
+
+        disposables.add(send)
+    }
+
     // 로그인
     fun login() {
         checkId()
@@ -197,9 +207,30 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
         }
     }
 
+    // 비밀번호 확인 (회원탈퇴)
+    fun confirmPassword(password: String) {
+        val confirm = repository.confirmPassword(password)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                when (it) {
+                    "error" -> {
+                        _registerForm.value = RegisterFormStatus(passwordError = R.string.message_change_password)
+                        result!!.onFailed()
+
+                    } else -> {
+                    sendEmailForWithdraw(UtilBase64Cipher.decode(it))
+                    result!!.onSuccess()
+                } }
+            }, {
+                result!!.onError()
+            })
+
+        disposables.add(confirm)
+    }
+
     // 이메일 변경
     fun changeEmail() {
-
         val change  = repository.changeEmail(email1!!.text.toString(), mRandom.toString(), code!!.text.toString())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -257,6 +288,26 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
             _registerForm.value = RegisterFormStatus(isProgressValid = true)
             disposables.add(send)
         }
+    }
+
+    // 회원탈퇴
+    fun withdraw(code: String) {
+        val withdraw = repository.withdraw(code, mRandom.toString())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                when (it) {
+                    "success" -> {
+                        _registerForm.value = RegisterFormStatus(success = R.string.message_withdraw)
+                    } else -> {
+                    _registerForm.value = RegisterFormStatus(error = R.string.message_register_code_incorrect)
+                }
+                }
+            }, {
+
+            })
+
+        disposables.add(withdraw)
     }
 
     // 이름 형식 체크

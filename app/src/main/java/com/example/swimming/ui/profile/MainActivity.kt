@@ -23,6 +23,7 @@ import com.example.swimming.ui.board.*
 import com.example.swimming.ui.result.ProfileActionResult
 import com.example.swimming.ui.user.ChangeActivity
 import com.example.swimming.etc.utils.UtilBase64Cipher
+import com.example.swimming.ui.user.WithDrawActivity
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.include_main.*
 import org.kodein.di.KodeinAware
@@ -137,6 +138,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val viewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java)
 
         when(item.itemId) {
+
+            // 로그아웃
             R.id.nav_logout -> {
                 val mBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
                 mBuilder.setMessage("로그아웃 하시겠습니까?")
@@ -149,26 +152,41 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 mBuilder.setNegativeButton("취소") {_, _ -> }.show()
             }
 
+            R.id.nav_withdraw -> {
+                val intent = Intent(this, WithDrawActivity::class.java)
+                startActivity(intent)
+            }
+
+            // 개인정보 변경
             R.id.nav_change -> {
                 val intent = Intent(this, ChangeActivity::class.java)
                 startActivity(intent)
             }
 
+            // 내가 쓴 게시글
             R.id.nav_myBoard -> {
                 val intent = Intent(this, MyBoardActivity::class.java)
                 intent.putExtra("Kind", "Board")
                 startActivity(intent)
             }
 
+            // 내가 쓴 댓글
             R.id.nav_myComment -> {
                 val intent = Intent(this, MyBoardActivity::class.java)
                 intent.putExtra("Kind", "Comments")
                 startActivity(intent)
             }
 
+            // 좋아요
             R.id.nav_myLike -> {
                 val intent = Intent(this, MyBoardActivity::class.java)
                 intent.putExtra("Kind", "Like")
+                startActivity(intent)
+            }
+
+            // 알림 설정
+            R.id.nav_alarm -> {
+                val intent = Intent(this, AlarmActivity::class.java)
                 startActivity(intent)
             }
         }

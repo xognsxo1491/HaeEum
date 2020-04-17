@@ -19,7 +19,6 @@
         app:umanoDragView="@id/dragView"
         app:umanoOverlay="true"
         app:umanoPanelHeight="67dp"
-        app:umanoParallaxOffset="100dp"
         app:umanoShadowHeight="8dp"
         tools:context=".MainActivity">
 
@@ -95,22 +94,24 @@
             android:focusable="false"
             android:orientation="vertical">
 
-            <include
-                android:id="@+id/include"
-                layout="@layout/item_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:visibility="gone" />
-
             <TextView
                 android:id="@+id/textView"
                 style="@style/TextTheme_White"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="16dp"
+                android:layout_margin="16dp"
                 android:text="@string/click"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/include"
+                layout="@layout/item_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:visibility="gone" />
 
             <LinearLayout
@@ -148,7 +149,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
                     android:text="@string/none_like"
-                    android:textColor="@color/colorGrayVariant"
+                    android:textColor="@color/colorGray"
                     android:textSize="12sp" />
 
                 <androidx.recyclerview.widget.RecyclerView

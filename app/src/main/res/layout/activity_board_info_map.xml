@@ -18,7 +18,7 @@
         app:umanoDragView="@id/dragView"
         app:umanoOverlay="true"
         app:umanoPanelHeight="150dp"
-        app:umanoShadowHeight="8dp"
+        app:umanoShadowHeight="67dp"
         tools:context=".MainActivity">
 
         <LinearLayout
@@ -191,7 +191,7 @@
                     <EditText
                         android:id="@+id/edit_comments_comments"
                         style="@style/EditTheme_White"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_weight="5"
@@ -203,12 +203,11 @@
 
                     <ImageView
                         android:id="@+id/img_comments_comments"
-                        android:layout_width="30dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_gravity="center"
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
                         android:clickable="true"
                         android:focusable="true"
                         app:srcCompat="@drawable/round_send_24"

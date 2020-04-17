@@ -2,6 +2,7 @@ package com.example.swimming.ui.board
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.os.SystemClock
@@ -46,6 +47,8 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
     private lateinit var mBuilder: AlertDialog.Builder
     private lateinit var mMap: GoogleMap
     private lateinit var mLayout: SlidingUpPanelLayout
+    private lateinit var pref: SharedPreferences
+    private lateinit var id: String
     private var mLastClickTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +74,9 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         mViewModel.recyclerView = recycler_Info
         mViewModel.refreshLayout = swipe_info
 
+        pref = getSharedPreferences("Login", Context.MODE_PRIVATE)
+        id = pref.getString("Id", "")!!
+
         val id = intent.getStringExtra("id")
         val uuid = intent.getStringExtra("uuid")
         val imgCount = intent.getStringExtra("imgCount")
@@ -82,7 +88,12 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
         mViewModel.card4 = mBinding.includeInfo.card_info4
         mViewModel.card5 = mBinding.includeInfo.card_info5
         mViewModel.imgLike = mBinding.includeInfo.img_favorite
+        mViewModel.textView = mBinding.includeInfo.text_board_commentCount
         img_favorite.tag = Integer.valueOf(R.string.unLike)
+
+        mViewModel.cardComment = mBinding.cardInfoComments
+        mViewModel.cardCommentComment = mBinding.cardInfoCommentsComments
+        mViewModel.textCommentComment = mBinding.textCommentId
 
         mBinding.includeInfo.text_board_id.text = id
         mBinding.includeInfo.text_board_title.text = intent.getStringExtra("title")
@@ -217,8 +228,13 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
                 mBinding.includeInfo. text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
                 if (mBinding.includeInfo.text_board_id.text.toString() != id) {
-                    mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), edit_comments.text.toString())
-                    mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                    if (pref.getBoolean("tab", true)) {
+                        mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), mBinding.editComments.text.toString())
+                    }
+
+                    if (pref.getBoolean("alarm", true)) {
+                        mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                    }
                 }
 
                 mBinding.editComments.text = null
@@ -240,8 +256,13 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
                 mBinding.includeInfo.text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
                 if (mBinding.includeInfo.text_board_id.text.toString() != id) {
-                    mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), mBinding.editComments.text.toString())
-                    mViewModel.pushToken(getString(R.string.message_comments_comments), "대댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                    if (pref.getBoolean("tab", true)) {
+                        mViewModel.pushMessage("User", "MessageInfo", uuid, "StoreBoard", text_board_title.text.toString(), mBinding.editComments.text.toString())
+                    }
+
+                    if (pref.getBoolean("alarm", true)) {
+                        mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                    }
                 }
 
                 mBinding.editCommentsComments.text = null
@@ -297,9 +318,6 @@ class BoardInfoMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallbac
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val pref = getSharedPreferences("Login", Context.MODE_PRIVATE)
-        val id = pref.getString("Id", "")
-
         if (id == text_board_id.text.toString() || id == "Admin1")
             menuInflater.inflate(R.menu.menu_delete, menu)
 

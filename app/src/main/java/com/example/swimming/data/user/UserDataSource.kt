@@ -50,8 +50,9 @@ class UserDataSource {
             override fun onDataChange(p0: DataSnapshot) {
                 if (p0.exists()) {
                     if (p0.child("password").value.toString() == password) {
-                        auth.signInWithEmailAndPassword(UtilBase64Cipher.decode(p0.child("email").value.toString()), UtilBase64Cipher.decode(password))
                         editor.putString("Id", UtilBase64Cipher.decode(id)).apply()
+                        editor.putString("email", p0.child("email").value.toString()).apply()
+                        editor.putString("password", p0.child("password").value.toString()).apply()
 
                         it.onComplete()
 
@@ -179,6 +180,24 @@ class UserDataSource {
         })
     }
 
+    // 비밀번호 확인 (회원탈퇴)
+    fun confirmPassword(id: String, password: String) = Single.create<String> {
+        database.reference.child("User").child("UserInfo").child(id).addListenerForSingleValueEvent(object : ValueEventListener {
+
+            override fun onCancelled(p0: DatabaseError) {
+                it.onError(p0.toException())
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val user = p0.getValue(User::class.java)
+                if (password == user!!.password) {
+                    it.onSuccess(user.email!!)
+                } else
+                    it.onSuccess("error")
+            }
+        })
+    }
+
     // 비밀번호 변경
     fun changePassword(id: String, password1: String, password3: String, editor: SharedPreferences.Editor) =  Single.create<String> {
         val reference = database.reference.child("User").child("UserInfo").child(id)
@@ -264,4 +283,27 @@ class UserDataSource {
         })
     }
 
+    // 이메일 전송 (회원 탈퇴)
+    fun sendEmailForWithdraw(code: String, email: String) = Completable.create {
+        try {
+            UtilSendEmail().sendMail("헤엄 인증코드 발송 메일입니다.", "인증번호는 다음과 같습니다.\n 인증번호: $code", email)
+            it.onComplete()
+        } catch (e: Exception) {
+            it.onError(e)
+        }
+    }
+
+    // 회원 탈퇴
+    fun withdraw(id: String, email: String, code: String, random: String, editor: SharedPreferences.Editor) = Single.create<String> { emitter ->
+        if (code == random) {
+            database.reference.child("User").child("UserInfo").child(id).removeValue().addOnSuccessListener {
+                database.reference.child("User").child("EmailInfo").child(email).removeValue()
+                auth.currentUser!!.delete()
+                editor.clear().apply()
+                emitter.onSuccess("success")
+            }
+        } else {
+            emitter.onSuccess("error")
+        }
+    }
 }

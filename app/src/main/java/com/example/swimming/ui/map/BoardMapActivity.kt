@@ -82,6 +82,8 @@ class BoardMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
             val status = it ?: return@Observer
 
             if (status.board != null) {
+                mLayout.panelState = SlidingUpPanelLayout.PanelState.ANCHORED
+
                 mBinding.include.text_board_id.text = UtilBase64Cipher.decode(status.board!!.id)
                 text_board_title.text = UtilBase64Cipher.decode(status.board!!.title)
                 text_board_contents.text = UtilBase64Cipher.decode(status.board!!.contents).replace(" ", "\u00A0")
@@ -93,8 +95,6 @@ class BoardMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
                 mBinding.include.visibility = View.VISIBLE
                 mBinding.textView.visibility = View.VISIBLE
                 mBinding.layout.visibility = View.GONE
-
-                mLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
             }
 
             if (status.like != null) {
@@ -139,8 +139,7 @@ class BoardMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
 
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             val seoul = LatLng(37.52487, 126.92723)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 18f))
-
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 13f))
         }
     }
 
@@ -178,7 +177,7 @@ class BoardMapActivity : AppCompatActivity(), KodeinAware, OnMapReadyCallback {
         mBinding.mapView.onStart()
 
         if (Build.VERSION.SDK_INT >= 23)
-            LocationPermission.requestMapPermissions(this)
+            LocationPermission.requestPermission(this, this)
     }
 
     override fun onStop() {

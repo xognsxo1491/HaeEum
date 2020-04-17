@@ -78,7 +78,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:backgroundTint="@color/colorWhiteVariant"
-                        android:hint="@string/none"
+                        android:hint="@string/message_register_name_form"
                         android:importantForAutofill="no"
                         android:inputType=""
                         android:privateImeOptions="defaultInputmode=korean"
@@ -108,8 +108,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:backgroundTint="@color/colorWhiteVariant"
+                        android:hint="@string/message_register_id_length"
                         android:importantForAutofill="no"
-                        android:inputType="textEmailAddress" />
+                        android:inputType="textEmailAddress"
+                        tools:ignore="LabelFor" />
 
                 </androidx.cardview.widget.CardView>
 
@@ -135,8 +137,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="35dp"
                         android:backgroundTint="@color/colorWhiteVariant"
+                        android:hint="@string/message_register_password_length"
                         android:importantForAutofill="no"
-                        android:inputType="textPassword" />
+                        android:inputType="textPassword"
+                        tools:ignore="LabelFor" />
                 </androidx.cardview.widget.CardView>
 
                 <TextView

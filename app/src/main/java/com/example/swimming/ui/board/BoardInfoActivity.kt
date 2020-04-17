@@ -2,6 +2,7 @@ package com.example.swimming.ui.board
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.Menu
@@ -37,6 +38,8 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
     private lateinit var mViewModel: BoardViewModel
 
     private lateinit var mBuilder: AlertDialog.Builder
+    private lateinit var pref: SharedPreferences
+    private lateinit var id: String
     private var mLastClickTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +51,9 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
         setSupportActionBar(mBinding.toolbarInfo)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.round_chevron_left_24)
+
+        pref = getSharedPreferences("Login", Context.MODE_PRIVATE)
+        id = pref.getString("Id", "")!!
 
         val id = intent.getStringExtra("id")
         val kind = intent.getStringExtra("BoardKind")
@@ -222,8 +228,13 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                 mBinding.includeInfo.text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
                 if (mBinding.includeInfo.text_board_id.text.toString() != id) {
-                    mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), mBinding.editComments.text.toString())
-                    mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                    if (pref.getBoolean("tab", true)) {
+                        mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), mBinding.editComments.text.toString())
+                    }
+
+                    if (pref.getBoolean("alarm", true)) {
+                        mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                    }
                 }
 
                 mBinding.editComments.text = null
@@ -245,8 +256,13 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
                 mBinding.includeInfo.text_board_commentCount.text = (Integer.parseInt(text_board_commentCount.text.toString()) + 1).toString()
 
                 if (mBinding.includeInfo.text_board_id.text.toString() != id) {
-                    mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), mBinding.editComments.text.toString())
-                    mViewModel.pushToken(getString(R.string.message_comments_comments), "대댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                    if (pref.getBoolean("tab", true)) {
+                        mViewModel.pushMessage("User", "MessageInfo", uuid, kind, text_board_title.text.toString(), mBinding.editComments.text.toString())
+                    }
+
+                    if (pref.getBoolean("alarm", true)) {
+                        mViewModel.pushToken(getString(R.string.message_comments), "댓글: " + edit_comments.text.toString(), token!!, getString(R.string.post_fcm), getString(R.string.authorization))
+                    }
                 }
 
                 mBinding.editCommentsComments.text = null
@@ -293,9 +309,6 @@ class BoardInfoActivity : AppCompatActivity(), KodeinAware {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val pref = getSharedPreferences("Login", Context.MODE_PRIVATE)
-        val id = pref.getString("Id", "")
-
         if (id == text_board_id.text.toString() || id == "Admin1")
             menuInflater.inflate(R.menu.menu_delete, menu)
 
