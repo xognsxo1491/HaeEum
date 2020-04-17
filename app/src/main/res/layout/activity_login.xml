@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.swimming.ui.user.UserViewModel" />
+            type="com.kang.swimming.ui.user.UserViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

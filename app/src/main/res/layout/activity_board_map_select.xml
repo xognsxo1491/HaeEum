@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.swimming.ui.map.MapViewModel" />
+            type="com.kang.swimming.ui.map.MapViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

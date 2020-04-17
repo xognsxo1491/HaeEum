@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:185932867191:android:59755fda4a247178bbc872",
         "android_client_info": {
-          "package_name": "com.example.swimming"
+          "package_name": "com.kang.swimming"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "185932867191-q6iin1nnq9agn6jeu4all7tomtvhs3qm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.swimming",
+            "package_name": "com.kang.swimming",
             "certificate_hash": "92649a1a62c3d2002109965a5877b8eaa6b53a53"
           }
         },

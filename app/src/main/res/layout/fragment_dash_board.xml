@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.swimming.ui.board.BoardViewModel" />
+            type="com.kang.swimming.ui.board.BoardViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.swimming.ui.board.BoardViewModel" />
+            type="com.kang.swimming.ui.board.BoardViewModel" />
     </data>
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout

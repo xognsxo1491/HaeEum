@@ -144,4 +144,8 @@
     <string name="fish3_contents">구피(guppy)는 포에킬리아과에 속하며 학명은 Poecilia Reticulata 이다. 몸길이는 수컷이 3 cm, 암컷이 4 cm 가량으로 송사리와 비슷하나 몸이 더 가늘고 길며 빨강·노랑·파랑·검정 등의 여러 빛깔의 무늬가 섞여 있다.
         금붕어와 함께 세계에서 가장 인기 있는 애완용 물고기로 깃털 같은 꼬리와 지느러미가 아름답다. 모기의 유충인 장구벌레를 잡아 먹으며 베네수엘라와 인근 섬 지역의 따뜻한 하천이 원산지이다.</string>
 
+    <string name="privacy_title">약관 동의</string>
+    <string name="prvacy_contents">헤엄 개인정보 처리방침</string>
+    <string name="privacy_agree">다음 약관에 대해 동의합니다.</string>
+
 </resources>
